@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 
-
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,6 +24,11 @@ public class Users implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pk;
+
+    @NotNull
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="badge_pk", referencedColumnName = "pk")
+    private CodingBadge badge;
 
     @NotNull
     @CreationTimestamp
@@ -47,25 +51,22 @@ public class Users implements UserDetails {
     @Column(unique = true)
     private String nickname;
 
-    @Lob
-    @Column(name = "profile_url", length = 99999)
-    private String profileUrl = null;
-
+    @NotNull
+    @Column(name = "phone_num")
     private String phoneNum;
 
+    @NotNull
     private String major;
 
+    @NotNull
     private String email;
 
     @Column(name = "email_check")
-    private boolean emailCheck;
-
-    private String badge;
+    private boolean emailCheck = false;
 
     private boolean isAccountNonLocked = true;
 
     public void updateNickname(String nickname) { this.nickname = nickname; }
-    public void updateProfileImg(String profileUrl) { this.profileUrl = profileUrl; }
 
     public static Users makeUsers(String id, String pw) {
         Users user = new Users();
