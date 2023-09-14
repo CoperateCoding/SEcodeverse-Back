@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "ctf_category")
 public class CTFCategory {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pk;

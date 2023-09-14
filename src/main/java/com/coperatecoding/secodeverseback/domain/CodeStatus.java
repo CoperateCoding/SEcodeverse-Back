@@ -1,5 +1,5 @@
 package com.coperatecoding.secodeverseback.domain;
 
-public enum UserRole {
-    USER, ADMIN
+public enum CodeStatus {
+    WAITING,TRUE,FALSE
 }

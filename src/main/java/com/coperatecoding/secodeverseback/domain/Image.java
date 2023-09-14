@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "image")
 public class Image {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pk;
