@@ -1,5 +1,6 @@
 package com.coperatecoding.secodeverseback.domain.question;
 
+import com.coperatecoding.secodeverseback.domain.TestCase;
 import com.coperatecoding.secodeverseback.domain.Users;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -32,6 +33,9 @@ public class Question {
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST)
     private List<QuestionCategory> questionCategories = new ArrayList<>();
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST)
+    private List<TestCase> testCases = new ArrayList<>();
 
     @NotNull
     @CreationTimestamp
@@ -67,8 +71,13 @@ public class Question {
 
     private String limitations; //제한사항
 
+    @Lob
     private String source; // 출처
 
+    private String language;
+
+
+    // 이거 너무 길어서 builder로 빼야 할듯함.
     public static Question makeQuestion(Users user, String title, String intro, String reason, int level, String content, String limitations, String source) {
         Question question = new Question();
         question.user = user;

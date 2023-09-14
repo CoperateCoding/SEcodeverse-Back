@@ -3,10 +3,7 @@ package com.coperatecoding.secodeverseback.domain.board;
 import com.coperatecoding.secodeverseback.domain.Users;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -39,7 +36,7 @@ public class Board {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private BoardStatus status;
+    private BoardStatus status = BoardStatus.WAITING;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -55,12 +52,53 @@ public class Board {
     private String title;
 
     @NotNull
+    @Lob
     private String content;
 
     public String convertDate(LocalDateTime createAt) {
         String convertedDate = createAt.format(DateTimeFormatter.ofPattern("yyyy. MM. dd. HH:mm"));
         return convertedDate;
     }
+
+    public static Board makeBoard(Users user, BoardCategory category, String title, String content) {
+        Board board = new Board();
+        board.user = user;
+        board.category = category;
+        board.title = title;
+        board.content = content;
+        return board;
+    }
+
+    // only admin
+    public static Board makeNotice(Users user, String title, String content) {
+        Board board = new Board();
+        board.user = user;
+        board.status = BoardStatus.APPROVED;
+        board.category = BoardCategory.NOTICE;
+        board.title = title;
+        board.content = content;
+        return board;
+    }
+
+    //얘는 너무 길어서 builder 사용해도 되긴 함
+//    @Builder
+//    public Board(Users user, BoardCategory category, String title, String content) {
+//        this.user = user;
+//        this.category = category;
+//        this.title = title;
+//        this.content = content;
+//    }
+//
+//    // 관리자 - 공지사항
+//    @Builder
+//    public Board(Users user, BoardStatus status, BoardCategory category, String title, String content) {
+//        this.user = user;
+//        this.status = APPROVED;
+//        this.category = category;
+//        this.title = title;
+//        this.content = content;
+//    }
+
 
 
 

@@ -37,8 +37,8 @@ public class Users implements UserDetails {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "roles")
-    private UserRole role = UserRole.USER;
+    @Column(name = "role_type")
+    private RoleType roleType = RoleType.USER;
 
     @NotNull
     @Column(unique = true)

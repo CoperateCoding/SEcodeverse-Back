@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "board_image")
 public class BoardImage {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pk;
@@ -25,6 +26,5 @@ public class BoardImage {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_pk", referencedColumnName = "pk")
     private Image image;
-
 
 }
