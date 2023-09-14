@@ -1,18 +1,23 @@
 package com.coperatecoding.secodeverseback.domain;
 
+import com.coperatecoding.secodeverseback.domain.question.Question;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.sql.Time;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "qna")
-public class QnA {
+@Table(name = "code")
+public class Code {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pk;
@@ -22,14 +27,25 @@ public class QnA {
     @JoinColumn(name = "user_pk", referencedColumnName = "pk")
     private Users user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "question_pk", referencedColumnName = "pk")
+    private Question question;
+
+    @Lob
     @NotNull
-    private String content;
-
-    private String reply;
+    private String code;
 
     @NotNull
-    @Column(name = "reply_status")
-    private boolean replyStatus = false;
+    @CreationTimestamp
+    private Time compileTime;
 
+    @NotNull
+    private Long memory;
+
+    @NotNull
+    private CodeStatus status = CodeStatus.WAITING;
+
+    @NotNull
+    private String language;
 
 }
