@@ -31,7 +31,7 @@ public class Team {
     @NotNull
     private int score = 0;
 
-    @NotNull
-    private int rank;
+    @Column(name = "team_rank")
+    private int teamRank;
 
 }

@@ -31,8 +31,9 @@ public class Question {
     @JoinColumn(name = "user_pk", referencedColumnName = "pk")
     private Users user;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST)
-    private List<QuestionCategory> questionCategories = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "category_pk", referencedColumnName = "pk")
+    private QuestionCategory category;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST)
     private List<TestCase> testCases = new ArrayList<>();
@@ -48,7 +49,6 @@ public class Question {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
     private QuestionStatus status = QuestionStatus.WAITING;
 
     @NotNull
