@@ -38,7 +38,6 @@ public class EditRequest {
     private LocalDateTime createAt = LocalDateTime.now();
 
     @NotNull
-    @Column(length = 999999999)
     private String content; // 사유
 
     public static EditRequest makeEditRequest(Users user, Question question, String content) {

@@ -1,15 +1,11 @@
 package com.coperatecoding.secodeverseback.domain.ctf;
 
-import com.coperatecoding.secodeverseback.domain.board.BoardCategory;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,12 +18,13 @@ public class CTFQuestion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pk;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "league_pk", referencedColumnName = "pk")
     private CTFLeague league;
 
-    @OneToMany(mappedBy = "ctf_question", cascade = CascadeType.PERSIST)
-    private List<CTFCategory> ctfCategories = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "category_pk", referencedColumnName = "pk")
+    private CTFCategory category;
 
     @NotNull
     private String name;
@@ -43,6 +40,7 @@ public class CTFQuestion {
     private String answer;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     private CTFQuestionType type;
 
 }
