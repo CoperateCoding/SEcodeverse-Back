@@ -53,6 +53,7 @@ public class Board {
 
     @NotNull
     @Lob
+    @Column(length = 99999)
     private String content;
 
     public String convertDate(LocalDateTime createAt) {

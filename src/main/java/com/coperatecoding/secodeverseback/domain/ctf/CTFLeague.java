@@ -1,6 +1,5 @@
 package com.coperatecoding.secodeverseback.domain.ctf;
 
-import com.coperatecoding.secodeverseback.domain.question.QuestionCategory;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -10,8 +9,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,9 +19,6 @@ public class CTFLeague {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pk;
-
-    @OneToMany(mappedBy = "ctf_league", cascade = CascadeType.PERSIST)
-    private List<CTFQuestion> ctfQuestions = new ArrayList<>();
 
     @NotNull
     private String name;
@@ -39,7 +33,7 @@ public class CTFLeague {
 
     @NotNull
     @CreationTimestamp
-    @Column(name = "open_time")
+    @Column(name = "close_time")
     private LocalDateTime closeTime;
 
     @NotNull
@@ -53,6 +47,7 @@ public class CTFLeague {
     private String detailDescription;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     private LeagueStatus status;
 
 }
