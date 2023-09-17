@@ -36,6 +36,9 @@ public class Report {
     private LocalDateTime createAt = LocalDateTime.now();
 
     @NotNull
+    private String title;
+
+    @NotNull
     private String reason;
 
 }
