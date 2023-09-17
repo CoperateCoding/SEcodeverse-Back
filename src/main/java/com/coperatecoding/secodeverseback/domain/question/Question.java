@@ -56,6 +56,7 @@ public class Question {
     
     private String intro; //한줄 설명
 
+    @Column(length = 99999)
     private String reason; //(거부 또는 수정요청)사유
 
     @NotNull
@@ -67,8 +68,10 @@ public class Question {
 
     @NotNull
     @Lob
+    @Column(length = 99999)
     private String content; //내용
 
+    @Lob
     private String limitations; //제한사항
 
     @Lob
