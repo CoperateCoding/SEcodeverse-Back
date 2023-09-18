@@ -28,7 +28,7 @@ public class Board {
     @NotNull
     @CreationTimestamp
     @Column(name = "create_at")
-    private LocalDateTime createAt = LocalDateTime.now();
+    private LocalDateTime createAt = LocalDateTime.now(); // LocalDate, LocalDateTime 사용 시 @Temporal 생략 가능
 
     @CreationTimestamp
     @Column(name = "update_at")
@@ -49,16 +49,15 @@ public class Board {
     private Long commentCnt = 0L;
 
     @NotNull
+    @Column(length = 20)
     private String title;
 
     @NotNull
-    @Lob
     @Column(length = 99999)
     private String content;
 
     public String convertDate(LocalDateTime createAt) {
-        String convertedDate = createAt.format(DateTimeFormatter.ofPattern("yyyy. MM. dd. HH:mm"));
-        return convertedDate;
+        return createAt.format(DateTimeFormatter.ofPattern("yyyy. MM. dd. HH:mm"));
     }
 
     public static Board makeBoard(Users user, BoardCategory category, String title, String content) {
@@ -80,27 +79,5 @@ public class Board {
         board.content = content;
         return board;
     }
-
-    //얘는 너무 길어서 builder 사용해도 되긴 함
-//    @Builder
-//    public Board(Users user, BoardCategory category, String title, String content) {
-//        this.user = user;
-//        this.category = category;
-//        this.title = title;
-//        this.content = content;
-//    }
-//
-//    // 관리자 - 공지사항
-//    @Builder
-//    public Board(Users user, BoardStatus status, BoardCategory category, String title, String content) {
-//        this.user = user;
-//        this.status = APPROVED;
-//        this.category = category;
-//        this.title = title;
-//        this.content = content;
-//    }
-
-
-
 
 }

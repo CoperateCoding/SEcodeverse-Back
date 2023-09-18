@@ -1,5 +1,6 @@
 package com.coperatecoding.secodeverseback.domain;
 
+import com.coperatecoding.secodeverseback.domain.ctf.Team;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -25,6 +26,10 @@ public class Users implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pk;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team_pk")
+    private Team team;
+
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="badge_pk", referencedColumnName = "pk")
@@ -47,8 +52,8 @@ public class Users implements UserDetails {
     @NotNull
     private String pw;
 
-    @NotNull
-    @Column(unique = true)
+    //NotNull 대신 Column에 nullable=false 해도 됨.
+    @Column(unique = true, nullable = false, length = 10)
     private String nickname;
 
     @NotNull
@@ -63,6 +68,8 @@ public class Users implements UserDetails {
 
     @Column(name = "email_check")
     private boolean emailCheck = false;
+    
+    private Integer exp; // 경험치
 
     private boolean isAccountNonLocked = true;
 
@@ -124,8 +131,7 @@ public class Users implements UserDetails {
     }
 
     public String convertDate(LocalDateTime createAt) {
-        String convertedDate = createAt.format(DateTimeFormatter.ofPattern("yyyy. MM. dd. HH:mm:ss"));
-        return convertedDate;
+        return createAt.format(DateTimeFormatter.ofPattern("yyyy. MM. dd. HH:mm:ss"));
     }
 
 }
