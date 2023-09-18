@@ -1,11 +1,15 @@
 package com.coperatecoding.secodeverseback.domain.ctf;
 
+import com.coperatecoding.secodeverseback.domain.Users;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -28,10 +32,11 @@ public class Team {
     @NotNull
     private String pw;
 
-    @NotNull
-    private int score = 0;
+    private Integer score;
 
     @Column(name = "team_rank")
-    private int teamRank;
+    private Integer teamRank;
 
+    @OneToMany(mappedBy = "team")
+    private List<Users> users = new ArrayList<>();
 }

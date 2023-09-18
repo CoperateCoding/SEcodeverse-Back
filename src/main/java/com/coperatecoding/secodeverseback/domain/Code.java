@@ -31,11 +31,10 @@ public class Code {
     @JoinColumn(name = "question_pk", referencedColumnName = "pk")
     private Question question;
 
-    @Lob
     @NotNull
-    private String code;
+    @Column(length = 99999)
+    private String content;
 
-    @NotNull
     @CreationTimestamp
     private Time compileTime;
 

@@ -33,7 +33,7 @@ public class CTFQuestion {
     private int score;
 
     @NotNull
-    @Lob
+    @Column(length = 99999)
     private String description;
 
     @NotNull
