@@ -1,6 +1,6 @@
 package com.coperatecoding.secodeverseback.domain.board;
 
-import com.coperatecoding.secodeverseback.domain.Users;
+import com.coperatecoding.secodeverseback.domain.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -22,8 +22,8 @@ public class Board {
 
     //사용자가 탈퇴했을 때 알수없음 처리를 위해 nullable
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_pk", referencedColumnName = "pk")
-    private Users user;
+    @JoinColumn(name = "user_pk")
+    private User user;
 
     @NotNull
     @CreationTimestamp
@@ -34,12 +34,8 @@ public class Board {
     @Column(name = "update_at")
     private LocalDateTime updateAt = LocalDateTime.now();
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private BoardStatus status = BoardStatus.WAITING;
-
-    @NotNull
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "category_pk")
     private BoardCategory category;
 
     @Column(name = "like_cnt")
@@ -53,28 +49,17 @@ public class Board {
     private String title;
 
     @NotNull
-    @Column(length = 99999)
+    @Column(length = 2000)
     private String content;
 
     public String convertDate(LocalDateTime createAt) {
         return createAt.format(DateTimeFormatter.ofPattern("yyyy. MM. dd. HH:mm"));
     }
 
-    public static Board makeBoard(Users user, BoardCategory category, String title, String content) {
+    public static Board makeBoard(User user, BoardCategory category, String title, String content) {
         Board board = new Board();
         board.user = user;
         board.category = category;
-        board.title = title;
-        board.content = content;
-        return board;
-    }
-
-    // only admin
-    public static Board makeNotice(Users user, String title, String content) {
-        Board board = new Board();
-        board.user = user;
-        board.status = BoardStatus.APPROVED;
-        board.category = BoardCategory.NOTICE;
         board.title = title;
         board.content = content;
         return board;

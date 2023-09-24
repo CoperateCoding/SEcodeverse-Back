@@ -1,7 +1,7 @@
 package com.coperatecoding.secodeverseback.domain.question;
 
-import com.coperatecoding.secodeverseback.domain.Users;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,20 +11,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "question_comment")
-public class QuestionComment {
+@Table(name = "level")
+public class Level {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pk;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_pk", referencedColumnName = "pk")
-    private Users user;
+    @NotNull
+    private Integer score;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="question_pk", referencedColumnName = "pk")
-    private Question question;
-
-    private String content;
-
+    @NotNull
+    private Integer exp;
 }

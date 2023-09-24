@@ -24,11 +24,11 @@ public class Code {
 
     //사용자가 탈퇴했을 때 알수없음 처리를 위해 nullable
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_pk", referencedColumnName = "pk")
-    private Users user;
+    @JoinColumn(name = "user_pk")
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_pk", referencedColumnName = "pk")
+    @JoinColumn(name = "question_pk")
     private Question question;
 
     @NotNull

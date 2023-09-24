@@ -1,5 +1,5 @@
 package com.coperatecoding.secodeverseback.domain;
 
 public enum CodeStatus {
-    WAITING,TRUE,FALSE
+    WAITING, TRUE, FALSE
 }
