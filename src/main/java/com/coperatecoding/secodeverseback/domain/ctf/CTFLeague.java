@@ -38,15 +38,13 @@ public class CTFLeague {
 
     @NotNull
     @Column(name = "member_cnt")
-    private int memberCnt;
+    private Integer memberCnt;
 
     private String notice;
 
-    @Lob
-    @Column(name = "detail_description")
+    @Column(name = "detail_description", length = 2000)
     private String detailDescription;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     private LeagueStatus status;
 

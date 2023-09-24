@@ -1,5 +1,6 @@
 package com.coperatecoding.secodeverseback.domain.ctf;
 
+import com.coperatecoding.secodeverseback.domain.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -7,12 +8,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "team")
-public class Team {
+@Table(name = "ctf_team")
+public class CTFTeam {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,15 +27,17 @@ public class Team {
     private CTFLeague ctfLeague;
 
     @NotNull
+    @Column(length = 8)
     private String name;
 
     @NotNull
     private String pw;
 
-    @NotNull
-    private int score = 0;
+    private Integer score;
 
     @Column(name = "team_rank")
-    private int teamRank;
+    private Integer teamRank;
 
+    @OneToMany(mappedBy = "ctf_team")
+    private List<User> users = new ArrayList<>();
 }

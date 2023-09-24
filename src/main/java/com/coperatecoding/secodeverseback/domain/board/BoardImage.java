@@ -1,7 +1,5 @@
 package com.coperatecoding.secodeverseback.domain.board;
 
-import com.coperatecoding.secodeverseback.domain.Image;
-import com.coperatecoding.secodeverseback.domain.Users;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -20,11 +18,10 @@ public class BoardImage {
     private Long pk;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_pk", referencedColumnName = "pk")
+    @JoinColumn(name = "board_pk")
     private Board board;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "image_pk", referencedColumnName = "pk")
-    private Image image;
+    @JoinColumn(name = "img_url")
+    private String imgUrl;
 
 }

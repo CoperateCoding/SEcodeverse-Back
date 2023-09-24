@@ -21,15 +21,15 @@ public class Likes {
 
     //user가 탈퇴하면 알수없음으로 처리, like 개수는 유지
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_pk", referencedColumnName = "pk")
-    private Users user;
+    @JoinColumn(name="user_pk")
+    private User user;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="board_pk", referencedColumnName = "pk")
+    @JoinColumn(name="board_pk")
     private Board board;
 
-    public static Likes makeLikes(Users user, Board board) {
+    public static Likes makeLikes(User user, Board board) {
         Likes likes = new Likes();
         likes.user = user;
         likes.board = board;

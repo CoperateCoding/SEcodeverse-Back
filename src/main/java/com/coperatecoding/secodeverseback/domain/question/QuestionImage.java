@@ -1,7 +1,5 @@
 package com.coperatecoding.secodeverseback.domain.question;
 
-import com.coperatecoding.secodeverseback.domain.Image;
-import com.coperatecoding.secodeverseback.domain.ctf.CTFQuestion;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -22,8 +20,7 @@ public class QuestionImage {
     @JoinColumn(name = "question_pk", referencedColumnName = "pk")
     private Question ctfQuestion;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "image_pk", referencedColumnName = "pk")
-    private Image image;
+    @JoinColumn(name = "img_url")
+    private String imgUrl;
 
 }
