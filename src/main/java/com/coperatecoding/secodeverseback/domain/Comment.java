@@ -30,8 +30,8 @@ public class Comment {
 
     //댓글을 단 사용자가 탈퇴하면 알수없음 처리 nullable
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_pk", referencedColumnName = "pk")
-    private Users user;
+    @JoinColumn(name="user_pk")
+    private User user;
 
     @NotNull
     @CreationTimestamp
@@ -41,7 +41,7 @@ public class Comment {
     @NotNull
     private String content;
 
-    public static Comment makeComment(Board board, Users user, String content) {
+    public static Comment makeComment(Board board, User user, String content) {
         Comment comment = new Comment();
         comment.board = board;
         comment.user = user;

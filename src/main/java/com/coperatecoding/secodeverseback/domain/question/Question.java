@@ -1,7 +1,7 @@
 package com.coperatecoding.secodeverseback.domain.question;
 
 import com.coperatecoding.secodeverseback.domain.TestCase;
-import com.coperatecoding.secodeverseback.domain.Users;
+import com.coperatecoding.secodeverseback.domain.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -25,14 +25,18 @@ public class Question {
 
     //사용자가 탈퇴했을 때 알수없음 처리를 위해 nullable
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_pk", referencedColumnName = "pk")
-    private Users user;
+    @JoinColumn(name = "user_pk")
+    private User user;
 
     @ManyToOne
-    @JoinColumn(name = "category_pk", referencedColumnName = "pk")
+    @JoinColumn(name = "category_pk")
     private QuestionCategory category;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.PERSIST)
+    @ManyToOne
+    @JoinColumn(name = "level_pk")
+    private Level level;
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private List<TestCase> testCases = new ArrayList<>();
 
     @NotNull
@@ -45,10 +49,6 @@ public class Question {
     private LocalDateTime updateAt = LocalDateTime.now();
 
     @NotNull
-    @Enumerated(EnumType.STRING)
-    private QuestionStatus status = QuestionStatus.WAITING;
-
-    @NotNull
     private String title; //제목
     
     private String intro; //한줄 설명
@@ -59,9 +59,6 @@ public class Question {
     @NotNull
     @Column(name = "report_cnt")
     private Long reportCnt = 0L;
-
-    @NotNull
-    private Integer level; //난이도
 
     @NotNull
     @Column(length = 99999)
@@ -78,12 +75,11 @@ public class Question {
 
     // 이거 너무 길어서 builder로 뺌.
     @Builder
-    public Question(Users user, String title, String intro, String reason, int level, String content, String limitations, String source) {
+    public Question(User user, String title, String intro, String reason, String content, String limitations, String source) {
         this.user = user;
         this.title = title;
         this.intro = intro;
         this.reason = reason;
-        this.level = level;
         this.content = content;
         this.limitations = limitations;
         this.source = source;

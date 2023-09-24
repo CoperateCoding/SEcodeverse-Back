@@ -1,6 +1,6 @@
 package com.coperatecoding.secodeverseback.domain;
 
-import com.coperatecoding.secodeverseback.domain.ctf.Team;
+import com.coperatecoding.secodeverseback.domain.ctf.CTFTeam;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -20,7 +20,7 @@ import java.util.Collection;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "users")
-public class Users implements UserDetails {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,11 +28,11 @@ public class Users implements UserDetails {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_pk")
-    private Team team;
+    private CTFTeam team;
 
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="badge_pk", referencedColumnName = "pk")
+    @JoinColumn(name="badge_pk")
     private CodingBadge badge;
 
     @NotNull
@@ -46,22 +46,23 @@ public class Users implements UserDetails {
     private RoleType roleType = RoleType.USER;
 
     @NotNull
-    @Column(unique = true)
+    @Column(unique = true, length =12)
     private String id;
 
     @NotNull
+    @Column(length = 20)
     private String pw;
 
     //NotNull 대신 Column에 nullable=false 해도 됨.
-    @Column(unique = true, nullable = false, length = 10)
+    @Column(unique = true, nullable = false, length = 8)
     private String nickname;
 
     @NotNull
-    @Column(name = "phone_num")
+    @Column(name = "phone_num", length = 13)
     private String phoneNum;
 
     @NotNull
-    private String major;
+    private Major major;
 
     @NotNull
     private String email;
@@ -75,8 +76,8 @@ public class Users implements UserDetails {
 
     public void updateNickname(String nickname) { this.nickname = nickname; }
 
-    public static Users makeUsers(String id, String pw) {
-        Users user = new Users();
+    public static User makeUsers(String id, String pw) {
+        User user = new User();
         user.id = id;
         user.pw = pw;
         return user;

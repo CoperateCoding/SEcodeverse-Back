@@ -19,18 +19,18 @@ public class CTFQuestion {
     private Long pk;
 
     @ManyToOne
-    @JoinColumn(name = "league_pk", referencedColumnName = "pk")
+    @JoinColumn(name = "league_pk")
     private CTFLeague league;
 
     @ManyToOne
-    @JoinColumn(name = "category_pk", referencedColumnName = "pk")
+    @JoinColumn(name = "category_pk")
     private CTFCategory category;
 
     @NotNull
     private String name;
 
     @NotNull
-    private int score;
+    private Integer score;
 
     @NotNull
     @Column(length = 99999)

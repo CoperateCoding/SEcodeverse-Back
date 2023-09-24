@@ -10,15 +10,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "image")
-public class Image {
+@Table(name = "code_language")
+public class CodeLanguage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pk;
 
-    @Lob
-    @Column(name = "img_url", length = 99999)
-    private String imgUrl = null;
+    @ManyToOne
+    @JoinColumn(name = "code_pk")
+    private Code code;
+
+    @OneToOne 
+    @JoinColumn(name = "language_pk")
+    private Language language;
 
 }
