@@ -33,11 +33,11 @@ public class CTFTeam {
     @NotNull
     private String pw;
 
-    private Integer score;
+    private Integer score = 0;
 
     @Column(name = "team_rank")
     private Integer teamRank;
 
-    @OneToMany(mappedBy = "ctf_team")
+    @OneToMany(mappedBy = "team")
     private List<User> users = new ArrayList<>();
 }

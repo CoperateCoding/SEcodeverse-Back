@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "ctf_league")
 public class CTFLeague {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pk;
@@ -38,7 +39,7 @@ public class CTFLeague {
 
     @NotNull
     @Column(name = "member_cnt")
-    private Integer memberCnt;
+    private int memberCnt;
 
     private String notice;
 
@@ -46,6 +47,6 @@ public class CTFLeague {
     private String detailDescription;
 
     @Enumerated(EnumType.STRING)
-    private LeagueStatus status;
+    private CTFLeagueStatus status;
 
 }

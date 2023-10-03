@@ -63,12 +63,6 @@ public class User implements UserDetails {
 
     @NotNull
     private Major major;
-
-    @NotNull
-    private String email;
-
-    @Column(name = "email_check")
-    private boolean emailCheck = false;
     
     private Integer exp; // 경험치
 

@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Time;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -44,7 +46,7 @@ public class Code {
     @NotNull
     private CodeStatus status = CodeStatus.WAITING;
 
-    @NotNull
-    private String language;
+    @OneToMany(mappedBy = "code", cascade = CascadeType.ALL)
+    private List<CodeLanguage> languageList = new ArrayList<>();
 
 }

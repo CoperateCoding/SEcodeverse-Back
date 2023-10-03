@@ -25,6 +25,10 @@ public class Board {
     @JoinColumn(name = "user_pk")
     private User user;
 
+    @ManyToOne
+    @JoinColumn(name = "category_pk")
+    private BoardCategory category;
+
     @NotNull
     @CreationTimestamp
     @Column(name = "create_at")
@@ -33,10 +37,6 @@ public class Board {
     @CreationTimestamp
     @Column(name = "update_at")
     private LocalDateTime updateAt = LocalDateTime.now();
-
-    @ManyToOne
-    @JoinColumn(name = "category_pk")
-    private BoardCategory category;
 
     @Column(name = "like_cnt")
     private Long likeCnt = 0L;
