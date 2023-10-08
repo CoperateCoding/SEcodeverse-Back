@@ -18,7 +18,7 @@ public class QuestionImage {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_pk", referencedColumnName = "pk")
-    private Question ctfQuestion;
+    private Question question;
 
     @JoinColumn(name = "img_url")
     private String imgUrl;

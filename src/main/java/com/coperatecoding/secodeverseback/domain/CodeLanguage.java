@@ -21,7 +21,7 @@ public class CodeLanguage {
     @JoinColumn(name = "code_pk")
     private Code code;
 
-    @OneToOne 
+    @ManyToOne
     @JoinColumn(name = "language_pk")
     private Language language;
 

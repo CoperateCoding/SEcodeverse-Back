@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +15,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "users")
@@ -30,9 +28,9 @@ public class User implements UserDetails {
     @JoinColumn(name = "team_pk")
     private CTFTeam team;
 
-    @NotNull
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="badge_pk")
+//    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "badge_pk")
     private CodingBadge badge;
 
     @NotNull
@@ -53,22 +51,13 @@ public class User implements UserDetails {
     @Column(length = 20)
     private String pw;
 
+    @NotNull
+    private String name;
+
     //NotNull 대신 Column에 nullable=false 해도 됨.
-    @Column(unique = true, nullable = false, length = 8)
+    @NotNull
+    @Column(unique = true, length = 8)
     private String nickname;
-
-    @NotNull
-    @Column(name = "phone_num", length = 13)
-    private String phoneNum;
-
-    @NotNull
-    private Major major;
-
-    @NotNull
-    private String email;
-
-    @Column(name = "email_check")
-    private boolean emailCheck = false;
     
     private Integer exp; // 경험치
 
@@ -76,10 +65,16 @@ public class User implements UserDetails {
 
     public void updateNickname(String nickname) { this.nickname = nickname; }
 
-    public static User makeUsers(String id, String pw) {
+    public User() {
+        this.badge = new CodingBadge();
+    }
+
+    public static User makeUsers(String id, String pw, String name, String nickname) {
         User user = new User();
         user.id = id;
         user.pw = pw;
+        user.name = name;
+        user.nickname = nickname;
         return user;
     }
 
@@ -123,6 +118,10 @@ public class User implements UserDetails {
         this.nickname = (nickname != null)? nickname : this.nickname;
     }
 
+    public void updatePw(String pw) {
+        this.pw = (pw != null)? pw : this.pw;
+    }
+
     public void lock() {
         this.isAccountNonLocked = false;
     }
@@ -134,5 +133,11 @@ public class User implements UserDetails {
     public String convertDate(LocalDateTime createAt) {
         return createAt.format(DateTimeFormatter.ofPattern("yyyy. MM. dd. HH:mm:ss"));
     }
+
+    public void setBadge(CodingBadge codingBadge){
+        this.badge = codingBadge;
+    }
+
+
 
 }
