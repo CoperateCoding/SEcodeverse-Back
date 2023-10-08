@@ -1,4 +1,4 @@
-package com.coperatecoding.secodeverseback.domain.ctf;
+package com.coperatecoding.secodeverseback.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -7,28 +7,26 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "ctf_category")
-public class CTFCategory {
-
+@Table(name = "jwt_token_blacklist")
+public class JwtTokenBlackList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pk;
 
     @NotNull
-    private String name;
+    private String token;
 
+    @NotNull
+    @Column(name = "expired_at")
+    private LocalDateTime expiredAt;
 
-    public static CTFCategory makeCategory(String name) {
-        CTFCategory newCategory = new CTFCategory();
-        newCategory.name  = name;
-        return newCategory;
-    }
-
-    public void updateName(String name) {
-        this.name = name;
+    public static JwtTokenBlackList makeEntity(String token, LocalDateTime expiredAt) {
+        return new JwtTokenBlackList(null, token, expiredAt);
     }
 }

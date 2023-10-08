@@ -10,13 +10,15 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Time;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "code")
-public class Code {
+public class                                                                                                                                                                                                            Code {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +46,9 @@ public class Code {
     @NotNull
     private CodeStatus status = CodeStatus.WAITING;
 
-    @NotNull
-    private String language;
+    private Integer accuracy;
+
+    @OneToMany(mappedBy = "code", cascade = CascadeType.ALL)
+    private List<CodeLanguage> languageList = new ArrayList<>();
 
 }

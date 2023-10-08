@@ -37,7 +37,7 @@ public class Question {
     private Level level;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
-    private List<TestCase> testCases = new ArrayList<>();
+    private List<TestCase> testCaseList = new ArrayList<>();
 
     @NotNull
     @CreationTimestamp
@@ -53,13 +53,6 @@ public class Question {
     
     private String intro; //한줄 설명
 
-
-    private String reason; //(거부 또는 수정요청)사유
-
-    @NotNull
-    @Column(name = "report_cnt")
-    private Long reportCnt = 0L;
-
     @NotNull
     @Column(length = 99999)
     private String content; //내용
@@ -70,23 +63,36 @@ public class Question {
     @Column(length = 99999)
     private String source; // 출처
 
-    private String language;
-
+    private String language; // 언어
 
     // 이거 너무 길어서 builder로 뺌.
     @Builder
-    public Question(User user, String title, String intro, String reason, String content, String limitations, String source) {
+    public Question(User user, String title, String intro, String content, String limitations, String source, String language) {
         this.user = user;
         this.title = title;
         this.intro = intro;
-        this.reason = reason;
         this.content = content;
         this.limitations = limitations;
         this.source = source;
+        this.language = language;
     }
 
     public String convertDate(LocalDateTime createAt) {
         return createAt.format(DateTimeFormatter.ofPattern("yyyy. MM. dd. HH:mm"));
+    }
+
+    public void editQuestion(User user, Question question) {
+        this.user = user;
+        this.category = question.category;
+        this.testCaseList = question.testCaseList;
+        this.level = question.level;
+        this.title = question.title;
+        this.intro = question.intro;
+        this.content = question.content;
+        this.limitations = question.limitations;
+        this.source = question.source;
+        this.language = question.language;
+        this.updateAt = LocalDateTime.now();
     }
 
 

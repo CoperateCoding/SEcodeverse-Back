@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,5 +25,18 @@ public class BoardImage {
 
     @JoinColumn(name = "img_url")
     private String imgUrl;
+
+
+    public static BoardImage makeBoardImage(Board board, String imgUrl) {
+        BoardImage boardImage = new BoardImage();
+        boardImage.board = board;
+        boardImage.imgUrl = imgUrl;
+
+        return boardImage;
+    }
+
+    public void edit(String imgUrl) {
+        this.imgUrl = Objects.nonNull(imgUrl) ? imgUrl : this.imgUrl;
+    }
 
 }

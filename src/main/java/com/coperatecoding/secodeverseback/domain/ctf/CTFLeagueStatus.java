@@ -1,5 +1,5 @@
 package com.coperatecoding.secodeverseback.domain.ctf;
 
-public enum LeagueStatus {
+public enum CTFLeagueStatus {
     CLOSE, OPEN
 }

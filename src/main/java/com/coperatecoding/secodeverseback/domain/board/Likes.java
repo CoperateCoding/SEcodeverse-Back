@@ -1,6 +1,6 @@
-package com.coperatecoding.secodeverseback.domain;
+package com.coperatecoding.secodeverseback.domain.board;
 
-import com.coperatecoding.secodeverseback.domain.board.Board;
+import com.coperatecoding.secodeverseback.domain.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -28,6 +28,7 @@ public class Likes {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="board_pk")
     private Board board;
+
 
     public static Likes makeLikes(User user, Board board) {
         Likes likes = new Likes();

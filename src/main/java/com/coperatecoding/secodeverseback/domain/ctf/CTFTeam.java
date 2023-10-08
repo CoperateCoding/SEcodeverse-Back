@@ -24,13 +24,14 @@ public class CTFTeam {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "league_pk", referencedColumnName = "pk")
-    private CTFLeague ctfLeague;
+    private CTFLeague league;
 
     @NotNull
     @Column(length = 8)
     private String name;
 
     @NotNull
+    @Column(length = 20)
     private String pw;
 
     private Integer score;
@@ -38,6 +39,6 @@ public class CTFTeam {
     @Column(name = "team_rank")
     private Integer teamRank;
 
-    @OneToMany(mappedBy = "ctf_team")
+    @OneToMany(mappedBy = "team")
     private List<User> users = new ArrayList<>();
 }
