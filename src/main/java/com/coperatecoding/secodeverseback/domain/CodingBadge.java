@@ -21,9 +21,13 @@ public class CodingBadge {
     @NotNull
     private String name;
 
-    @NotNull
+//    @NotNull //임시로 일단 지움.
     @Column(name = "img_url")
     private String imgUrl;
+
+    public CodingBadge(Long pk){
+        this.pk = pk;
+    }
 
     public static CodingBadge makeCodingBadge(String name, String imgUrl) {
         CodingBadge codingBadge = new CodingBadge();

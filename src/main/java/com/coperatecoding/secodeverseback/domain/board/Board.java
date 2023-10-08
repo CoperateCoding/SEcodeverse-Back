@@ -8,6 +8,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -52,17 +54,44 @@ public class Board {
     @Column(length = 2000)
     private String content;
 
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true) //image 삭제하지 않아도 삭제됨
+    private List<BoardImage> imageList = new ArrayList<>();
+
+
     public String convertDate(LocalDateTime createAt) {
         return createAt.format(DateTimeFormatter.ofPattern("yyyy. MM. dd. HH:mm"));
     }
 
-    public static Board makeBoard(User user, BoardCategory category, String title, String content) {
+    public static Board makeBoard(User user, BoardCategory category, String title, String content, List<BoardImage> imageList) {
         Board board = new Board();
         board.user = user;
         board.category = category;
         board.title = title;
         board.content = content;
+        board.imageList = imageList;
         return board;
     }
+
+    public void edit(BoardCategory category, String title, String content, List<BoardImage> imageList){
+
+    }
+
+    public void addLikeCnt(){
+
+    }
+
+    public void deleteLikeCnt(){
+
+    }
+
+    public void addCommentCnt(){
+
+    }
+
+    public void deleteCommentCnt(){
+
+    }
+
+
 
 }

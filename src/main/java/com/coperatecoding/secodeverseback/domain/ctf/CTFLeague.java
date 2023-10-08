@@ -1,5 +1,8 @@
 package com.coperatecoding.secodeverseback.domain.ctf;
 
+import com.coperatecoding.secodeverseback.domain.Comment;
+import com.coperatecoding.secodeverseback.domain.User;
+import com.coperatecoding.secodeverseback.domain.board.Board;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -9,6 +12,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -24,9 +29,6 @@ public class CTFLeague {
     @NotNull
     private String name;
 
-    @Column(name = "short_description")
-    private String shortDescription;
-
     @NotNull
     @CreationTimestamp
     @Column(name = "open_time")
@@ -41,12 +43,30 @@ public class CTFLeague {
     @Column(name = "member_cnt")
     private int memberCnt;
 
+    @Column(length = 2000)
     private String notice;
 
-    @Column(name = "detail_description", length = 2000)
-    private String detailDescription;
+    @Column(length = 2000)
+    private String description;
 
     @Enumerated(EnumType.STRING)
     private CTFLeagueStatus status;
+
+    @OneToMany(mappedBy = "league", cascade = CascadeType.ALL)
+    private List<CTFQuestion> questionList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "league", cascade = CascadeType.ALL)
+    private List<CTFTeam> teamList = new ArrayList<>();
+
+
+    public static CTFLeague makeCTFLeague(String name, int memberCnt, String notice, String description) {
+        CTFLeague ctfLeague = new CTFLeague();
+        ctfLeague.name = name;
+        ctfLeague.memberCnt = memberCnt;
+        ctfLeague.notice = notice;
+        ctfLeague.description = description;
+        return ctfLeague;
+    }
+
 
 }

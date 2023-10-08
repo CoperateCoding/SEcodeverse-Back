@@ -18,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "code")
-public class Code {
+public class                                                                                                                                                                                                            Code {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,6 +45,8 @@ public class Code {
 
     @NotNull
     private CodeStatus status = CodeStatus.WAITING;
+
+    private Integer accuracy;
 
     @OneToMany(mappedBy = "code", cascade = CascadeType.ALL)
     private List<CodeLanguage> languageList = new ArrayList<>();
