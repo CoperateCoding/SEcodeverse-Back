@@ -50,18 +50,18 @@ public class TokenController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "엑세스 토큰 재발급(리프레쉬 토큰 이용)", description = """
-    refresh token을 <X-REFRESH-TOKEN 헤더>에 넣어 보내면 새로운 access token을 반환<br>
-    ★★★주의★★★[Bearer asdf~~ ] 이런식으로 꼭!!! 넣어줘야함. Bearer 필수<br>
-    401: 리프레쉬 토큰이 유효하지 않음<br>
-    """)
-    @GetMapping("/token/reissue")
-    public ResponseEntity reissueAccessToken(@RequestHeader(value = "X-REFRESH-TOKEN") String bearerRefreshToken, HttpServletRequest request) {
-
-        UserDTO.LoginResponse response = refreshTokenService.reissue(bearerRefreshToken, request);
-
-        return ResponseEntity.ok(response);
-    }
+//    @Operation(summary = "엑세스 토큰 재발급(리프레쉬 토큰 이용)", description = """
+//    refresh token을 <X-REFRESH-TOKEN 헤더>에 넣어 보내면 새로운 access token을 반환<br>
+//    ★★★주의★★★[Bearer asdf~~ ] 이런식으로 꼭!!! 넣어줘야함. Bearer 필수<br>
+//    401: 리프레쉬 토큰이 유효하지 않음<br>
+//    """)
+//    @GetMapping("/token/reissue")
+//    public ResponseEntity reissueAccessToken(@RequestHeader(value = "X-REFRESH-TOKEN") String bearerRefreshToken, HttpServletRequest request) {
+//
+//        UserDTO.LoginResponse response = refreshTokenService.reissue(bearerRefreshToken, request);
+//
+//        return ResponseEntity.ok(response);
+//    }
 
 
 

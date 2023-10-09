@@ -28,11 +28,11 @@ public class JwtService {
     @Value("${jwt.secretKey}")
     private String SECRET_KEY;
 
-    public static long accessTokenValidTime = Duration.ofMinutes(200).toMillis(); // 만료시간 30분
-    public static final long refreshTokenValidTime = Duration.ofDays(14).toMillis(); // 만료시간 2주
+    public long accessTokenValidTime = Duration.ofMinutes(200).toMillis(); // 만료시간 30분
+    public long refreshTokenValidTime = Duration.ofDays(14).toMillis(); // 만료시간 2주
 
-    @Autowired
-    private TokenBlackListRepository tokenBlackListRepository;
+//    @Autowired
+//    private TokenBlackListRepository tokenBlackListRepository;
 
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
@@ -45,51 +45,79 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
+
     public String generateToken(
             Map<String, Object> extraClaims,
             UserDetails userDetails,
-            String tokenType //access, refresh
+            long durationTime
     ) {
-        long durationTime = (tokenType == "access")? accessTokenValidTime : refreshTokenValidTime;
-
         return Jwts.builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + durationTime))
-                .claim("token_type", tokenType)
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String generateAccessToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails, "access");
+    public String generateToken(UserDetails userDetails) {
+        return generateToken(new HashMap<>(), userDetails, accessTokenValidTime);
     }
 
     public String generateRefreshToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails, "refresh");
+        return generateToken(new HashMap<>(), userDetails, refreshTokenValidTime);
     }
 
+//    public String generateToken(
+//            Map<String, Object> extraClaims,
+//            UserDetails userDetails,
+//            String tokenType //access, refresh
+//    ) {
+//        long durationTime = (tokenType == "access")? accessTokenValidTime : refreshTokenValidTime;
+//
+//        return Jwts.builder()
+//                .setClaims(extraClaims)
+//                .setSubject(userDetails.getUsername())
+//                .setIssuedAt(new Date(System.currentTimeMillis()))
+//                .setExpiration(new Date(System.currentTimeMillis()))
+//                .setExpiration(new Date(System.currentTimeMillis() + durationTime))
+//                .claim("token_type", tokenType)
+//                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+//                .compact();
+//    }
+
+//    public String generateAccessToken(UserDetails userDetails) {
+//        return generateToken(new HashMap<>(), userDetails, "access");
+//    }
+//
+//    public String generateRefreshToken(UserDetails userDetails) {
+//        return generateToken(new HashMap<>(), userDetails, "refresh");
+//    }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
 
-        boolean b = (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
-
-        //블랙리스트 토큰인지 확인
-        Integer isExist = tokenBlackListRepository.isExistToken(token)
-                .orElseGet(() -> null);
-
-        if (isExist != null)
-            return false;
-
-        //리프레쉬 토큰인 경우 인증처리 ㄴㄴ
-        if (extractClaim(token, (Claims claim) -> claim.get("token_type", String.class)).equals("refresh"))
-            return false;
-
-        return b;
+        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
+
+//    public boolean isTokenValid(String token, UserDetails userDetails) {
+//        final String username = extractUsername(token);
+//
+//        boolean b = (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+//
+//        //블랙리스트 토큰인지 확인
+//        Integer isExist = tokenBlackListRepository.isExistToken(token)
+//                .orElseGet(() -> null);
+//
+//        if (isExist != null)
+//            return false;
+//
+//        //리프레쉬 토큰인 경우 인증처리 ㄴㄴ
+//        if (extractClaim(token, (Claims claim) -> claim.get("token_type", String.class)).equals("refresh"))
+//            return false;
+//
+//        return b;
+//    }
 
     public boolean isTokenExpired(String token) {
         try {
@@ -120,19 +148,19 @@ public class JwtService {
 
         return Keys.hmacShaKeyFor(keyBytes);
     }
-
-    @Transactional
-    public void addBlackList(String token) {
-        JwtTokenBlackList blackList = JwtTokenBlackList.makeEntity(
-                token,
-                extractExpiration(token)
-                        .toInstant()
-                        .atZone(ZoneId.systemDefault())
-                        .toLocalDateTime()
-        );
-
-        tokenBlackListRepository.save(blackList);
-    }
+//
+//    @Transactional
+//    public void addBlackList(String token) {
+//        JwtTokenBlackList blackList = JwtTokenBlackList.makeEntity(
+//                token,
+//                extractExpiration(token)
+//                        .toInstant()
+//                        .atZone(ZoneId.systemDefault())
+//                        .toLocalDateTime()
+//        );
+//
+//        tokenBlackListRepository.save(blackList);
+//    }
 
     public boolean isTokenValidByUsers(User user) {
         return !(user == null);

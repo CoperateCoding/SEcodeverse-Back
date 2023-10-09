@@ -36,7 +36,7 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
 
 
-    public void signUp(UserDTO.RegisterRequest dto) throws RuntimeException {
+    public User signUp(UserDTO.RegisterRequest dto) throws RuntimeException {
 
         if (isExistId(dto.getId())) {
             throw new UserInfoDuplicatedException("해당하는 id가 존재합니다.");
@@ -55,6 +55,8 @@ public class UserService {
         newUser.setBadge(defaultBadge);
 
         userRepository.save(newUser);
+
+        return newUser;
     }
 
     //중복 아이디 확인
@@ -123,30 +125,46 @@ public class UserService {
         return clientIp;
     }
 
-
-    public UserDTO.LoginResponse login(UserDTO.Login loginRequest, HttpServletRequest request) {
-        User user = userRepository.findById(loginRequest.getId())
-                .orElseGet(() -> null);
-
-        if (!user.isAccountNonLocked()) {
-            throw new UserLockedException();
-        }
-
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getId(),
-                        loginRequest.getId()
-                )
-        );
-
-        //토큰 생성
-        String accessToken = jwtService.generateAccessToken(user);
-        String refreshToken = jwtService.generateRefreshToken(user);
-
+//    public UserDTO.LoginResponse login(UserDTO.LoginRequest loginRequest, HttpServletRequest request) {
+//        User user = userRepository.findById(loginRequest.getId())
+//                .orElseGet(() -> null);
+//
+//        if (!user.isAccountNonLocked()) {
+//            throw new UserLockedException();
+//        }
+//
+//        authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(
+//                        loginRequest.getId(),
+//                        loginRequest.getPassword()
+//                )
+//        );
+//
+//        //토큰 생성
+//        String accessToken = jwtService.generateAccessToken(user);
+//        String refreshToken = jwtService.generateRefreshToken(user);
+//
 //        refreshTokenRepository.save(
 //                RefreshToken.makeRefreshToken(refreshToken, getClientIp(request), user, jwtService.extractExpiration(refreshToken))
 //        );
+//
+//        return UserDTO.LoginResponse.makeResponse(accessToken, refreshToken);
+//    }
 
-        return UserDTO.LoginResponse.makeResponse(accessToken, refreshToken);
+    public UserDTO.LoginResponse authenticate(UserDTO.LoginRequest loginRequest) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getId(),
+                        loginRequest.getPassword()
+                )
+        );
+
+        User user = userRepository.findById(loginRequest.getId())
+                .orElseThrow(() -> new NotFoundException());
+
+        String jwtToken = jwtService.generateToken(user);
+
+        return new UserDTO.LoginResponse(jwtToken, user.getId(), user.getNickname(), user.getRoleType().name());
+
     }
 }
