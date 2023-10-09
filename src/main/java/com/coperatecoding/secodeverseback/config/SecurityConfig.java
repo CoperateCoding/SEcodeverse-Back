@@ -27,7 +27,7 @@ public class SecurityConfig {
             "/api/v1/user/login", "api/v1/user/signup",
             "/error",
             "/api/v1/token/validate", "/api/v1/token/reissue",
-//            "/logoutPage"
+//            "/logout"
     };
 
     private final JwtAuthenticationFilter jwtAuthFilter;
@@ -64,12 +64,13 @@ public class SecurityConfig {
         configuration.addAllowedOrigin("https://lucky-llama-7b0801.netlify.app");
         configuration.addAllowedOrigin("https://lucky-llama-7b0801.netlify.app/");
         configuration.addAllowedOrigin("https://lucky-llama-7b0801.netlify.app:443");
-        configuration.addAllowedHeader("*");
+//        configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+
         return source;
     }
 
