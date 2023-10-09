@@ -94,25 +94,26 @@ public class User implements UserDetails {
         return null;
     }
 
-    @Override
+    @Override //만료여부
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
-    @Override
+    @Override //잠긴 사용자
     public boolean isAccountNonLocked() {
-        return false;
+        return isAccountNonLocked;
     }
 
-    @Override
+    @Override //자격증명 만료
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
-    @Override
-    public boolean isEnabled() {
-        return false;
+    @Override //활성화, 비활성화 여부
+    public boolean isEnabled() { //활성화상태인가? - 휴면상태 관리
+        return true;
     }
+
 
     public void updateInfo(String nickname) {
         this.nickname = (nickname != null)? nickname : this.nickname;
