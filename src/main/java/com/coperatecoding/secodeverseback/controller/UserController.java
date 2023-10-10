@@ -49,13 +49,6 @@ public class UserController {
 
     }
 
-//    @PostMapping("/login") //로그인
-//    public ResponseEntity<UserDTO.LoginResponse> authenticate(
-//            @RequestBody UserDTO.Login loginRequest
-//    ) {
-//        UserDTO.LoginResponse loginResponse = userService.login(loginRequest, request);
-//        return ResponseEntity.ok(loginResponse);
-//    }
 
     @PostMapping("/login") //로그인
     public ResponseEntity<UserDTO.LoginResponse> authenticate(
