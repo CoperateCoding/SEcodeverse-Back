@@ -24,7 +24,7 @@ import java.util.Collections;
                 version = "v1"
         ),
         servers = {
-                @Server(url = "http://localhost:80", description = "Local 테스트용 서버"),
+                @Server(url = "http://localhost:8080", description = "Local 테스트용 서버"),
         }
 )
 public class SwaggerConfig {
