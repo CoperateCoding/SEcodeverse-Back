@@ -65,6 +65,9 @@ public class Question {
 
     private String language; // 언어
 
+    @Column(length = 99999, name = "testcase_description")
+    private String testcaseDescription;
+
     // 이거 너무 길어서 builder로 뺌.
     @Builder
     public Question(User user, String title, String intro, String content, String limitations, String source, String language) {
