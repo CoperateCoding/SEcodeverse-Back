@@ -25,7 +25,7 @@ import java.util.Collections;
         ),
         servers = {
                 @Server(url = "http://localhost:8080", description = "Local 테스트용 서버"),
-                @Server(url = "http://3.35.101.75:8080", description = "AWS 서버"),
+                @Server(url = "http://3.35.101.75:8080", description = "AWS 서버")
         }
 )
 public class SwaggerConfig {
