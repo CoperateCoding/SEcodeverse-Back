@@ -57,41 +57,54 @@ public class Board {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true) //image 삭제하지 않아도 삭제됨
     private List<BoardImage> imageList = new ArrayList<>();
 
-
-    public String convertDate(LocalDateTime createAt) {
-        return createAt.format(DateTimeFormatter.ofPattern("yyyy. MM. dd. HH:mm"));
-    }
-
-    public static Board makeBoard(User user, BoardCategory category, String title, String content, List<BoardImage> imageList) {
+    public static Board makeBoard(User user, BoardCategory category, String title, String content) {
         Board board = new Board();
         board.user = user;
         board.category = category;
         board.title = title;
         board.content = content;
-        board.imageList = imageList;
         return board;
     }
 
     public void edit(BoardCategory category, String title, String content, List<BoardImage> imageList){
+        this.title = (title != null)? title : this.title;
+        this.content = (content != null)? content : this.content;
+        this.category = (category != null)? category : this.category;
 
+        if(imageList != null) {
+            this.imageList.clear();
+            this.imageList.addAll(imageList);
+        }
+
+        this.updateAt = LocalDateTime.now();
     }
 
     public void addLikeCnt(){
-
+        this.likeCnt++;
     }
 
     public void deleteLikeCnt(){
-
+        this.likeCnt--;
     }
 
     public void addCommentCnt(){
-
+        this.commentCnt++;
     }
 
     public void deleteCommentCnt(){
+        this.commentCnt--;
+    }
 
+    public String convertDate(LocalDateTime updateAt) {
+        return updateAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+    }
+
+    public String convertPreviewDate(LocalDateTime updateAt) {
+        return updateAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
 
-
+    public void setBoardImage(List<BoardImage> boardImageList) {
+        this.imageList = boardImageList;
+    }
 }

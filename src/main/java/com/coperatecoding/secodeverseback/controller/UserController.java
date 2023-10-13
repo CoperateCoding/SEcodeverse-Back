@@ -1,18 +1,15 @@
 package com.coperatecoding.secodeverseback.controller;
 
-import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.dto.UserDTO;
 import com.coperatecoding.secodeverseback.service.JwtService;
 import com.coperatecoding.secodeverseback.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
