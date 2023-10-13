@@ -3,7 +3,6 @@ package com.coperatecoding.secodeverseback.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,7 +25,8 @@ public class SecurityConfig {
             "/swagger-resources/**", "/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**",
             "/api/v1/user/login", "api/v1/user/signup",
             "/error",
-            "/api/v1/token/validate", "/api/v1/token/reissue",
+            "/api/v1/token/validate", "/api/v1/token/reissue", "api/v1/user/username/**", "api/v1/user/id/**",
+            "api/v1/board/**" // 이건 다 임의로 넣어둠.
 //            "/logout"
     };
 
@@ -60,7 +60,7 @@ public class SecurityConfig {
         configuration.addAllowedOrigin("http://localhost:3000");
         configuration.addAllowedOrigin("http://localhost");
         configuration.addAllowedOrigin("http://localhost/");
-        configuration.addAllowedOrigin("http://localhost:80");
+        configuration.addAllowedOrigin("http://localhost:8080");
         configuration.addAllowedOrigin("https://lucky-llama-7b0801.netlify.app");
         configuration.addAllowedOrigin("https://lucky-llama-7b0801.netlify.app/");
         configuration.addAllowedOrigin("https://lucky-llama-7b0801.netlify.app:443");
