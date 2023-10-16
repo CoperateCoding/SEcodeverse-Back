@@ -31,7 +31,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final CodingBadgeRepository codingBadgeRepository;
-    private final JwtService jwtService;
+//    private final JwtService jwtService;
 
     private final AuthenticationManager authenticationManager;
 
@@ -151,20 +151,20 @@ public class UserService {
 //        return UserDTO.LoginResponse.makeResponse(accessToken, refreshToken);
 //    }
 
-    public UserDTO.LoginResponse authenticate(UserDTO.LoginRequest loginRequest) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getId(),
-                        loginRequest.getPassword()
-                )
-        );
-
-        User user = userRepository.findById(loginRequest.getId())
-                .orElseThrow(() -> new NotFoundException());
-
-        String jwtToken = jwtService.generateToken(user);
-
-        return new UserDTO.LoginResponse(jwtToken, user.getId(), user.getNickname(), user.getRoleType().name());
-
-    }
+//    public UserDTO.LoginResponse authenticate(UserDTO.LoginRequest loginRequest) {
+//        authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(
+//                        loginRequest.getId(),
+//                        loginRequest.getPassword()
+//                )
+//        );
+//
+//        User user = userRepository.findById(loginRequest.getId())
+//                .orElseThrow(() -> new NotFoundException());
+//
+//        String jwtToken = jwtService.generateToken(user);
+//
+//        return new UserDTO.LoginResponse(jwtToken, user.getId(), user.getNickname(), user.getRoleType().name());
+//
+//    }
 }
