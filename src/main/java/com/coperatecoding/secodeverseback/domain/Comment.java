@@ -49,6 +49,8 @@ public class Comment {
         return comment;
     }
 
+
+
     public String convertDate(LocalDateTime createAt) {
         String convertedDate = createAt.format(DateTimeFormatter.ofPattern("yyyy. MM. dd. HH:mm"));
         return convertedDate;

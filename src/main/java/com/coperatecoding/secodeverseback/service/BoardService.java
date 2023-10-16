@@ -22,7 +22,9 @@ import java.util.List;
 @Service
 public class BoardService {
     private final BoardRepository boardRepository;
+
     private final BoardCategoryRepository boardCategoryRepository;
+
     public Board makeBoard(User user, BoardDTO.AddBoardRequest addBoardRequest) throws RuntimeException {
 
         // 카테고리 올바른지 확인
@@ -37,6 +39,14 @@ public class BoardService {
 //        board.setBoardImage(boardImageList);
 
         return boardRepository.save(board);
+
+    }
+
+    public void makeLike(Long boardPk) throws RuntimeException{
+
+        Board board = boardRepository.findById(boardPk)
+                .orElseThrow(() -> new NotFoundException("해당하는 카테고리가 존재하지 않음"));
+       board.addLikeCnt();
 
     }
 
