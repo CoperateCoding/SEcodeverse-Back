@@ -1,7 +1,7 @@
 package com.coperatecoding.secodeverseback.controller;
 
 import com.coperatecoding.secodeverseback.dto.UserDTO;
-import com.coperatecoding.secodeverseback.service.JwtService;
+//import com.coperatecoding.secodeverseback.service.JwtService;
 import com.coperatecoding.secodeverseback.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,7 +23,7 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
-    private final JwtService jwtService;
+//    private final JwtService jwtService;
 
 
     @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -47,12 +47,12 @@ public class UserController {
     }
 
 
-    @PostMapping("/login") //로그인
-    public ResponseEntity<UserDTO.LoginResponse> authenticate(
-            @RequestBody @Valid UserDTO.LoginRequest loginRequest
-    ) {
-        return ResponseEntity.ok(userService.authenticate(loginRequest));
-    }
+//    @PostMapping("/login") //로그인
+//    public ResponseEntity<UserDTO.LoginResponse> authenticate(
+//            @RequestBody @Valid UserDTO.LoginRequest loginRequest
+//    ) {
+//        return ResponseEntity.ok(userService.authenticate(loginRequest));
+//    }
 
 //    @Operation(summary = "로그아웃", description = """
 //    [로그인 필요] 로그아웃을 합니다.<br>
