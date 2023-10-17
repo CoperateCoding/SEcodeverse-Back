@@ -130,6 +130,13 @@ public class BoardService {
         return board;
     }
 
+    public void deleteLike(Long boardPk) throws RuntimeException{
+        Board board =boardRepository.findById(boardPk)
+                        .orElseThrow(() -> new NotFoundException("해당하는 카테고리가 존재하지 않음"));
+        board.deleteLikeCnt();
+
+    }
+
 //    private List<BoardImage> getBoardImage(Board board, List<BoardImage> imageList) {
 //
 //
