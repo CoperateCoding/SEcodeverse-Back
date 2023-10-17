@@ -28,4 +28,11 @@ public class LikesController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
 
     }
+    @DeleteMapping("/{boardPk}")
+    public ResponseEntity deleteLikes(@PathVariable Long boardPk){
+        likeService.deleteLikes(boardPk);
+        boardService.deleteLike(boardPk);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.coperatecoding.secodeverseback.controller;
 
+import com.coperatecoding.secodeverseback.domain.Comment;
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.dto.CommentDTO;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
@@ -12,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "댓글", description = "댓글 관련 API")
 @RequiredArgsConstructor
@@ -36,6 +39,21 @@ public class CommentController {
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+    @PostMapping("/{commentPk}")
+    public ResponseEntity modiftComment(@PathVariable Long commentPk, @RequestBody String content){
+        commentService.modifyComment(commentPk,content);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+    @GetMapping("/{boardPk}")
+    public ResponseEntity getComments(@PathVariable Long boardPk){
+        List<Comment> comments = commentService.getComments(boardPk);
+
+        if (comments.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("댓글이 없음");
+        }
+
+        return ResponseEntity.ok(comments);
     }
 
 }
