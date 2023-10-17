@@ -66,6 +66,14 @@ public class Board {
         return board;
     }
 
+    public void edit(BoardCategory category, String title, String content){
+        this.title = (title != null)? title : this.title;
+        this.content = (content != null)? content : this.content;
+        this.category = (category != null)? category : this.category;
+
+        this.updateAt = LocalDateTime.now();
+    }
+
     public void edit(BoardCategory category, String title, String content, List<BoardImage> imageList){
         this.title = (title != null)? title : this.title;
         this.content = (content != null)? content : this.content;
