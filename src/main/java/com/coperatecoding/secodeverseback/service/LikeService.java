@@ -30,4 +30,10 @@ public class LikeService {
 
         return likeRepository.save(likes);
     }
+
+    public void deleteLikes(Long likePk) throws RuntimeException{
+        Likes likes = likeRepository.findById(likePk)
+                .orElseThrow(() -> new NotFoundException("해당 좋아요가 존재하지 않음"));
+        likeRepository.delete(likes);
+    }
 }
