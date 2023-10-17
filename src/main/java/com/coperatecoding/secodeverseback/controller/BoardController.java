@@ -2,16 +2,24 @@ package com.coperatecoding.secodeverseback.controller;
 
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.dto.BoardDTO;
+import com.coperatecoding.secodeverseback.dto.SortType;
+import com.coperatecoding.secodeverseback.exception.CategoryNotFoundException;
+import com.coperatecoding.secodeverseback.exception.ForbiddenException;
 import com.coperatecoding.secodeverseback.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.NoSuchElementException;
 
 @Tag(name = "게시글", description = "게시글 관련 API")
 @RequiredArgsConstructor
@@ -61,9 +69,11 @@ public class BoardController {
 //
 //        return ResponseEntity.ok(boardList);
 //    }
-//
-//
-//    @Operation(summary = "게시글 상세보기", description = """
+
+
+
+
+//    @Operation(summary = "게시글 상세 조회", description = """
 //    [모두 접근가능]<br>
 //    200: 성공<br>
 //    404: 해당하는 pk의 게시글이 없음
@@ -75,38 +85,39 @@ public class BoardController {
 //
 //        return ResponseEntity.ok(boardInfo);
 //    }
-//
-//    @Operation(summary = "게시글 수정", description = """
-//      [로그인 필요] 작성자 or 관리자만 게시글을 수정 가능<br>
-//      null로 들어오면 해당 값은 수정되지 않음<br>
-//      200: 성공<br>
-//      403: 수정할 권한 없음<br>
-//      404: 해당하는 pk의 게시글이 없음
-//      """)
-//    @PatchMapping("/boards/{boardPk}")
-//    public ResponseEntity editBoard(
-//            @AuthenticationPrincipal User user,
-//            @PathVariable Long boardPk,
-//            @RequestBody AddBoardRequest addBoardRequest
-//    ) throws NoSuchElementException, ForbiddenException {
-//
-//        boardService.editBoard(user, boardPk, addBoardRequest);
-//
-//        return ResponseEntity.ok().build();
-//    }
-//
-//    @Operation(summary = "게시글 삭제", description = """
-//      [로그인 필요] 작성자 or 관리자만 정보글을 삭제 가능<br>
-//      200: 성공<br>
-//      403: 수정할 권한 없음<br>
-//      404: 해당하는 pk의 게시글이 없음
-//      """)
-//    @DeleteMapping("/boards/{boardPk}")
-//    public ResponseEntity deleteBoard(@AuthenticationPrincipal User user, @PathVariable Long boardPk) throws NoSuchElementException, ForbiddenException {
-//        boardService.deleteBoard(user, boardPk);
-//
-//        return ResponseEntity.ok().build();
-//    }
+
+
+    @Operation(summary = "게시글 수정", description = """
+      [로그인 필요] 작성자 or 관리자만 게시글을 수정 가능<br>
+      null로 들어오면 해당 값은 수정되지 않음<br>
+      200: 성공<br>
+      403: 수정할 권한 없음<br>
+      404: 해당하는 pk의 게시글이 없음
+      """)
+    @PatchMapping("/{boardPk}")
+    public ResponseEntity editBoard(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long boardPk,
+            @RequestBody BoardDTO.AddBoardRequest addBoardRequest
+    ) throws NoSuchElementException, ForbiddenException {
+
+        boardService.editBoard(user, boardPk, addBoardRequest);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "게시글 삭제", description = """
+      [로그인 필요] 작성자 or 관리자만 정보글을 삭제 가능<br>
+      200: 성공<br>
+      403: 수정할 권한 없음<br>
+      404: 해당하는 pk의 게시글이 없음
+      """)
+    @DeleteMapping("/{boardPk}")
+    public ResponseEntity deleteBoard(@AuthenticationPrincipal User user, @PathVariable Long boardPk) throws NoSuchElementException, ForbiddenException {
+        boardService.deleteBoard(user, boardPk);
+
+        return ResponseEntity.ok().build();
+    }
 //
 //    @Operation(summary = "인기 게시글 조회", description = """
 //        [모두 접근가능] 인기 게시글을 조회합니다.<br>
