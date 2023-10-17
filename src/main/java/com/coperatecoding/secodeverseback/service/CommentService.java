@@ -7,14 +7,14 @@ import com.coperatecoding.secodeverseback.dto.CommentDTO;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.repository.BoardRepository;
 import com.coperatecoding.secodeverseback.repository.CommentRepository;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -42,5 +42,17 @@ public class CommentService {
 
     }
 
+    public void modifyComment(Long commentPk, String content) throws RuntimeException{
+        Comment comment = commentRepository.findById(commentPk).orElseThrow(() -> new NotFoundException("해당하는 댓글이 존재하지 않음"));
+        comment.modifyComment(content);
+
+    }
+
+    public List<Comment> getComments(Long boardPk){
+        Board board = boardRepository.findById(boardPk).orElseThrow(() -> new NotFoundException("해당하는 게시글이 존재하지 않음"));;
+        List<Comment>comments=commentRepository.findAllById(Collections.singleton(board.getPk()));
+        return comments;
+
+    }
 
 }
