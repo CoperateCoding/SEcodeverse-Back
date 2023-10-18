@@ -84,6 +84,22 @@ public class Question {
         return createAt.format(DateTimeFormatter.ofPattern("yyyy. MM. dd. HH:mm"));
     }
 
+public static Question  makeQuestion(User user,QuestionCategory category,Level level,String title, String intro, String content, String limitations, String source, String language, String testcaseDescription){
+        Question question = new Question();
+
+        question.level=level;
+        question.testcaseDescription=testcaseDescription;
+    question.user = user;
+    question.title = title;
+    question.intro = intro;
+    question.content = content;
+    question.limitations = limitations;
+    question.source = source;
+    question.language = language;
+    question.category=category;
+    return question;
+
+}
     public void editQuestion(User user, Question question) {
         this.user = user;
         this.category = question.category;
