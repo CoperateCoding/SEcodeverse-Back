@@ -12,9 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -42,17 +40,50 @@ public class CommentService {
 
     }
 
-    public void modifyComment(Long commentPk, String content) throws RuntimeException{
+    public void modifyComment(Long commentPk, CommentDTO.modifyRequest modifyRequest) throws RuntimeException{
         Comment comment = commentRepository.findById(commentPk).orElseThrow(() -> new NotFoundException("해당하는 댓글이 존재하지 않음"));
-        comment.modifyComment(content);
+        comment.modifyComment(modifyRequest.getContent());
 
     }
 
-    public List<Comment> getComments(Long boardPk){
-        Board board = boardRepository.findById(boardPk).orElseThrow(() -> new NotFoundException("해당하는 게시글이 존재하지 않음"));;
-        List<Comment>comments=commentRepository.findAllById(Collections.singleton(board.getPk()));
-        return comments;
+    public List<CommentDTO.SearchResponse> getComments(Long boardPk){
+        Board board = boardRepository.findById(boardPk).orElseThrow(() -> new NotFoundException("해당하는 게시글이 존재하지 않음"));
+        List<Comment> comments = commentRepository.findByBoard(board);
+        List<CommentDTO.SearchResponse> commentDTOS = new ArrayList<>();
+
+        for (Comment comment : comments) {
+            CommentDTO.SearchListRequest request = CommentDTO.SearchListRequest.makeRequest(
+                    comment.getPk(),
+                    comment.getCreateAt(), // 여기에 필요한 필드 값을 전달
+                    comment.getContent(),
+                    comment.getUser() // 필요한 경우 User 엔티티를 DTO로 변환
+            );
+            CommentDTO.SearchResponse response = getCommentList(request);
+
+            CommentDTO.SearchResponse commentDTO = CommentDTO.SearchResponse.builder()
+                    .pk(response.getPk())
+                    .createAt(response.getCreateAt())
+                    .content(response.getContent())
+                    .user(response.getUser()) // 필요한 경우 User 엔티티를 DTO로 변환
+                    .build();
+
+            commentDTOS.add(commentDTO);
+        }
+
+        return commentDTOS;
 
     }
+
+    public CommentDTO.SearchResponse getCommentList(CommentDTO.SearchListRequest request){
+        CommentDTO.SearchResponse response = CommentDTO.SearchResponse.builder()
+                .pk(request.getPk())
+                .createAt(request.getCreateAt())
+                .content(request.getContent())
+                .user(request.getUser())
+                .build();
+
+        return response;
+    }
+
 
 }
