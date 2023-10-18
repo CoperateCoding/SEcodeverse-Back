@@ -2,9 +2,11 @@ package com.coperatecoding.secodeverseback.controller;
 
 import com.coperatecoding.secodeverseback.dto.UserDTO;
 //import com.coperatecoding.secodeverseback.service.JwtService;
+import com.coperatecoding.secodeverseback.exception.UserInfoDuplicatedException;
 import com.coperatecoding.secodeverseback.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,29 +32,31 @@ public class UserController {
     @Operation(summary = "회원가입", description = """
     [모두 접근가능] 회원가입을 할 수 있습니다.<br>
     201: 성공<br>
-    409: 같은 uid가 이미 존재함
+    409: 같은 아이디or닉네임이 이미 존재함
     """)
     @PostMapping("/signup")
-    public ResponseEntity<UserDTO.RegisterResponse> signUp (@RequestBody @Valid UserDTO.RegisterRequest registerRequest) throws RuntimeException {
+    public ResponseEntity signUp (@RequestBody UserDTO.RegisterRequest registerRequest) throws UserInfoDuplicatedException {
         userService.signUp(registerRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-                UserDTO.RegisterResponse
-                        .builder()
-                        .id(registerRequest.getId())
-                        .nickname(registerRequest.getNickname())
-                        .build()
-        );
+
+//        return ResponseEntity.status(HttpStatus.CREATED).body(
+//                UserDTO.RegisterResponse
+//                        .builder()
+//                        .id(registerRequest.getId())
+//                        .nickname(registerRequest.getNickname())
+//                        .build()
+//        );
 
     }
 
 
-//    @PostMapping("/login") //로그인
-//    public ResponseEntity<UserDTO.LoginResponse> authenticate(
-//            @RequestBody @Valid UserDTO.LoginRequest loginRequest
-//    ) {
-//        return ResponseEntity.ok(userService.authenticate(loginRequest));
-//    }
+    @PostMapping("/login") //로그인
+    public ResponseEntity<UserDTO.LoginResponse> login(@RequestBody UserDTO.LoginRequest loginRequest, HttpServletRequest request) {
+            UserDTO.LoginResponse loginResponse = userService.login(loginRequest, request);
+
+            return ResponseEntity.ok(loginResponse);
+    }
 
 //    @Operation(summary = "로그아웃", description = """
 //    [로그인 필요] 로그아웃을 합니다.<br>

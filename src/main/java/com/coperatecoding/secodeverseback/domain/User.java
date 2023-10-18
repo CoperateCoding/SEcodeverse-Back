@@ -48,7 +48,7 @@ public class User implements UserDetails {
     private String id;
 
     @NotNull
-    @Column(length = 20)
+//    @Column(length = 20)
     private String pw;
 
     @NotNull
@@ -85,13 +85,11 @@ public class User implements UserDetails {
     }
 
     @Override
-    public String getPassword() {
-        return null;
-    }
+    public String getPassword() { return pw; }
 
     @Override
     public String getUsername() {
-        return null;
+        return id;
     }
 
     @Override //만료여부
