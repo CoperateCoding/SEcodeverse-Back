@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.coperatecoding.secodeverseback.exception.UserInfoDuplicatedException;
@@ -31,12 +32,14 @@ public class UserService {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final CodingBadgeRepository codingBadgeRepository;
-//    private final JwtService jwtService;
+
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     private final AuthenticationManager authenticationManager;
 
 
-    public User signUp(UserDTO.RegisterRequest dto) throws RuntimeException {
+    public void signUp(UserDTO.RegisterRequest dto) throws UserInfoDuplicatedException {
 
         if (isExistId(dto.getId())) {
             throw new UserInfoDuplicatedException("해당하는 id가 존재합니다.");
@@ -51,13 +54,12 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("Default badge with pk 1 not found."));
 
         // User 생성 및 Badge 설정
-        User newUser = User.makeUsers(dto.getId(), dto.getPw(), dto.getName(), dto.getNickname());
+        User newUser = User.makeUsers(dto.getId(), passwordEncoder.encode(dto.getPw()), dto.getName(), dto.getNickname());
         newUser.setBadge(defaultBadge);
 
         userRepository.save(newUser);
 
-        return newUser;
-    }
+   }
 
     //중복 아이디 확인
     @Transactional(readOnly = true)
@@ -123,6 +125,33 @@ public class UserService {
         }
 
         return clientIp;
+    }
+
+    public UserDTO.LoginResponse login(UserDTO.LoginRequest loginRequest, HttpServletRequest request) {
+        User user = userRepository.findById(loginRequest.getId())
+                .orElseGet(() -> null);
+
+        if (!user.isAccountNonLocked()) {
+            throw new UserLockedException();
+        }
+
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getId(),
+                        loginRequest.getPw()
+                )
+        );
+
+        //토큰 생성
+        String accessToken = jwtService.generateAccessToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
+
+        refreshTokenRepository.save(
+                RefreshToken.makeRefreshToken(refreshToken, getClientIp(request), user, jwtService.extractExpiration(refreshToken))
+        );
+
+        return UserDTO.LoginResponse.makeResponse(accessToken, refreshToken);
+
     }
 
 //    public UserDTO.LoginResponse login(UserDTO.LoginRequest loginRequest, HttpServletRequest request) {

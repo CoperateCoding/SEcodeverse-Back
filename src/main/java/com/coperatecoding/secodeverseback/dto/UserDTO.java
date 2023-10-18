@@ -36,51 +36,50 @@ public class UserDTO {
         @NotNull
         private String id;
         @NotNull
-        private String password;
+        private String pw;
+
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LoginResponse {
+        private String token;
+        private String accessToken;
+        private String refreshToken;
+        public static LoginResponse makeResponse(String accessToken, String refreshToken) {
+            return new LoginResponse(accessToken, accessToken, refreshToken);
+        }
+
 
     }
 
 //    @Getter
-//    @NoArgsConstructor
-//    @AllArgsConstructor
+//    @Builder
+//    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+//    @NoArgsConstructor(access = AccessLevel.PROTECTED)
 //    public static class LoginResponse {
 //        private String token;
-//        private String accessToken;
-//        private String refreshToken;
+//        private UserInfo user;
 //
-//        public static LoginResponse makeResponse(String accessToken, String refreshToken) {
-//            return new LoginResponse(accessToken, accessToken, refreshToken);
+//        public LoginResponse(String token, String id, String username, String role) {
+//            this.token = token;
+//            this.user = new UserInfo(id, username, role);
 //        }
 //
+//        @Data
+//        @AllArgsConstructor
+//        private class UserInfo {
+//            private String id;
+//            private String username;
+//            private String role;
 //
+//        }
+//
+//        public String getId() {
+//            return this.user.id;
+//        }
 //    }
-
-    @Getter
-    @Builder
-    @AllArgsConstructor(access = AccessLevel.PROTECTED)
-    @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    public static class LoginResponse {
-        private String token;
-        private UserInfo user;
-
-        public LoginResponse(String token, String id, String username, String role) {
-            this.token = token;
-            this.user = new UserInfo(id, username, role);
-        }
-
-        @Data
-        @AllArgsConstructor
-        private class UserInfo {
-            private String id;
-            private String username;
-            private String role;
-
-        }
-
-        public String getId() {
-            return this.user.id;
-        }
-    }
 
 
 }
