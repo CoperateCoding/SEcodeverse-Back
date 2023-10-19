@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
@@ -80,8 +81,40 @@ public class QuestionService {
 
         return response;
     }
-    public List<QuestionDTO.SearchQuestionListResponse> getCategoryQuestion(Long categoryPk){
-        QuestionCategory questionCategory = questionCategoryRepository.findById(categoryPk).orElseThrow(() -> new NotFoundException("해당하는 게시글이 존재하지 않음"));;
+
+    public List<QuestionDTO.SearchQuestionListResponse> getLevelQuestionList(boolean isSort,Long levelPk){
+        Level level = levelRepository.findById(levelPk).orElseThrow(() -> new NotFoundException("해당하는 레벨 존재하지 않음"));;
+
+        List<Question>questions = questionRepository.findByLevel(level);
+        List<QuestionDTO.SearchQuestionListResponse> questionDTOS= new ArrayList<>();
+        for(Question question:questions){
+            QuestionDTO.SearchQuestionListRequest request = QuestionDTO.SearchQuestionListRequest.questions(
+                    question.getPk(),
+                    question.getLevel().getPk(),
+                    question.getTitle(),
+                    question.getIntro()
+            );
+
+            QuestionDTO.SearchQuestionListResponse response = getQuestion(request);
+
+            QuestionDTO.SearchQuestionListResponse questionDTO = QuestionDTO.SearchQuestionListResponse.builder()
+                    .pk(response.getPk())
+                    .levelPk(response.getLevelPk())
+                    .title(response.getTitle())
+                    .intro(response.getIntro())
+                    .build();
+            questionDTOS.add(questionDTO);
+            if(isSort==true){
+                Collections.sort(questionDTOS, (q1, q2) -> q1.getLevelPk().compareTo(q2.getLevelPk()));
+            }
+
+        }
+        return questionDTOS;
+    }
+
+    public List<QuestionDTO.SearchQuestionListResponse> getCategoryQuestion(boolean isSort, Long categoryPk){
+        QuestionCategory questionCategory = questionCategoryRepository.findById(categoryPk).orElseThrow(() -> new NotFoundException("해당하는 카테고리가 존재하지 않음"));;
+
         List<Question> questions = questionRepository.findByCategory(questionCategory);
 
         List<QuestionDTO.SearchQuestionListResponse> questionDTOS= new ArrayList<>();
@@ -102,9 +135,47 @@ public class QuestionService {
                     .intro(response.getIntro())
                     .build();
             questionDTOS.add(questionDTO);
-
+            if(isSort==true){
+                Collections.sort(questionDTOS, (q1, q2) -> q1.getLevelPk().compareTo(q2.getLevelPk()));
+            }
         }
         return questionDTOS;
     }
+    public List<QuestionDTO.SearchQuestionListResponse> getMatchingQuestions( boolean isSort,Long categoryPk, Long levelPk) {
+        QuestionCategory questionCategory = questionCategoryRepository.findById(categoryPk)
+                .orElseThrow(() -> new NotFoundException("해당하는 카테고리가 존재하지 않음"));
+
+        Level level = levelRepository.findById(levelPk)
+                .orElseThrow(() -> new NotFoundException("해당하는 레벨이 존재하지 않음"));
+
+        List<Question> questions = questionRepository.findByCategoryAndLevel(questionCategory, level);
+
+        List<QuestionDTO.SearchQuestionListResponse> questionDTOS = new ArrayList<>();
+        for (Question question : questions) {
+            QuestionDTO.SearchQuestionListRequest request = QuestionDTO.SearchQuestionListRequest.questions(
+                    question.getPk(),
+                    question.getLevel().getPk(),
+                    question.getTitle(),
+                    question.getIntro()
+            );
+
+            QuestionDTO.SearchQuestionListResponse response = getQuestion(request);
+
+            QuestionDTO.SearchQuestionListResponse questionDTO = QuestionDTO.SearchQuestionListResponse.builder()
+                    .pk(response.getPk())
+                    .levelPk(response.getLevelPk())
+                    .title(response.getTitle())
+                    .intro(response.getIntro())
+                    .build();
+
+            questionDTOS.add(questionDTO);
+        }
+        if(isSort==true){
+            Collections.sort(questionDTOS, (q1, q2) -> q1.getLevelPk().compareTo(q2.getLevelPk()));
+        }
+
+        return questionDTOS;
+    }
+
 
 }
