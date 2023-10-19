@@ -57,7 +57,7 @@ public class UserService {
         User newUser = User.makeUsers(dto.getId(), passwordEncoder.encode(dto.getPw()), dto.getName(), dto.getNickname());
         newUser.setBadge(defaultBadge);
 
-        userRepository.save(newUser);
+         userRepository.save(newUser);
 
    }
 
