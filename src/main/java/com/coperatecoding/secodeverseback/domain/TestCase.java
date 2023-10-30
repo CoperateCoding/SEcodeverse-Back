@@ -29,12 +29,14 @@ public class TestCase {
     private String output;
 
 
-    public static TestCase makeTestCase(String input, String output) {
+    public static TestCase makeTestCase(Question question,String input, String output) {
         TestCase testCase = new TestCase();
+        testCase.question=question;
         testCase.input = input;
         testCase.output = output;
         return testCase;
     }
+
 
     public void updateTestCase(String input, String output) {
         this.input = input;

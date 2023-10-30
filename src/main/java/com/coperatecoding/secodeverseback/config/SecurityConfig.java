@@ -26,11 +26,11 @@ public class SecurityConfig {
             "/api/v1/user/login", "api/v1/user/signup",
             "/error",
             "/api/v1/token/validate", "/api/v1/token/reissue", "api/v1/user/username/**", "api/v1/user/id/**",
-            "api/v1/board/**", "api/v1/comment/**","/api/v1/likes/**"// 이건 다 임의로 넣어둠.
+            "api/v1/board/**", "api/v1/comment/**","/api/v1/likes/**","api/v1/question/**","test/hello"// 이건 다 임의로 넣어둠.
 //            "/logout"
     };
 
-//    private final JwtAuthenticationFilter jwtAuthFilter;
+    private final JwtAuthenticationFilter jwtAuthFilter;
     private final JwtExceptionFilter jwtExceptionFilter;
     private final AuthenticationProvider authenticationProvider;
 
@@ -46,9 +46,9 @@ public class SecurityConfig {
             .requestMatchers( "/api/v1/admin/**").hasAuthority("ADMIN")
             .anyRequest().authenticated()
          .and()
-         .authenticationProvider(authenticationProvider);
-//         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-//        .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
+         .authenticationProvider(authenticationProvider)
+         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
 
         return http.build();
     }
