@@ -1,39 +1,21 @@
 package com.coperatecoding.secodeverseback.controller;
 
-import com.coperatecoding.secodeverseback.domain.TestCase;
 import com.coperatecoding.secodeverseback.domain.User;
-import com.coperatecoding.secodeverseback.domain.question.Level;
 import com.coperatecoding.secodeverseback.domain.question.Question;
-import com.coperatecoding.secodeverseback.domain.question.QuestionImage;
 import com.coperatecoding.secodeverseback.dto.*;
-import com.coperatecoding.secodeverseback.exception.CategoryNotFoundException;
-import com.coperatecoding.secodeverseback.exception.ForbiddenException;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.service.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.slf4j.Logger;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Tag(name = "문제", description = "문제 관련 API")
 @RequiredArgsConstructor
@@ -104,60 +86,34 @@ public class QuestionController {
         }
 
     }
+
+
+
     @GetMapping("/{questionPk}")
-    public ResponseEntity< Map<String, Object>>detailQuestion(@PathVariable Long questionPk){
-        Map<String, Object> response = new HashMap<>();
+    public  ResponseEntity <QuestionAndTestAndImageDTO.QuestionAndTest >detailQuestion(@PathVariable Long questionPk) {
 
         Question question = questionService.getDetailQuestion(questionPk);
         List<TestCaseDTO.SearchResponse> testCases = testCaseService.getTestCaseList(questionPk);
         List<QuestionImgDTO.SearchQuestionImgListResponse> imgs = questionImgService.getQuestionImg(questionPk);
-        Map<String,Object>questionMap = new HashMap<>();
-
-        questionMap.put("title",question.getTitle());
-        questionMap.put("intro",question.getIntro());
-        questionMap.put("content",question.getContent());
-        questionMap.put("limitation",question.getLimitations());
-        questionMap.put("source",question.getSource());
-        questionMap.put("language",question.getLanguage());
-        questionMap.put("testcaseDescription",question.getTestcaseDescription());
-        List<Map<String, Object>> questionList = (List<Map<String, Object>>) response.get("question");
-        if (questionList == null) {
-            questionList = new ArrayList<>();
-        }
-        questionList.add(questionMap);
-        response.put("question",questionList);
-        for(TestCaseDTO.SearchResponse testCase : testCases){
-            Map<String, Object> testCaseMap = new HashMap<>();
-            testCaseMap.put("input",testCase.getInput());
-            testCaseMap.put("output",testCase.getOutput());
-            List<Map<String, Object>> testCaseList = (List<Map<String, Object>>) response.get("testcase");
-            if (testCaseList == null) {
-                testCaseList = new ArrayList<>();
-            }
-            testCaseList.add(testCaseMap);
-
-            response.put("testcase", testCaseList);
-
-        }
-        if(imgs.size()>0){
-
-            for(QuestionImgDTO.SearchQuestionImgListResponse img : imgs){
-                Map<String,Object>imgMap = new HashMap<>();
-                imgMap.put("imgUrl",img.getImgUrl());
-                List<Map<String, Object>> imgList = (List<Map<String, Object>>) response.get("img");
-                if (imgList == null) {
-                    imgList = new ArrayList<>();
-                }
-                imgList.add(imgMap);
-
-                response.put("img", imgList);
-
-            }
-        }
-
+        QuestionAndTestAndImageDTO.QuestionAndTest response = new QuestionAndTestAndImageDTO.QuestionAndTest();
+        response.setQuestion(question);
+        response.setTestCase(testCases);
+        response.setImg(imgs);
 
         return ResponseEntity.ok(response);
 
+    }
+
+    @GetMapping("post/user={userPk}")
+    public  ResponseEntity<List<QuestionDTO.SearchQuestionListResponse>> userPostQuestion(@AuthenticationPrincipal User user){
+        List<QuestionDTO.SearchQuestionListResponse> question= questionService.userPostQuestion(user);
+        return ResponseEntity.ok(question);
+    }
+
+    @GetMapping("/keyword={keyword}")
+    public  ResponseEntity<List<QuestionDTO.SearchQuestionListResponse>> getKeywordQuestion(@PathVariable String keyword){
+            List<QuestionDTO.SearchQuestionListResponse> question= questionService.getKeywordQuestion(keyword);
+        return ResponseEntity.ok(question);
     }
     @GetMapping("")
     public ResponseEntity<List<QuestionDTO.SearchQuestionListResponse>> getQuestions(
