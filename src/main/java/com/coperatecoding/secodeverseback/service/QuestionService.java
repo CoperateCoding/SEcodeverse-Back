@@ -1,5 +1,6 @@
 package com.coperatecoding.secodeverseback.service;
 
+import com.coperatecoding.secodeverseback.domain.Comment;
 import com.coperatecoding.secodeverseback.domain.TestCase;
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.domain.question.Level;
@@ -7,6 +8,7 @@ import com.coperatecoding.secodeverseback.domain.question.Question;
 import com.coperatecoding.secodeverseback.domain.question.QuestionCategory;
 import com.coperatecoding.secodeverseback.dto.CommentDTO;
 import com.coperatecoding.secodeverseback.dto.QuestionDTO;
+import com.coperatecoding.secodeverseback.dto.QuestionandTestCaseDTO;
 import com.coperatecoding.secodeverseback.dto.TestCaseDTO;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.repository.LevelRepository;
@@ -46,6 +48,27 @@ public class QuestionService {
         return question;
     }
 
+
+        public Question modifyQuestion(Long questionPk, QuestionDTO.AddQuestionRequest addQuestionRequest) throws RuntimeException{
+            QuestionCategory category = questionCategoryRepository.findById(addQuestionRequest.getCategoryPk())
+                    .orElseThrow(() -> new NotFoundException("해당하는 카테고리가 존재하지 않음"));
+
+            Level level = levelRepository.findById(addQuestionRequest.getLevelPk())
+                    .orElseThrow(() -> new NotFoundException("해당하는 레벨이 존재하지 않음"));
+            Question question = questionRepository.findById(questionPk) .orElseThrow(() -> new NotFoundException("해당하는 문제가 존재하지 않음"));
+            question.editQuestion(category,level,addQuestionRequest.getTitle(),addQuestionRequest.getIntro(),addQuestionRequest.getContent(),addQuestionRequest.getLimitations(),addQuestionRequest.getSource(),addQuestionRequest.getLanguage(),addQuestionRequest.getTestcaseDescription());
+            return question;
+    }
+
+    public Question getDetailQuestion(Long questionPk){
+        Question question = questionRepository.findById(questionPk)
+                .orElseThrow(() -> new NotFoundException("해당하는 문제가 존재하지 않음"));
+        return question;
+    }
+    public void deleteQuestion(Long questionPK){
+        Question question = questionRepository.findById(questionPK).orElseThrow(() -> new NotFoundException("해당하는 댓글이 존재하지 않음"));
+        questionRepository.delete(question);
+    }
     public List<QuestionDTO.SearchQuestionListResponse> getQuestion(){
         List<Question>questions = questionRepository.findAll();
         List<QuestionDTO.SearchQuestionListResponse> questionDTOS= new ArrayList<>();
