@@ -59,12 +59,68 @@ public class QuestionService {
             question.editQuestion(category,level,addQuestionRequest.getTitle(),addQuestionRequest.getIntro(),addQuestionRequest.getContent(),addQuestionRequest.getLimitations(),addQuestionRequest.getSource(),addQuestionRequest.getLanguage(),addQuestionRequest.getTestcaseDescription());
             return question;
     }
+    public Question findByPk(Long questionPk){
+        Question question = questionRepository.findById(questionPk)
+                .orElseThrow(() -> new NotFoundException("해당하는 문제가 존재하지 않음"));
+        return question;
+    }
 
     public Question getDetailQuestion(Long questionPk){
         Question question = questionRepository.findById(questionPk)
                 .orElseThrow(() -> new NotFoundException("해당하는 문제가 존재하지 않음"));
         return question;
     }
+
+    public List<QuestionDTO.SearchQuestionListResponse> userPostQuestion(User user){
+        List<Question> questions = questionRepository.findByUser(user);
+        List<QuestionDTO.SearchQuestionListResponse> questionDTOS= new ArrayList<>();
+        for(Question question:questions){
+            QuestionDTO.SearchQuestionListRequest request = QuestionDTO.SearchQuestionListRequest.questions(
+                    question.getPk(),
+                    question.getLevel().getPk(),
+                    question.getTitle(),
+                    question.getIntro()
+            );
+
+            QuestionDTO.SearchQuestionListResponse response = getQuestion(request);
+
+            QuestionDTO.SearchQuestionListResponse questionDTO = QuestionDTO.SearchQuestionListResponse.builder()
+                    .pk(response.getPk())
+                    .levelPk(response.getLevelPk())
+                    .title(response.getTitle())
+                    .intro(response.getIntro())
+                    .build();
+            questionDTOS.add(questionDTO);
+
+        }
+        return questionDTOS;
+    }
+
+    public List<QuestionDTO.SearchQuestionListResponse> getKeywordQuestion(String keyword){
+        List<Question> questions=questionRepository.findByTitleContaining(keyword);
+        List<QuestionDTO.SearchQuestionListResponse> questionDTOS= new ArrayList<>();
+        for(Question question:questions){
+            QuestionDTO.SearchQuestionListRequest request = QuestionDTO.SearchQuestionListRequest.questions(
+                    question.getPk(),
+                    question.getLevel().getPk(),
+                    question.getTitle(),
+                    question.getIntro()
+            );
+
+            QuestionDTO.SearchQuestionListResponse response = getQuestion(request);
+
+            QuestionDTO.SearchQuestionListResponse questionDTO = QuestionDTO.SearchQuestionListResponse.builder()
+                    .pk(response.getPk())
+                    .levelPk(response.getLevelPk())
+                    .title(response.getTitle())
+                    .intro(response.getIntro())
+                    .build();
+            questionDTOS.add(questionDTO);
+
+        }
+        return questionDTOS;
+    }
+
     public void deleteQuestion(Long questionPK){
         Question question = questionRepository.findById(questionPK).orElseThrow(() -> new NotFoundException("해당하는 댓글이 존재하지 않음"));
         questionRepository.delete(question);
@@ -94,6 +150,17 @@ public class QuestionService {
         return questionDTOS;
     }
 
+    public QuestionDTO.SearchQuestionListResponse getByPk(Question question){
+        QuestionDTO.SearchQuestionListResponse response = QuestionDTO.SearchQuestionListResponse.builder()
+                .pk(question.getPk())
+                .levelPk(question.getLevel().getPk())
+                .title(question.getTitle())
+                .intro(question.getIntro())
+                .build();
+
+        return response;
+    }
+
     public QuestionDTO.SearchQuestionListResponse getQuestion(QuestionDTO.SearchQuestionListRequest request){
         QuestionDTO.SearchQuestionListResponse response = QuestionDTO.SearchQuestionListResponse.builder()
                 .pk(request.getPk())
@@ -104,6 +171,7 @@ public class QuestionService {
 
         return response;
     }
+
 
     public List<QuestionDTO.SearchQuestionListResponse> getLevelQuestionList(boolean isSort,Long levelPk){
         Level level = levelRepository.findById(levelPk).orElseThrow(() -> new NotFoundException("해당하는 레벨 존재하지 않음"));;

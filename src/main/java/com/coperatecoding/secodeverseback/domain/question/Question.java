@@ -46,7 +46,7 @@ public class Question {
 
     @CreationTimestamp
     @Column(name = "update_at")
-    private LocalDateTime updateAt = LocalDateTime.now();
+    private LocalDateTime updateAt=LocalDateTime.now() ;
 
     @NotNull
     private String title; //제목
@@ -89,14 +89,14 @@ public static Question  makeQuestion(User user,QuestionCategory category,Level l
 
         question.level=level;
         question.testcaseDescription=testcaseDescription;
-    question.user = user;
-    question.title = title;
-    question.intro = intro;
-    question.content = content;
-    question.limitations = limitations;
-    question.source = source;
-    question.language = language;
-    question.category=category;
+        question.user = user;
+        question.title = title;
+        question.intro = intro;
+        question.content = content;
+        question.limitations = limitations;
+        question.source = source;
+        question.language = language;
+        question.category=category;
     return question;
 
 }
@@ -111,7 +111,7 @@ public static Question  makeQuestion(User user,QuestionCategory category,Level l
        this.source=source;
        this.language=language;
        this.testcaseDescription=testcaseDescription;
-
+        this.updateAt=LocalDateTime.now();
     }
 
 
