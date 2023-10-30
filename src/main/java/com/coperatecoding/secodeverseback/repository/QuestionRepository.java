@@ -1,6 +1,7 @@
 package com.coperatecoding.secodeverseback.repository;
 
 import com.coperatecoding.secodeverseback.domain.Comment;
+import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.domain.board.Board;
 import com.coperatecoding.secodeverseback.domain.question.Level;
 import com.coperatecoding.secodeverseback.domain.question.Question;
@@ -13,6 +14,8 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
         List<Question> findByCategory(QuestionCategory questionCategory);
         List<Question> findByLevel(Level level);
         List<Question>findByCategoryAndLevel(QuestionCategory questionCategory, Level level);
+        List<Question> findByTitleContaining(String title);
+        List<Question> findByUser(User user);
 }
 
 
