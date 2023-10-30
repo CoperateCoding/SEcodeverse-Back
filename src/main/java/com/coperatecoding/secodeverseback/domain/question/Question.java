@@ -100,18 +100,18 @@ public static Question  makeQuestion(User user,QuestionCategory category,Level l
     return question;
 
 }
-    public void editQuestion(User user, Question question) {
-        this.user = user;
-        this.category = question.category;
-        this.testCaseList = question.testCaseList;
-        this.level = question.level;
-        this.title = question.title;
-        this.intro = question.intro;
-        this.content = question.content;
-        this.limitations = question.limitations;
-        this.source = question.source;
-        this.language = question.language;
-        this.updateAt = LocalDateTime.now();
+
+    public void  editQuestion(QuestionCategory category, Level level, String title, String intro, String content, String limitations, String source, String language, String testcaseDescription){
+       this.category=category;
+       this.level=level;
+       this.title=title;
+       this.intro=intro;
+       this.content=content;
+       this.limitations=limitations;
+       this.source=source;
+       this.language=language;
+       this.testcaseDescription=testcaseDescription;
+
     }
 
 

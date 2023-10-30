@@ -1,10 +1,9 @@
 package com.coperatecoding.secodeverseback.domain.question;
 
+import com.coperatecoding.secodeverseback.dto.QuestionDTO;
+import com.coperatecoding.secodeverseback.dto.QuestionImgDTO;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,5 +21,17 @@ public class QuestionImage {
 
     @JoinColumn(name = "img_url")
     private String imgUrl;
+
+    public static QuestionImage makeQuestionImg(String imgUrl, Question question){
+        QuestionImage questionImage = new QuestionImage();
+        questionImage.imgUrl=imgUrl;
+        questionImage.question=question;
+        return questionImage;
+    }
+
+
+    public void modifyQuestionImg(String imgUrl){
+        this.imgUrl=imgUrl;
+    }
 
 }
