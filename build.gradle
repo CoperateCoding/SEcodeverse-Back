@@ -70,9 +70,7 @@ tasks.named('test') {
 }
 
 task copyPrivate(type: Copy) {
-    copy {
         from './SEcodeverse-Back-Submodule'
         include "*.yml"
         into 'src/main/resources'
-    }
 }
