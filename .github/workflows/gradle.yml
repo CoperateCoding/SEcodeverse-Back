@@ -35,6 +35,10 @@ jobs:
       with:
         arguments: clean bootJar
 
+    - name: Run chmod to make gradlew executable
+      run: chmod +x ./gradlew
+
+
     # 3. Docker 이미지 빌드
     - name: docker image build
       run: docker build -t ${{ secrets.DOCKER_USERNAME }}/secodeverse .
