@@ -59,6 +59,12 @@ dependencies {
 
 }
 
+processResources {
+    filesMatching('application.yml') {
+        expand(project.properties)
+    }
+}
+
 tasks.named('test') {
     useJUnitPlatform()
 }
