@@ -56,6 +56,8 @@ dependencies {
 
     //aws s3
     implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.530'
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
 
 }
 
@@ -70,9 +72,7 @@ tasks.named('test') {
 }
 
 task copyPrivate(type: Copy) {
-    copy {
         from './SEcodeverse-Back-Submodule'
         include "*.yml"
         into 'src/main/resources'
-    }
 }
