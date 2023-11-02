@@ -8,8 +8,12 @@ import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 260839b2348078f54d8a065ff65888a02f67426e
 import java.security.Key;
 import java.time.Duration;
 import java.util.Date;
@@ -19,6 +23,7 @@ import java.util.function.Function;
 
 @Slf4j
 @Service
+@Component
 public class JwtService {
 
     @Value("${jwt.secretKey}")
