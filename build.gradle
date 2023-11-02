@@ -57,6 +57,10 @@ dependencies {
     //aws s3
     implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.530'
 
+    //chatbot
+    implementation 'org.tensorflow:tensorflow:1.15.0'
+
+
 }
 
 tasks.named('test') {
