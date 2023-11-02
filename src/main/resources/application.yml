@@ -1,0 +1,36 @@
+jwt:
+  secretKey: "26462948404D635166546A576E5A7234753778214125442A472D4B614E645267"
+
+server:
+  port : 8080
+
+spring:
+  profiles:
+    activate:
+      on-profile: docker
+  config:
+    import: optional:file:/resources/application.yml
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/secodeverse?serverTimezone=Asia/Seoul
+    username: coco
+    password: Coco1@2@3@4
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+        type:
+          descriptor:
+            sql:
+              BasicBinder: trace
