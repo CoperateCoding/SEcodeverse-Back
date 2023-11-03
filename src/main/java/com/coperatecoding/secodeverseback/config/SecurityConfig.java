@@ -30,7 +30,7 @@ public class SecurityConfig {
 //            "/logout"
     };
 
-    private final JwtAuthenticationFilter jwtAuthFilter;
+//    private final JwtAuthenticationFilter jwtAuthFilter;
     private final JwtExceptionFilter jwtExceptionFilter;
     private final AuthenticationProvider authenticationProvider;
 
@@ -46,9 +46,9 @@ public class SecurityConfig {
             .requestMatchers( "/api/v1/admin/**").hasAuthority("ADMIN")
             .anyRequest().authenticated()
          .and()
-         .authenticationProvider(authenticationProvider)
-         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-        .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
+         .authenticationProvider(authenticationProvider);
+//         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+//        .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
 
         return http.build();
     }

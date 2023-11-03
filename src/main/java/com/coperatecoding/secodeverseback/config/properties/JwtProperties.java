@@ -14,7 +14,3 @@ public class JwtProperties {
     private long expirationHours;
     private String issuer;
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> 260839b2348078f54d8a065ff65888a02f67426e
