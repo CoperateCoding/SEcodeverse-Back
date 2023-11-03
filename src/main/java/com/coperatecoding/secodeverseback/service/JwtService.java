@@ -19,7 +19,6 @@ import java.util.function.Function;
 
 @Slf4j
 @Service
-@Component
 public class JwtService {
 
     @Value("${jwt.secretKey}")
@@ -66,13 +65,13 @@ public class JwtService {
             UserDetails userDetails,
             String tokenType //access, refresh
     ) {
-        long durationTime = (tokenType == "access")? accessTokenValidTime : refreshTokenValidTime;
+        long durationTime = "access".equals(tokenType)? accessTokenValidTime : refreshTokenValidTime;
 
         return Jwts.builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()))
+//                .setExpiration(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + durationTime))
                 .claim("token_type", tokenType)
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
@@ -100,7 +99,8 @@ public class JwtService {
 //            return false;
 
         //리프레쉬 토큰인 경우 인증처리 x
-        if (extractClaim(token, (Claims claim) -> claim.get("token_type", String.class)).equals("refresh"))
+        Object tokenTypeClaim = extractClaim(token, (Claims claim) -> claim.get("token_type", String.class));
+        if (tokenTypeClaim != null && tokenTypeClaim.equals("refresh"))
             return false;
 
         return b;
@@ -148,8 +148,6 @@ public class JwtService {
 //
 //        tokenBlackListRepository.save(blackList);
 //    }
-
-
 
 
 }
