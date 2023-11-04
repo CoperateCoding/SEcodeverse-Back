@@ -1,27 +1,23 @@
 package com.coperatecoding.secodeverseback.service;
 
-import com.coperatecoding.secodeverseback.domain.JwtTokenBlackList;
-import com.coperatecoding.secodeverseback.domain.User;
-import com.coperatecoding.secodeverseback.repository.TokenBlackListRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.security.Key;
 import java.time.Duration;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+@Slf4j
 @Service
 public class JwtService {
 
@@ -69,13 +65,13 @@ public class JwtService {
             UserDetails userDetails,
             String tokenType //access, refresh
     ) {
-        long durationTime = (tokenType == "access")? accessTokenValidTime : refreshTokenValidTime;
+        long durationTime = "access".equals(tokenType)? accessTokenValidTime : refreshTokenValidTime;
 
         return Jwts.builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()))
+//                .setExpiration(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + durationTime))
                 .claim("token_type", tokenType)
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
@@ -103,7 +99,8 @@ public class JwtService {
 //            return false;
 
         //리프레쉬 토큰인 경우 인증처리 x
-        if (extractClaim(token, (Claims claim) -> claim.get("token_type", String.class)).equals("refresh"))
+        Object tokenTypeClaim = extractClaim(token, (Claims claim) -> claim.get("token_type", String.class));
+        if (tokenTypeClaim != null && tokenTypeClaim.equals("refresh"))
             return false;
 
         return b;
@@ -151,8 +148,6 @@ public class JwtService {
 //
 //        tokenBlackListRepository.save(blackList);
 //    }
-
-
 
 
 }

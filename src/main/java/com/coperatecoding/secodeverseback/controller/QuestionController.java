@@ -29,7 +29,7 @@ public class QuestionController {
     private final LevelService levelService;
     private final QuestionCategoryService questionCategoryService;
     private final QuestionImgService questionImgService;
-
+    private final CodeService codeService;
     @PostMapping("/post")
     public ResponseEntity makeQuestion(@AuthenticationPrincipal User user, @RequestBody QuestionAndTestAndImageDTO.AddQuestionAndTestAndImageRequest addQuestionAndTestAndImageRequest) {
         Question question = questionService.makeQuestion(user, addQuestionAndTestAndImageRequest.getQuestion());
@@ -86,8 +86,35 @@ public class QuestionController {
         }
 
     }
+    @GetMapping("/solve/user={userPk}")
+    public ResponseEntity<List<QuestionDTO.SearchQuestionListResponse>>getUserQuestion(@AuthenticationPrincipal User user){
 
+        List<CodeDTO.SearchCodeListResponse>codes=codeService.getUserCodes(user);
+        List<QuestionDTO.SearchQuestionListResponse> questions=new ArrayList<>();
+        for(CodeDTO.SearchCodeListResponse code: codes){
+            Question question = questionService.findByPk(code.getQuestionPk());
+            QuestionDTO.SearchQuestionListResponse questionDTO=questionService.getByPk(question);
+            questions.add(questionDTO);
 
+        }
+
+        return ResponseEntity.ok(questions);
+    }
+
+@GetMapping("/wrong/user={userPk}")
+public ResponseEntity<List<QuestionDTO.SearchQuestionListResponse>>getWrongQuestion(@AuthenticationPrincipal User user){
+
+        List<CodeDTO.SearchCodeListResponse>codes=codeService.getWrongCodes(user);
+        List<QuestionDTO.SearchQuestionListResponse> questions=new ArrayList<>();
+        for(CodeDTO.SearchCodeListResponse code: codes){
+            Question question = questionService.findByPk(code.getQuestionPk());
+            QuestionDTO.SearchQuestionListResponse questionDTO=questionService.getByPk(question);
+            questions.add(questionDTO);
+
+        }
+
+    return ResponseEntity.ok(questions);
+    }
 
     @GetMapping("/{questionPk}")
     public  ResponseEntity <QuestionAndTestAndImageDTO.QuestionAndTest >detailQuestion(@PathVariable Long questionPk) {

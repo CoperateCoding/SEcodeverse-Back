@@ -59,6 +59,11 @@ public class QuestionService {
             question.editQuestion(category,level,addQuestionRequest.getTitle(),addQuestionRequest.getIntro(),addQuestionRequest.getContent(),addQuestionRequest.getLimitations(),addQuestionRequest.getSource(),addQuestionRequest.getLanguage(),addQuestionRequest.getTestcaseDescription());
             return question;
     }
+    public Question findByPk(Long questionPk){
+        Question question = questionRepository.findById(questionPk)
+                .orElseThrow(() -> new NotFoundException("해당하는 문제가 존재하지 않음"));
+        return question;
+    }
 
     public Question getDetailQuestion(Long questionPk){
         Question question = questionRepository.findById(questionPk)
@@ -143,6 +148,17 @@ public class QuestionService {
 
         }
         return questionDTOS;
+    }
+
+    public QuestionDTO.SearchQuestionListResponse getByPk(Question question){
+        QuestionDTO.SearchQuestionListResponse response = QuestionDTO.SearchQuestionListResponse.builder()
+                .pk(question.getPk())
+                .levelPk(question.getLevel().getPk())
+                .title(question.getTitle())
+                .intro(question.getIntro())
+                .build();
+
+        return response;
     }
 
     public QuestionDTO.SearchQuestionListResponse getQuestion(QuestionDTO.SearchQuestionListRequest request){
