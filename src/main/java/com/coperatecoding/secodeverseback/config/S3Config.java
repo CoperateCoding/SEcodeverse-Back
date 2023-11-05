@@ -29,7 +29,7 @@ public class S3Config {
     public AmazonS3 amazonS3() {
         AmazonS3 s3Builder = AmazonS3ClientBuilder.standard()
                 .withRegion(region)
-                .withCredentials(new AWSStaticCredentialsProvider(awsCredentialsProvider()))
+             .withCredentials(new AWSStaticCredentialsProvider(awsCredentialsProvider()))
                 .build();
         return s3Builder;
     }

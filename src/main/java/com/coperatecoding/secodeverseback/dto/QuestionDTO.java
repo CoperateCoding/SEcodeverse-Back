@@ -41,11 +41,13 @@ public class QuestionDTO {
     @AllArgsConstructor
     public static class SearchQuestionListRequest {
         private Long pk;
+        private String userName;
         private Long levelPk;
         private String title;
         private String intro;
-        public static SearchQuestionListRequest questions(Long pk,Long levelPk ,String title, String intro ){
-            return new SearchQuestionListRequest(pk,levelPk,title,intro);
+        private Long categoryPk;
+        public static SearchQuestionListRequest questions(Long pk,String userName,Long levelPk ,String title, String intro , Long questionPk){
+            return new SearchQuestionListRequest(pk,userName, levelPk, title, intro, questionPk);
         }
 
     }
@@ -58,9 +60,11 @@ public class QuestionDTO {
     @AllArgsConstructor
     public static class SearchQuestionListResponse {
         private Long pk;
+        private String userName;
         private Long levelPk;
         private String title;
         private String intro;
+        private Long categoryPk;
 
     }
 

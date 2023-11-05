@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +38,9 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity signUp (@RequestBody UserDTO.RegisterRequest registerRequest) throws UserInfoDuplicatedException {
         userService.signUp(registerRequest);
+
+
+
         return ResponseEntity.status(HttpStatus.CREATED).build();
 
 
@@ -53,9 +57,9 @@ public class UserController {
 
     @PostMapping("/login") //로그인
     public ResponseEntity<UserDTO.LoginResponse> login(@RequestBody UserDTO.LoginRequest loginRequest, HttpServletRequest request) {
-            UserDTO.LoginResponse loginResponse = userService.login(loginRequest, request);
+        UserDTO.LoginResponse loginResponse = userService.login(loginRequest, request);
 
-            return ResponseEntity.ok(loginResponse);
+        return ResponseEntity.ok(loginResponse);
     }
 
 //    @Operation(summary = "로그아웃", description = """
