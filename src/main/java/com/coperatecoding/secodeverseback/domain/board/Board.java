@@ -115,4 +115,13 @@ public class Board {
     public void setBoardImage(List<BoardImage> boardImageList) {
         this.imageList = boardImageList;
     }
+
+    public String getPreview() {
+        int previewLength = 10;
+        if (content.length() <= previewLength) {
+            return content;
+        } else {
+            return content.substring(0, previewLength) + "...";
+        }
+    }
 }
