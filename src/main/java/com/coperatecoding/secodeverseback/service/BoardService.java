@@ -104,11 +104,17 @@ public class BoardService {
     private Pageable makePageable(SortType sortType, Integer page, Integer pageSize) throws RuntimeException {
 
         Sort sort;
-        if (sortType == null || sortType == SortType.POP) {
+        if (sortType == null || sortType == SortType.RECENT) {
+            sort = Sort.by(Sort.Direction.DESC, "createAt");
+        }
+        else if (sortType == SortType.POP) {
             sort = Sort.by(Sort.Direction.DESC, "likeCnt");
         }
+        else if (sortType == SortType.COMMENT) {
+            sort = Sort.by(Sort.Direction.DESC, "commentCnt");
+        }
         else {
-            sort = Sort.by(Sort.Direction.DESC, "updateAt");
+            sort = Sort.by(Sort.Direction.DESC, "createAt");
         }
 
         if (page == null)
@@ -119,6 +125,19 @@ public class BoardService {
 
         return PageRequest.of(page-1, pageSize, sort);
     }
+
+    private Pageable makePageable(Integer page, Integer pageSize) throws RuntimeException {
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "createAt");
+        if (page == null)
+            page = 1;
+
+        if (pageSize == null)
+            pageSize = 10;
+
+        return PageRequest.of(page-1, pageSize, sort);
+    }
+
 
     private Board verifyWriterAndfindBoard(User user, Long boardPk) {
         Board board = boardRepository.findById(boardPk)
@@ -136,6 +155,72 @@ public class BoardService {
         board.deleteLikeCnt();
 
     }
+
+    public BoardDTO.SearchListResponse getBoardList(Long categoryPk, String q, int page, int pageSize, SortType sort) throws CategoryNotFoundException {
+        Pageable pageable = makePageable(sort, page, pageSize);
+        Page<Board> list;
+
+        //선택한 카테고리, 검색어가 존재한다면 해당 카테고리에 해당하는 검색어와 일치하는 글을 조회
+        if (categoryPk != null && q != null) {
+            BoardCategory category = boardCategoryRepository.findById(categoryPk)
+                    .orElseThrow(() -> new CategoryNotFoundException("해당하는 카테고리가 없습니다"));
+            list = boardRepository.findByCategoryAndTitleOrContentContaining(category, q, pageable);
+        }
+        else if (categoryPk != null) { //카테고리만 지정된 경우
+            BoardCategory category = boardCategoryRepository.findById(categoryPk)
+                    .orElseThrow(() -> new CategoryNotFoundException("해당하는 카테고리가 없습니다"));
+            list = boardRepository.findByCategory(category, pageable);
+        }
+        else if (q != null) { //검색어만 지정된 경우
+            list = boardRepository.findByTitleOrContentContaining(q, pageable);
+
+        } else { //아무것도 지정 x -> 그냥 줌
+            list = boardRepository.findAll(pageable);
+        }
+
+
+        List<BoardDTO.SearchResponse> searchList = list.getContent().stream()
+                .map(board -> BoardDTO.SearchResponse.builder()
+                        .pk(board.getPk())
+                        .title(board.getTitle())
+                        .preview(board.getPreview())  // 프리뷰 생성 로직 필요
+                        .likeCnt(board.getLikeCnt()) // 좋아요 개수 가져오는 로직 필요
+                        .commentCnt(board.getCommentCnt()) // 댓글 개수 가져오는 로직 필요
+                        .createAt(board.convertPreviewDate(board.getCreateAt())) // 날짜 포맷 변경 로직 필요
+                        .build())
+                .collect(Collectors.toList());
+
+        return BoardDTO.SearchListResponse.builder()
+                .cnt(searchList.size())
+                .list(searchList)
+                .build();
+
+    }
+
+    @Transactional(readOnly = true)
+    public BoardDTO.SearchListResponse getMyBoardList(User user, int page, int pageSize) {
+        Pageable pageable = makePageable(page, pageSize);
+        Page<Board> boardList = boardRepository.findByUser(user, pageable);
+
+        List<BoardDTO.SearchResponse> searchList = boardList.getContent().stream()
+                .map(board -> BoardDTO.SearchResponse.builder()
+                        .pk(board.getPk())
+                        .title(board.getTitle())
+                        .preview(board.getPreview())  // 프리뷰 생성 로직 필요
+                        .likeCnt(board.getLikeCnt()) // 좋아요 개수 가져오는 로직 필요
+                        .commentCnt(board.getCommentCnt()) // 댓글 개수 가져오는 로직 필요
+                        .createAt(board.convertPreviewDate(board.getCreateAt())) // 날짜 포맷 변경 로직 필요
+                        .build())
+                .collect(Collectors.toList());
+
+
+        return BoardDTO.SearchListResponse.builder()
+                .cnt(searchList.size())
+                .list(searchList)
+                .build();
+
+    }
+
 
 //    private List<BoardImage> getBoardImage(Board board, List<BoardImage> imageList) {
 //
