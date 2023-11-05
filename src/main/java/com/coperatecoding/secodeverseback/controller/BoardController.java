@@ -132,33 +132,22 @@ public class BoardController {
 //
 //        return ResponseEntity.ok(boardList);
 //    }
-//
-//    @Operation(summary = "최근 게시글 조회", description = """
-//        [모두 접근가능] 최근 게시글을 조회합니다.<br>
-//        200: 성공
-//        """)
-//    @GetMapping("/boards/popular")
-//    public ResponseEntity<BoardListResponse> getBoradSortPopular(
-//            @RequestParam(required = false, defaultValue = "10")int pageSize,
-//            @RequestParam(required = false, defaultValue = "1")int page
-//    ) {
-//        BoardListResponse boardList = boardService.getRecentBoardList(pageSize, page);
-//
-//        return ResponseEntity.ok(boardList);
-//    }
-//
-//
-//    @Operation(summary = "내가 쓴 게시글 조회", description = """
-//        [로그인 필요] 내가 쓴 글 모두 조회<br>
-//        200: 성공<br>
-//        403: 로그인 필요
-//        """)
-//    @GetMapping("/my")
-//    public ResponseEntity<BoardListResponse> getMyBoardList(@AuthenticationPrincipal User user) {
-//        BoardListResponse myList = boardService.getMyList(user);
-//
-//        return ResponseEntity.ok(myList);
-//    }
+
+    @Operation(summary = "내가 쓴 게시글 조회", description = """
+    [로그인 필요] 내가 쓴 글 모두 조회<br>
+    200: 성공<br>
+    403: 로그인 필요
+    """)
+    @GetMapping("/my")
+    public ResponseEntity<BoardDTO.SearchListResponse> getMyBoardList(
+            @AuthenticationPrincipal User user,
+            @RequestParam(required = false, defaultValue = "1") @Min(value = 1, message = "page는 1보다 커야합니다") int page,
+            @RequestParam(required = false, defaultValue = "10") @Min(value = 1, message = "pageSize는 1보다 커야합니다") int pageSize) {
+
+        BoardDTO.SearchListResponse myBoardList = boardService.getMyBoardList(user, page, pageSize);
+        return ResponseEntity.ok(myBoardList);
+    }
+
 
 
 
