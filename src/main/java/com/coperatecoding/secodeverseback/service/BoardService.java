@@ -126,6 +126,19 @@ public class BoardService {
         return PageRequest.of(page-1, pageSize, sort);
     }
 
+    private Pageable makePageable(Integer page, Integer pageSize) throws RuntimeException {
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "createAt");
+        if (page == null)
+            page = 1;
+
+        if (pageSize == null)
+            pageSize = 10;
+
+        return PageRequest.of(page-1, pageSize, sort);
+    }
+
+
     private Board verifyWriterAndfindBoard(User user, Long boardPk) {
         Board board = boardRepository.findById(boardPk)
                 .orElseThrow(() -> new NoSuchElementException("해당하는 게시글이 없습니다"));
@@ -176,6 +189,30 @@ public class BoardService {
                         .createAt(board.convertPreviewDate(board.getCreateAt())) // 날짜 포맷 변경 로직 필요
                         .build())
                 .collect(Collectors.toList());
+
+        return BoardDTO.SearchListResponse.builder()
+                .cnt(searchList.size())
+                .list(searchList)
+                .build();
+
+    }
+
+    @Transactional(readOnly = true)
+    public BoardDTO.SearchListResponse getMyBoardList(User user, int page, int pageSize) {
+        Pageable pageable = makePageable(page, pageSize);
+        Page<Board> boardList = boardRepository.findByUser(user, pageable);
+
+        List<BoardDTO.SearchResponse> searchList = boardList.getContent().stream()
+                .map(board -> BoardDTO.SearchResponse.builder()
+                        .pk(board.getPk())
+                        .title(board.getTitle())
+                        .preview(board.getPreview())  // 프리뷰 생성 로직 필요
+                        .likeCnt(board.getLikeCnt()) // 좋아요 개수 가져오는 로직 필요
+                        .commentCnt(board.getCommentCnt()) // 댓글 개수 가져오는 로직 필요
+                        .createAt(board.convertPreviewDate(board.getCreateAt())) // 날짜 포맷 변경 로직 필요
+                        .build())
+                .collect(Collectors.toList());
+
 
         return BoardDTO.SearchListResponse.builder()
                 .cnt(searchList.size())
