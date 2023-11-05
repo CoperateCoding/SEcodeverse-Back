@@ -49,8 +49,8 @@ public class QuestionController {
     @PatchMapping("/{questionPk}")
     public ResponseEntity modifyQuestion(@PathVariable Long questionPk, @RequestBody QuestionAndTestAndImageDTO.AddQuestionAndTestAndImageRequest addQuestionAndTestRequest) {
         questionService.modifyQuestion(questionPk, addQuestionAndTestRequest.getQuestion());
-        List<TestCaseDTO.SearchResponse>testCaseDTOS = testCaseService.getTestCaseList(questionPk);
-        List<QuestionImgDTO.SearchQuestionImgListResponse>questionImgDTOS = questionImgService.getQuestionImg(questionPk);
+        List<TestCaseDTO.SearchResponse> testCaseDTOS = testCaseService.getTestCaseList(questionPk);
+        List<QuestionImgDTO.SearchQuestionImgListResponse> questionImgDTOS = questionImgService.getQuestionImg(questionPk);
         System.out.println("이미지 크기는"+questionImgDTOS.size());
         int i=0;
         for (TestCaseDTO.SearchResponse testCase : testCaseDTOS) {

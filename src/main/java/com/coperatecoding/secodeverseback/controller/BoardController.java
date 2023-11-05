@@ -45,30 +45,30 @@ public class BoardController {
     }
 
 
-//    @Operation(summary = "게시글 목록 조회", description = """
-//    [모두 접근가능]
-//    sort: 1. POP(인기순) 2. NEW(최신순) 3. COMMENT(댓글순) <br>
-//    200: 성공<br>
-//    """)
-//    @Parameters({
-//            @Parameter(name = "categoryPk", description = "카테고리의 pk (nullable)"),
-//            @Parameter(name = "q", description = "검색어 (nullable)"),
-//            @Parameter(name = "pageSize", description = "페이지 크기(1보다 커야함)"),
-//            @Parameter(name = "page", description = "페이지(0보다 커야함)"),
-//            @Parameter(name = "sort", description = "정렬기준(최신, 인기, 댓글)")
-//    })
-//    @GetMapping("")
-//    public ResponseEntity<BoardDTO.SearchListResponse> getBoardList(
-//            @RequestParam(required = false) Long categoryPk,
-//            @RequestParam(required = false) String q,
-//            @RequestParam(required = false, defaultValue = "10") @Min(value = 2, message = "page 크기는 1보다 커야합니다") int pageSize,
-//            @RequestParam(required = false, defaultValue = "1") @Min(value = 1, message = "page는 0보다 커야합니다") int page,
-//            @RequestParam(required = false, defaultValue = "NEW") SortType sort
-//    ) throws CategoryNotFoundException {
-//        BoardDTO.SearchListResponse boardList = boardService.getBoardList(categoryPk, q, page, pageSize, sort);
-//
-//        return ResponseEntity.ok(boardList);
-//    }
+    @Operation(summary = "게시글 목록 조회", description = """
+    [모두 접근가능]
+    sort: 1. POP(인기순) 2. NEW(최신순) 3. COMMENT(댓글순) <br>
+    200: 성공<br>
+    """)
+    @Parameters({
+            @Parameter(name = "categoryPk", description = "카테고리의 pk (nullable)"),
+            @Parameter(name = "q", description = "검색어 (nullable)"),
+            @Parameter(name = "pageSize", description = "페이지 크기(1보다 커야함)"),
+            @Parameter(name = "page", description = "페이지(0보다 커야함)"),
+            @Parameter(name = "sort", description = "정렬기준(최신, 인기, 댓글)")
+    })
+    @GetMapping("")
+    public ResponseEntity<BoardDTO.SearchListResponse> getBoardList(
+            @RequestParam(required = false) Long categoryPk,
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false, defaultValue = "10") @Min(value = 2, message = "page 크기는 1보다 커야합니다") int pageSize,
+            @RequestParam(required = false, defaultValue = "1") @Min(value = 1, message = "page는 0보다 커야합니다") int page,
+            @RequestParam(required = false, defaultValue = "RECENT") SortType sort
+    ) throws CategoryNotFoundException {
+        BoardDTO.SearchListResponse boardList = boardService.getBoardList(categoryPk, q, page, pageSize, sort);
+
+        return ResponseEntity.ok(boardList);
+    }
 
 
 
@@ -80,7 +80,7 @@ public class BoardController {
 //    """)
 //    @Parameter(name = "boardPk", description = "게시글의 pk")
 //    @GetMapping("/{boardPk}")
-//    public ResponseEntity<BoardResponse> getBoard(@AuthenticationPrincipal User user, @PathVariable Long boardPk) throws NoSuchElementException {
+//    public ResponseEntity<BoardDetailResponse> getBoard(@AuthenticationPrincipal User user, @PathVariable Long boardPk) throws NoSuchElementException {
 //        BoardResponse boardInfo = boardService.getBoardInfo(boardPk, user);
 //
 //        return ResponseEntity.ok(boardInfo);
