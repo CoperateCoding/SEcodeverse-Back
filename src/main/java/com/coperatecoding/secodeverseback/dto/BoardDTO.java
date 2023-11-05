@@ -34,10 +34,10 @@ public class BoardDTO {
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
+    @Builder
     public static class SearchListResponse {
         private int cnt;
-        private List<SearchResponse> searchList;
-
+        private List<SearchResponse> list;
     }
 
     @Getter
@@ -72,7 +72,7 @@ public class BoardDTO {
         private String preview;
         private Long likeCnt;
         private Long commentCnt;
-        private String updateAt;
+        private String createAt;
     }
 
     @Getter
@@ -91,5 +91,6 @@ public class BoardDTO {
         private List<BoardImage> imageList = new ArrayList<>();
 
     }
+
 
 }
