@@ -29,7 +29,7 @@ public class User implements UserDetails {
     private CTFTeam team;
 
 //    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "badge_pk")
     private CodingBadge badge;
 

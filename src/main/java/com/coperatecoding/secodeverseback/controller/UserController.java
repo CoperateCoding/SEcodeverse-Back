@@ -1,9 +1,11 @@
 package com.coperatecoding.secodeverseback.controller;
 
+import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.dto.UserDTO;
 //import com.coperatecoding.secodeverseback.service.JwtService;
 import com.coperatecoding.secodeverseback.exception.UserInfoDuplicatedException;
 import com.coperatecoding.secodeverseback.service.UserService;
+import com.nimbusds.openid.connect.sdk.UserInfoResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -54,8 +57,8 @@ public class UserController {
 
     }
 
-
-    @PostMapping("/login") //로그인
+    @Operation(summary = "로그인")
+    @PostMapping("/login")
     public ResponseEntity<UserDTO.LoginResponse> login(@RequestBody UserDTO.LoginRequest loginRequest, HttpServletRequest request) {
         UserDTO.LoginResponse loginResponse = userService.login(loginRequest, request);
 
@@ -80,7 +83,8 @@ public class UserController {
 //        return ResponseEntity.ok(map);
 //    }
 
-    @GetMapping("/id/{id}/exists") //중복 아이디 확인
+    @Operation(summary = "중복 아이디 확인")
+    @GetMapping("/id/{id}/exists")
     public ResponseEntity<Map> isExistsId(@PathVariable("id") String id) {
         Map<String, Boolean> map = new HashMap<>();
         map.put("exists", userService.isExistId(id));
@@ -88,12 +92,25 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(map);
     }
 
-    @GetMapping("/nickname/{nickname}/exists") //중복 닉네임 확인
+    @Operation(summary = "중복 닉네임 확인")
+    @GetMapping("/nickname/{nickname}/exists")
     public ResponseEntity<Map> isExistsNickname(@PathVariable("nickname") String nickName) {
         Map<String, Boolean> map = new HashMap<>();
         map.put("exists", userService.isExistNickname(nickName));
 
         return ResponseEntity.status(HttpStatus.OK).body(map);
+    }
+
+    @Operation(summary = "내 정보 조회", description = """
+    [로그인 필요]<br>
+    200: 성공<br>
+    403: 로그인 필요
+    """)
+    @GetMapping("/info/my")
+    public ResponseEntity<UserDTO.UserInfoResponse> getUserInfo(@AuthenticationPrincipal User user) {
+        UserDTO.UserInfoResponse userInfo = userService.getUserInfo(user);
+
+        return ResponseEntity.ok(userInfo);
     }
 
 
