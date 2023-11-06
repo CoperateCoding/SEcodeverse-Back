@@ -6,7 +6,6 @@ import com.coperatecoding.secodeverseback.dto.*;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.service.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -47,7 +46,7 @@ public class QuestionController {
     }
 
     @PatchMapping("/{questionPk}")
-    public ResponseEntity modifyQuestion(@PathVariable Long questionPk, @RequestBody QuestionAndTestAndImageDTO.AddQuestionAndTestAndImageRequest addQuestionAndTestRequest) {
+    public ResponseEntity modifyQuestion(@AuthenticationPrincipal User user,@PathVariable Long questionPk, @RequestBody QuestionAndTestAndImageDTO.AddQuestionAndTestAndImageRequest addQuestionAndTestRequest) {
         questionService.modifyQuestion(questionPk, addQuestionAndTestRequest.getQuestion());
         List<TestCaseDTO.SearchResponse> testCaseDTOS = testCaseService.getTestCaseList(questionPk);
         List<QuestionImgDTO.SearchQuestionImgListResponse> questionImgDTOS = questionImgService.getQuestionImg(questionPk);
@@ -68,7 +67,7 @@ public class QuestionController {
     }
 
     @DeleteMapping("/{questionPk}")
-    public ResponseEntity deleteQuestion(@PathVariable Long questionPk){
+    public ResponseEntity deleteQuestion(@AuthenticationPrincipal User user,@PathVariable Long questionPk){
         try{
             List<QuestionImgDTO.SearchQuestionImgListResponse> imgDTOS=questionImgService.getQuestionImg(questionPk);
             for (QuestionImgDTO.SearchQuestionImgListResponse img : imgDTOS) {
@@ -146,7 +145,7 @@ public ResponseEntity<List<QuestionDTO.SearchQuestionListResponse>>getWrongQuest
     @GetMapping("")
     public ResponseEntity<List<QuestionDTO.SearchQuestionListResponse>> getQuestions(
             @RequestParam(value = "q", required = false) String q,
-            @RequestParam(value = "sort", required = false) SortType sort,
+            @RequestParam(value = "sort", required = false) QuestionSortType sort,
             @RequestParam(value = "categoryPk", required = false) List<Long> categoryPks,
             @RequestParam(value = "levelPk", required = false) List<Long> levelPks
 
@@ -156,7 +155,7 @@ public ResponseEntity<List<QuestionDTO.SearchQuestionListResponse>>getWrongQuest
         if(categoryPks == null && levelPks == null){
             questions=questionService.getQuestion();
         }else {
-            if (sort == SortType.RECENT) {
+            if (sort == QuestionSortType.RECENT) {
                 List<QuestionDTO.SearchQuestionListResponse> lastQuestion = new ArrayList<>();
                 if (categoryPks != null && !categoryPks.isEmpty() && levelPks != null && !levelPks.isEmpty()) {
                     for (Long categoryPk : categoryPks) {
