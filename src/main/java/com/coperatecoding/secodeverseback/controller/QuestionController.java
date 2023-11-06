@@ -49,7 +49,7 @@ public class QuestionController {
     public ResponseEntity modifyQuestion(@PathVariable Long questionPk, @RequestBody QuestionAndTestAndImageDTO.AddQuestionAndTestAndImageRequest addQuestionAndTestRequest) {
         questionService.modifyQuestion(questionPk, addQuestionAndTestRequest.getQuestion());
         List<TestCaseDTO.SearchResponse> testCaseDTOS = testCaseService.getTestCaseList(questionPk);
-        List<QuestionImgDTO.SearchQuestionImgListResponse> questionImgDTOS = questionImgService.getQuestionImg(questionPk);
+        List<QuestionImgDTO.SearchQuestionImgResponse> questionImgDTOS = questionImgService.getQuestionImg(questionPk);
         System.out.println("이미지 크기는"+questionImgDTOS.size());
         int i=0;
         for (TestCaseDTO.SearchResponse testCase : testCaseDTOS) {
@@ -58,7 +58,7 @@ public class QuestionController {
         }
         int j=0;
         System.out.println(addQuestionAndTestRequest.getImg().size());
-        for(QuestionImgDTO.SearchQuestionImgListResponse questionImg: questionImgDTOS){
+        for(QuestionImgDTO.SearchQuestionImgResponse questionImg: questionImgDTOS){
             System.out.println(addQuestionAndTestRequest.getImg().get(j).getImgUrl());
             questionImgService.modifyQuestionImg(questionImg.getPk(),addQuestionAndTestRequest.getImg().get(j));
             j++;
@@ -69,13 +69,13 @@ public class QuestionController {
     @DeleteMapping("/{questionPk}")
     public ResponseEntity deleteQuestion(@PathVariable Long questionPk){
         try{
-            List<QuestionImgDTO.SearchQuestionImgListResponse> imgDTOS=questionImgService.getQuestionImg(questionPk);
-            for (QuestionImgDTO.SearchQuestionImgListResponse img : imgDTOS) {
-                questionImgService.deleteImg(img.getPk());
+            List<QuestionImgDTO.SearchQuestionImgResponse> imgDTOS=questionImgService.getQuestionImg(questionPk);
+            for (QuestionImgDTO.SearchQuestionImgResponse img : imgDTOS) {
+                questionImgService.delete(img.getPk());
             }
             List<TestCaseDTO.SearchResponse>testCaseDTOS = testCaseService.getTestCaseList(questionPk);
             for (TestCaseDTO.SearchResponse testCase : testCaseDTOS) {
-                testCaseService.deleteTestCase(testCase.getPk());
+                testCaseService.delete(testCase.getPk());
             }
             questionService.deleteQuestion(questionPk);
             return ResponseEntity.noContent().build();
@@ -86,13 +86,13 @@ public class QuestionController {
 
     }
     @GetMapping("/solve/user={userPk}")
-    public ResponseEntity<List<QuestionDTO.SearchQuestionListResponse>>getUserQuestion(@AuthenticationPrincipal User user){
+    public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>>getUserQuestion(@AuthenticationPrincipal User user){
 
         List<CodeDTO.SearchCodeListResponse>codes=codeService.getUserCodes(user);
-        List<QuestionDTO.SearchQuestionListResponse> questions=new ArrayList<>();
+        List<QuestionDTO.SearchQuestionResponse> questions=new ArrayList<>();
         for(CodeDTO.SearchCodeListResponse code: codes){
             Question question = questionService.findByPk(code.getQuestionPk());
-            QuestionDTO.SearchQuestionListResponse questionDTO=questionService.getByPk(question);
+            QuestionDTO.SearchQuestionResponse questionDTO=questionService.getByPk(question);
             questions.add(questionDTO);
 
         }
@@ -101,13 +101,13 @@ public class QuestionController {
     }
 
 @GetMapping("/wrong/user={userPk}")
-public ResponseEntity<List<QuestionDTO.SearchQuestionListResponse>>getWrongQuestion(@AuthenticationPrincipal User user){
+public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>> getWrongQuestion(@AuthenticationPrincipal User user){
 
         List<CodeDTO.SearchCodeListResponse>codes=codeService.getWrongCodes(user);
-        List<QuestionDTO.SearchQuestionListResponse> questions=new ArrayList<>();
+        List<QuestionDTO.SearchQuestionResponse> questions=new ArrayList<>();
         for(CodeDTO.SearchCodeListResponse code: codes){
             Question question = questionService.findByPk(code.getQuestionPk());
-            QuestionDTO.SearchQuestionListResponse questionDTO=questionService.getByPk(question);
+            QuestionDTO.SearchQuestionResponse questionDTO=questionService.getByPk(question);
             questions.add(questionDTO);
 
         }
@@ -116,11 +116,11 @@ public ResponseEntity<List<QuestionDTO.SearchQuestionListResponse>>getWrongQuest
     }
 
     @GetMapping("/{questionPk}")
-    public  ResponseEntity <QuestionAndTestAndImageDTO.QuestionAndTest >detailQuestion(@PathVariable Long questionPk) {
+    public ResponseEntity<QuestionAndTestAndImageDTO.QuestionAndTest> detailQuestion(@PathVariable Long questionPk) {
 
         Question question = questionService.getDetailQuestion(questionPk);
         List<TestCaseDTO.SearchResponse> testCases = testCaseService.getTestCaseList(questionPk);
-        List<QuestionImgDTO.SearchQuestionImgListResponse> imgs = questionImgService.getQuestionImg(questionPk);
+        List<QuestionImgDTO.SearchQuestionImgResponse> imgs = questionImgService.getQuestionImg(questionPk);
         QuestionAndTestAndImageDTO.QuestionAndTest response = new QuestionAndTestAndImageDTO.QuestionAndTest();
         response.setQuestion(question);
         response.setTestCase(testCases);
@@ -131,43 +131,43 @@ public ResponseEntity<List<QuestionDTO.SearchQuestionListResponse>>getWrongQuest
     }
 
     @GetMapping("post/user={userPk}")
-    public  ResponseEntity<List<QuestionDTO.SearchQuestionListResponse>> userPostQuestion(@AuthenticationPrincipal User user){
-        List<QuestionDTO.SearchQuestionListResponse> question= questionService.userPostQuestion(user);
+    public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>> userPostQuestion(@AuthenticationPrincipal User user){
+        List<QuestionDTO.SearchQuestionResponse> question= questionService.userPostQuestion(user);
         return ResponseEntity.ok(question);
     }
 
     @GetMapping("/keyword={keyword}")
-    public  ResponseEntity<List<QuestionDTO.SearchQuestionListResponse>> getKeywordQuestion(@PathVariable String keyword){
-            List<QuestionDTO.SearchQuestionListResponse> question= questionService.getKeywordQuestion(keyword);
+    public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>> getKeywordQuestion(@PathVariable String keyword){
+            List<QuestionDTO.SearchQuestionResponse> question= questionService.getKeywordQuestion(keyword);
         return ResponseEntity.ok(question);
     }
     @GetMapping("")
-    public ResponseEntity<List<QuestionDTO.SearchQuestionListResponse>> getQuestions(
+    public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>> getQuestions(
             @RequestParam(value = "q", required = false) String q,
             @RequestParam(value = "sort", required = false) QuestionSortType sort,
             @RequestParam(value = "categoryPk", required = false) List<Long> categoryPks,
             @RequestParam(value = "levelPk", required = false) List<Long> levelPks
     ) {
 
-        List<QuestionDTO.SearchQuestionListResponse> questions = new ArrayList<>();
+        List<QuestionDTO.SearchQuestionResponse> questions = new ArrayList<>();
 
 
             if (sort != null) {
             if (categoryPks != null && !categoryPks.isEmpty() && levelPks != null && !levelPks.isEmpty()) {
                 for (Long categoryPk : categoryPks) {
                     for (Long levelPk : levelPks) {
-                        List<QuestionDTO.SearchQuestionListResponse> matchingQuestions = questionService.getMatchingQuestions(true, categoryPk, levelPk);
+                        List<QuestionDTO.SearchQuestionResponse> matchingQuestions = questionService.getMatchingQuestions(true, categoryPk, levelPk);
                         questions.addAll(matchingQuestions);
                     }
                 }
             } else if (categoryPks != null && !categoryPks.isEmpty()) {
                 for (Long categoryPk : categoryPks) {
-                    List<QuestionDTO.SearchQuestionListResponse> categoryQuestions = questionService.getCategoryQuestion(true, categoryPk);
+                    List<QuestionDTO.SearchQuestionResponse> categoryQuestions = questionService.getCategoryQuestion(true, categoryPk);
                     questions.addAll(categoryQuestions);
                 }
             } else if (levelPks != null && !levelPks.isEmpty()) {
                 for (Long levelPk : levelPks) {
-                    List<QuestionDTO.SearchQuestionListResponse> levelQuestions = questionService.getLevelQuestionList(true, levelPk);
+                    List<QuestionDTO.SearchQuestionResponse> levelQuestions = questionService.getLevelQuestionList(true, levelPk);
                     questions.addAll(levelQuestions);
                 }
             }
@@ -175,18 +175,18 @@ public ResponseEntity<List<QuestionDTO.SearchQuestionListResponse>>getWrongQuest
             if (categoryPks != null && !categoryPks.isEmpty() && levelPks != null && !levelPks.isEmpty()) {
                 for (Long categoryPk : categoryPks) {
                     for (Long levelPk : levelPks) {
-                        List<QuestionDTO.SearchQuestionListResponse> matchingQuestions = questionService.getMatchingQuestions(false, categoryPk, levelPk);
+                        List<QuestionDTO.SearchQuestionResponse> matchingQuestions = questionService.getMatchingQuestions(false, categoryPk, levelPk);
                         questions.addAll(matchingQuestions);
                     }
                 }
             } else if (categoryPks != null && !categoryPks.isEmpty()) {
                 for (Long categoryPk : categoryPks) {
-                    List<QuestionDTO.SearchQuestionListResponse> categoryQuestions = questionService.getCategoryQuestion(false, categoryPk);
+                    List<QuestionDTO.SearchQuestionResponse> categoryQuestions = questionService.getCategoryQuestion(false, categoryPk);
                     questions.addAll(categoryQuestions);
                 }
             } else if (levelPks != null && !levelPks.isEmpty()) {
                 for (Long levelPk : levelPks) {
-                    List<QuestionDTO.SearchQuestionListResponse> levelQuestions = questionService.getLevelQuestionList(false, levelPk);
+                    List<QuestionDTO.SearchQuestionResponse> levelQuestions = questionService.getLevelQuestionList(false, levelPk);
                     questions.addAll(levelQuestions);
                 }
             }

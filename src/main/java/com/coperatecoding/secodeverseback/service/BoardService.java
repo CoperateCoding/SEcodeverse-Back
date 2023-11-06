@@ -37,47 +37,32 @@ public class BoardService {
 
         Board board = Board.makeBoard(user, category, addBoardRequest.getTitle(), addBoardRequest.getContent());
 
-//        List<BoardImage> boardImageList = getBoardImage(board, addBoardRequest.getImageList());
-//
-//        board.setBoardImage(boardImageList);
-
         return boardRepository.save(board);
-
     }
 
     public void makeLike(Long boardPk) throws RuntimeException{
 
         Board board = boardRepository.findById(boardPk)
                 .orElseThrow(() -> new NotFoundException("해당하는 카테고리가 존재하지 않음"));
-       board.addLikeCnt();
+        board.addLikeCnt();
 
     }
 
     public void deleteBoard(User user, Long boardPk) throws NoSuchElementException, ForbiddenException {
-//        Board board = findBoard(boardPk);
 
-        Board board = boardRepository.findById(boardPk)
-                .orElseThrow(() -> new NoSuchElementException("해당하는 게시글을 찾을 수 없습니다."));
-
-
+        Board board = verifyWriterAndfindBoard(user, boardPk);
+//        Board board = boardRepository.findById(boardPk)
+//                .orElseThrow(() -> new NoSuchElementException("해당하는 게시글을 찾을 수 없습니다."));
+//
 //        if (user.getRoleType() != RoleType.ADMIN && board.getUser().getPk() != user.getPk())
 //            throw new ForbiddenException("권한이 없는 사용자입니다");
 
         boardRepository.delete(board);
     }
 
-    private Board findBoard(Long boardPk) {
-        Board board = boardRepository.findById(boardPk)
-                .orElseThrow(() -> new NoSuchElementException("해당하는 게시글을 찾을 수 없습니다"));
-
-        return board;
-    }
-
     public void editBoard(User user, Long boardPk, BoardDTO.AddBoardRequest addBoardRequest) {
-//        Board board = verifyWriterAndfindBoard(user, boardPk);
-        Board board = boardRepository.findById(boardPk)
-                .orElseThrow(() -> new NoSuchElementException("해당하는 게시글을 찾을 수 없습니다."));
-        
+        Board board = verifyWriterAndfindBoard(user, boardPk);
+
         BoardCategory boardCategory = boardCategoryRepository.findById(addBoardRequest.getCategoryPk())
                         .orElseThrow(() -> new NoSuchElementException("해당하는 게시글의 카테고리를 찾을 수 없습니다."));
 
@@ -128,7 +113,7 @@ public class BoardService {
                 .orElseThrow(() -> new NoSuchElementException("해당하는 게시글이 없습니다"));
 
         //글 작성자거나, admin이 아니라면 수정 불가능
-        if (user.getRoleType() != RoleType.ADMIN && board.getUser() != user)
+        if (user.getRoleType() != RoleType.ADMIN && board.getUser().getPk() != user.getPk())
             throw new ForbiddenException("권한이 없는 사용자");
         return board;
     }
@@ -267,7 +252,7 @@ public class BoardService {
     @Transactional(readOnly = true)
     public List<BoardDTO.PopularBoardResponse> getPopularBoardList() throws RuntimeException {
 
-        Pageable pageable = makePageable(BoardSortType.POP, 1, 10); // 상위 인기 게시글 10개 가져옴
+        Pageable pageable = makePageable(BoardSortType.POP, 1, 7); // 상위 인기 게시글 10개 가져옴
         Page<Board> list = boardRepository.findAll(pageable);
 
         List<BoardDTO.PopularBoardResponse> boardResponses = list.getContent().stream()
@@ -276,6 +261,7 @@ public class BoardService {
                         .title(board.getTitle())
                         .likeCnt(board.getLikeCnt())
                         .commentCnt(board.getCommentCnt())
+                        .createAt(board.convertPreviewDate(board.getCreateAt()))
                         .build())
                 .collect(Collectors.toList());
 

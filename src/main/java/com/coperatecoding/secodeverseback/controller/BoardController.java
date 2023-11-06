@@ -1,15 +1,14 @@
 package com.coperatecoding.secodeverseback.controller;
 
 import com.coperatecoding.secodeverseback.domain.User;
-import com.coperatecoding.secodeverseback.dto.BoardDTO;
-import com.coperatecoding.secodeverseback.dto.BoardSortType;
-import com.coperatecoding.secodeverseback.dto.QuestionSortType;
+import com.coperatecoding.secodeverseback.domain.board.Board;
+import com.coperatecoding.secodeverseback.dto.*;
 import com.coperatecoding.secodeverseback.exception.CategoryNotFoundException;
 import com.coperatecoding.secodeverseback.exception.ForbiddenException;
+import com.coperatecoding.secodeverseback.exception.NotFoundException;
+import com.coperatecoding.secodeverseback.service.BoardImgService;
 import com.coperatecoding.secodeverseback.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -32,6 +31,7 @@ import java.util.NoSuchElementException;
 public class BoardController {
 
     private final BoardService boardService;
+    private final BoardImgService boardImgService;
     
     @Operation(summary = "게시글 작성", description = """
     [로그인 필요]
@@ -41,8 +41,11 @@ public class BoardController {
     403: 권한없음
     """)
     @PostMapping("")
-    public ResponseEntity makeBoard(@AuthenticationPrincipal User user, @RequestBody @Valid BoardDTO.AddBoardRequest addBoardRequest) {
-        boardService.makeBoard(user, addBoardRequest);
+    public ResponseEntity makeBoard(@AuthenticationPrincipal User user, @RequestBody @Valid BoardAndImageDTO.AddBoardAndImageRequest addBoardAndImageRequest) {
+        Board board = boardService.makeBoard(user, addBoardAndImageRequest.getBoard());
+
+        for (BoardImgDTO.AddBoardImgRequest image : addBoardAndImageRequest.getImgList())
+            boardImgService.makeBoardImage(board.getPk(), image);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -140,9 +143,18 @@ public class BoardController {
       """)
     @DeleteMapping("/{boardPk}")
     public ResponseEntity deleteBoard(@AuthenticationPrincipal User user, @PathVariable Long boardPk) throws NoSuchElementException, ForbiddenException {
-        boardService.deleteBoard(user, boardPk);
+        try{
+            List<BoardImgDTO.SearchResponse> imgDTOS = boardImgService.getBoardImg(boardPk);
 
-        return ResponseEntity.ok().build();
+            for (BoardImgDTO.SearchResponse img : imgDTOS) {
+                boardImgService.delete(img.getPk());
+            }
+            boardService.deleteBoard(user, boardPk);
+            return ResponseEntity.noContent().build();
+        }
+        catch(NotFoundException e){
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @Operation(summary = "인기 게시글 조회", description = """
