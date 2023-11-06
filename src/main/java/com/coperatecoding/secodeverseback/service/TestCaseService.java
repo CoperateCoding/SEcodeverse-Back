@@ -1,11 +1,7 @@
 package com.coperatecoding.secodeverseback.service;
 
 import com.coperatecoding.secodeverseback.domain.TestCase;
-import com.coperatecoding.secodeverseback.domain.User;
-import com.coperatecoding.secodeverseback.domain.question.Level;
 import com.coperatecoding.secodeverseback.domain.question.Question;
-import com.coperatecoding.secodeverseback.domain.question.QuestionCategory;
-import com.coperatecoding.secodeverseback.dto.QuestionDTO;
 import com.coperatecoding.secodeverseback.dto.TestCaseDTO;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.repository.QuestionRepository;
@@ -32,7 +28,7 @@ public class TestCaseService {
         Question question = questionRepository.findById(questionPk)
                 .orElseThrow(() -> new NotFoundException("해당하는 문제가 존재하지 않음"));
 
-        TestCase testCase = TestCase.makeTestCase(question,addTestCaseRequest.getInput(), addTestCaseRequest.getOutput());
+        TestCase testCase = TestCase.makeTestCase(question, addTestCaseRequest.getInput(), addTestCaseRequest.getOutput());
         return testCaseRepository.save(testCase);
     }
 
@@ -40,14 +36,14 @@ public class TestCaseService {
         Question question = questionRepository.findById(questionPk)
                 .orElseThrow(() -> new NotFoundException("해당하는 문제가 존재하지 않음"));
 
-        List<TestCase>testCaseList = testCaseRepository.findByQuestion(question);
-        List<TestCaseDTO.SearchResponse> testCaseDTOS= new ArrayList<>();
+        List<TestCase> testCaseList = testCaseRepository.findByQuestion(question);
+        List<TestCaseDTO.SearchResponse> testCaseDTOS = new ArrayList<>();
+
         for(TestCase testCase:testCaseList){
             TestCaseDTO.SearchListRequest request =TestCaseDTO.SearchListRequest.makeRequest(
                     testCase.getPk(),
                     testCase.getInput(),
                     testCase.getOutput()
-
             );
 
             TestCaseDTO.SearchResponse response = getTestCase(request);
@@ -74,14 +70,17 @@ public class TestCaseService {
     }
 
     public TestCase modifyTestCase(Long testCasePK, TestCaseDTO.AddtestCaseRequest addQuestionRequest) throws RuntimeException{
-       TestCase testCase= testCaseRepository.findById(testCasePK).orElseThrow(() -> new NotFoundException("해당하는 테스트케이스가 존재하지 않음"));
+       TestCase testCase = testCaseRepository.findById(testCasePK)
+               .orElseThrow(() -> new NotFoundException("해당하는 테스트케이스가 존재하지 않음"));
 
         testCase.updateTestCase(addQuestionRequest.getInput(), addQuestionRequest.getOutput());
         return testCase;
     }
 
-    public void deleteTestCase(Long testCasePK) throws RuntimeException{
-        TestCase testCase = testCaseRepository.findById(testCasePK).orElseThrow(() -> new NotFoundException("해당하는 테스트케이스가 존재하지 않음"));
+    public void delete(Long testCasePK) throws RuntimeException{
+        TestCase testCase = testCaseRepository.findById(testCasePK)
+                .orElseThrow(() -> new NotFoundException("해당하는 테스트케이스가 존재하지 않음"));
+
         testCaseRepository.delete(testCase);
     }
 

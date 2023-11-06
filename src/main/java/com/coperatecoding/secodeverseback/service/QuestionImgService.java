@@ -1,11 +1,7 @@
 package com.coperatecoding.secodeverseback.service;
 
-import com.coperatecoding.secodeverseback.domain.User;
-import com.coperatecoding.secodeverseback.domain.question.Level;
 import com.coperatecoding.secodeverseback.domain.question.Question;
-import com.coperatecoding.secodeverseback.domain.question.QuestionCategory;
 import com.coperatecoding.secodeverseback.domain.question.QuestionImage;
-import com.coperatecoding.secodeverseback.dto.QuestionDTO;
 import com.coperatecoding.secodeverseback.dto.QuestionImgDTO;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.repository.QuestionImageRepository;
@@ -49,18 +45,18 @@ public class QuestionImgService {
     }
 
 
-    public List<QuestionImgDTO.SearchQuestionImgListResponse> getQuestionImg(Long questionPk){
+    public List<QuestionImgDTO.SearchQuestionImgResponse> getQuestionImg(Long questionPk){
         Question question = questionRepository.findById(questionPk)
                 .orElseThrow(() -> new NotFoundException("해당하는 문제가 존재하지 않음"));
-        List<QuestionImage> questionImgs=questionImageRepository.findByQuestion(question);
-        List<QuestionImgDTO.SearchQuestionImgListResponse> questionImgDTOS = new ArrayList<>();
+        List<QuestionImage> questionImgs = questionImageRepository.findByQuestion(question);
+        List<QuestionImgDTO.SearchQuestionImgResponse> questionImgDTOS = new ArrayList<>();
         for(QuestionImage questionImage: questionImgs){
-            QuestionImgDTO.SearchQuestionImgListRequest request = QuestionImgDTO.SearchQuestionImgListRequest.questionImg(
+            QuestionImgDTO.SearchQuestionImgRequest request = QuestionImgDTO.SearchQuestionImgRequest.questionImg(
                     questionImage.getPk(),
                     questionImage.getImgUrl()
             );
-            QuestionImgDTO.SearchQuestionImgListResponse response = getQuestionImg(request);
-            QuestionImgDTO.SearchQuestionImgListResponse questionImgDTO = QuestionImgDTO.SearchQuestionImgListResponse.builder()
+            QuestionImgDTO.SearchQuestionImgResponse response = getQuestionImg(request);
+            QuestionImgDTO.SearchQuestionImgResponse questionImgDTO = QuestionImgDTO.SearchQuestionImgResponse.builder()
                     .pk(response.getPk())
                     .imgUrl(response.getImgUrl())
                     .build();
@@ -69,15 +65,18 @@ public class QuestionImgService {
         return questionImgDTOS;
     }
 
-    public QuestionImgDTO.SearchQuestionImgListResponse getQuestionImg(QuestionImgDTO.SearchQuestionImgListRequest request){
-        QuestionImgDTO.SearchQuestionImgListResponse response = QuestionImgDTO.SearchQuestionImgListResponse.builder()
+    public QuestionImgDTO.SearchQuestionImgResponse getQuestionImg(QuestionImgDTO.SearchQuestionImgRequest request) {
+        QuestionImgDTO.SearchQuestionImgResponse response = QuestionImgDTO.SearchQuestionImgResponse.builder()
                 .pk(request.getPk())
                 .imgUrl(request.getImgUrl())
                 .build();
+
         return response;
     }
-    public void deleteImg(Long imgPk) throws RuntimeException{
-        QuestionImage questionImage = questionImageRepository.findById(imgPk).orElseThrow(() -> new NotFoundException("해당하는 이미지가 존재하지 않음"));
+    public void delete(Long imgPk) throws RuntimeException {
+        QuestionImage questionImage = questionImageRepository.findById(imgPk)
+                .orElseThrow(() -> new NotFoundException("해당하는 이미지가 존재하지 않음"));
+
         questionImageRepository.delete(questionImage);
     }
 }
