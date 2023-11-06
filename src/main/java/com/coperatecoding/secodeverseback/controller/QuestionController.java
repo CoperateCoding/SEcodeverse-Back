@@ -142,57 +142,65 @@ public ResponseEntity<List<QuestionDTO.SearchQuestionListResponse>>getWrongQuest
             List<QuestionDTO.SearchQuestionListResponse> question= questionService.getKeywordQuestion(keyword);
         return ResponseEntity.ok(question);
     }
+
     @GetMapping("")
     public ResponseEntity<List<QuestionDTO.SearchQuestionListResponse>> getQuestions(
             @RequestParam(value = "q", required = false) String q,
             @RequestParam(value = "sort", required = false) SortType sort,
             @RequestParam(value = "categoryPk", required = false) List<Long> categoryPks,
             @RequestParam(value = "levelPk", required = false) List<Long> levelPks
+
     ) {
 
         List<QuestionDTO.SearchQuestionListResponse> questions = new ArrayList<>();
-
-
-            if (sort != null) {
-            if (categoryPks != null && !categoryPks.isEmpty() && levelPks != null && !levelPks.isEmpty()) {
-                for (Long categoryPk : categoryPks) {
+        if(categoryPks == null && levelPks == null){
+            questions=questionService.getQuestion();
+        }else {
+            if (sort == SortType.RECENT) {
+                List<QuestionDTO.SearchQuestionListResponse> lastQuestion = new ArrayList<>();
+                if (categoryPks != null && !categoryPks.isEmpty() && levelPks != null && !levelPks.isEmpty()) {
+                    for (Long categoryPk : categoryPks) {
+                        for (Long levelPk : levelPks) {
+                            List<QuestionDTO.SearchQuestionListResponse> matchingQuestions = questionService.getMatchingQuestions(true, categoryPk, levelPk);
+                            lastQuestion.addAll(matchingQuestions);
+                        }
+                    }
+                } else if (categoryPks != null && !categoryPks.isEmpty()) {
+                    for (Long categoryPk : categoryPks) {
+                        List<QuestionDTO.SearchQuestionListResponse> categoryQuestions = questionService.getCategoryQuestion(true, categoryPk);
+                        lastQuestion.addAll(categoryQuestions);
+                    }
+                } else if (levelPks != null && !levelPks.isEmpty()) {
                     for (Long levelPk : levelPks) {
-                        List<QuestionDTO.SearchQuestionListResponse> matchingQuestions = questionService.getMatchingQuestions(true, categoryPk, levelPk);
-                        questions.addAll(matchingQuestions);
+                        List<QuestionDTO.SearchQuestionListResponse> levelQuestions = questionService.getLevelQuestionList(true, levelPk);
+                        lastQuestion.addAll(levelQuestions);
+                    }
+
+                }
+
+                for (int i = lastQuestion.size() - 1; i > -1; i--) {
+                    questions.add(lastQuestion.get(i));
+                }
+            } else {
+
+                if (categoryPks != null && !categoryPks.isEmpty() && levelPks != null && !levelPks.isEmpty()) {
+                    for (Long categoryPk : categoryPks) {
+                        for (Long levelPk : levelPks) {
+                            List<QuestionDTO.SearchQuestionListResponse> matchingQuestions = questionService.getMatchingQuestions(false, categoryPk, levelPk);
+                            questions.addAll(matchingQuestions);
+                        }
+                    }
+                } else if (categoryPks != null && !categoryPks.isEmpty()) {
+                    for (Long categoryPk : categoryPks) {
+                        List<QuestionDTO.SearchQuestionListResponse> categoryQuestions = questionService.getCategoryQuestion(false, categoryPk);
+                        questions.addAll(categoryQuestions);
+                    }
+                } else if (levelPks != null && !levelPks.isEmpty()) {
+                    for (Long levelPk : levelPks) {
+                        List<QuestionDTO.SearchQuestionListResponse> levelQuestions = questionService.getLevelQuestionList(false, levelPk);
+                        questions.addAll(levelQuestions);
                     }
                 }
-            } else if (categoryPks != null && !categoryPks.isEmpty()) {
-                for (Long categoryPk : categoryPks) {
-                    List<QuestionDTO.SearchQuestionListResponse> categoryQuestions = questionService.getCategoryQuestion(true, categoryPk);
-                    questions.addAll(categoryQuestions);
-                }
-            } else if (levelPks != null && !levelPks.isEmpty()) {
-                for (Long levelPk : levelPks) {
-                    List<QuestionDTO.SearchQuestionListResponse> levelQuestions = questionService.getLevelQuestionList(true, levelPk);
-                    questions.addAll(levelQuestions);
-                }
-            }
-        } else {
-            if (categoryPks != null && !categoryPks.isEmpty() && levelPks != null && !levelPks.isEmpty()) {
-                for (Long categoryPk : categoryPks) {
-                    for (Long levelPk : levelPks) {
-                        List<QuestionDTO.SearchQuestionListResponse> matchingQuestions = questionService.getMatchingQuestions(false, categoryPk, levelPk);
-                        questions.addAll(matchingQuestions);
-                    }
-                }
-            } else if (categoryPks != null && !categoryPks.isEmpty()) {
-                for (Long categoryPk : categoryPks) {
-                    List<QuestionDTO.SearchQuestionListResponse> categoryQuestions = questionService.getCategoryQuestion(false, categoryPk);
-                    questions.addAll(categoryQuestions);
-                }
-            } else if (levelPks != null && !levelPks.isEmpty()) {
-                for (Long levelPk : levelPks) {
-                    List<QuestionDTO.SearchQuestionListResponse> levelQuestions = questionService.getLevelQuestionList(false, levelPk);
-                    questions.addAll(levelQuestions);
-                }
-            }
-            if (questions.isEmpty()) {
-                questions = questionService.getQuestion();
 
             }
         }
