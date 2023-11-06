@@ -88,8 +88,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(map);
     }
 
-    @GetMapping("/username/{username}/exists") //중복 닉네임 확인
-    public ResponseEntity<Map> isExistsNickname(@PathVariable("username") String nickName) {
+    @GetMapping("/nickname/{nickname}/exists") //중복 닉네임 확인
+    public ResponseEntity<Map> isExistsNickname(@PathVariable("nickname") String nickName) {
         Map<String, Boolean> map = new HashMap<>();
         map.put("exists", userService.isExistNickname(nickName));
 
