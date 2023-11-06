@@ -1,0 +1,3 @@
+[submodule "SEcodeverse-Back-Submodule"]
+	path = SEcodeverse-Back-Submodule
+	url = https://github.com/CoperateCoding/SEcodeverse-Back-Submodule.git

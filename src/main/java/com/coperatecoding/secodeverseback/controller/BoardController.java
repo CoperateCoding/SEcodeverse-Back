@@ -32,7 +32,7 @@ public class BoardController {
 
     private final BoardService boardService;
     private final BoardImgService boardImgService;
-    
+
     @Operation(summary = "게시글 작성", description = """
     [로그인 필요]
     일단 지금은 이미지 제외함. s3 비용때문에 최대한 나중에 구현 예정

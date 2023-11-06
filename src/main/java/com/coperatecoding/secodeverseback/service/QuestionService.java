@@ -4,16 +4,22 @@ import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.domain.question.Level;
 import com.coperatecoding.secodeverseback.domain.question.Question;
 import com.coperatecoding.secodeverseback.domain.question.QuestionCategory;
+import com.coperatecoding.secodeverseback.dto.BoardSortType;
 import com.coperatecoding.secodeverseback.dto.QuestionDTO;
+import com.coperatecoding.secodeverseback.dto.QuestionSortType;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.repository.LevelRepository;
 import com.coperatecoding.secodeverseback.repository.QuestionCategoryRepository;
 import com.coperatecoding.secodeverseback.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.print.Pageable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -72,18 +78,22 @@ public class QuestionService {
         for(Question question:questions){
             QuestionDTO.SearchQuestionListRequest request = QuestionDTO.SearchQuestionListRequest.questions(
                     question.getPk(),
+                    user.getUsername(),
                     question.getLevel().getPk(),
                     question.getTitle(),
-                    question.getIntro()
+                    question.getIntro(),
+                    question.getCategory().getPk()
             );
 
             QuestionDTO.SearchQuestionResponse response = getQuestion(request);
 
             QuestionDTO.SearchQuestionResponse questionDTO = QuestionDTO.SearchQuestionResponse.builder()
                     .pk(response.getPk())
+                    .userName(response.getUserName())
                     .levelPk(response.getLevelPk())
                     .title(response.getTitle())
                     .intro(response.getIntro())
+                    .categoryPk(response.getCategoryPk())
                     .build();
             questionDTOS.add(questionDTO);
 
@@ -95,20 +105,25 @@ public class QuestionService {
         List<Question> questions=questionRepository.findByTitleContaining(keyword);
         List<QuestionDTO.SearchQuestionResponse> questionDTOS= new ArrayList<>();
         for(Question question:questions){
+            User user = question.getUser();
             QuestionDTO.SearchQuestionListRequest request = QuestionDTO.SearchQuestionListRequest.questions(
                     question.getPk(),
+                    user.getUsername(),
                     question.getLevel().getPk(),
                     question.getTitle(),
-                    question.getIntro()
+                    question.getIntro(),
+                    question.getCategory().getPk()
             );
 
             QuestionDTO.SearchQuestionResponse response = getQuestion(request);
 
             QuestionDTO.SearchQuestionResponse questionDTO = QuestionDTO.SearchQuestionResponse.builder()
                     .pk(response.getPk())
+                    .userName(response.getUserName())
                     .levelPk(response.getLevelPk())
                     .title(response.getTitle())
                     .intro(response.getIntro())
+                    .categoryPk(response.getCategoryPk())
                     .build();
             questionDTOS.add(questionDTO);
 
@@ -124,20 +139,25 @@ public class QuestionService {
         List<Question>questions = questionRepository.findAll();
         List<QuestionDTO.SearchQuestionResponse> questionDTOS= new ArrayList<>();
         for(Question question:questions){
+            User user = question.getUser();
             QuestionDTO.SearchQuestionListRequest request = QuestionDTO.SearchQuestionListRequest.questions(
                     question.getPk(),
+                    user.getUsername(),
                     question.getLevel().getPk(),
                     question.getTitle(),
-                    question.getIntro()
+                    question.getIntro(),
+                    question.getCategory().getPk()
             );
 
             QuestionDTO.SearchQuestionResponse response = getQuestion(request);
 
             QuestionDTO.SearchQuestionResponse questionDTO = QuestionDTO.SearchQuestionResponse.builder()
                     .pk(response.getPk())
+                    .userName(response.getUserName())
                     .levelPk(response.getLevelPk())
                     .title(response.getTitle())
                     .intro(response.getIntro())
+                    .categoryPk(response.getCategoryPk())
                     .build();
             questionDTOS.add(questionDTO);
 
@@ -148,9 +168,11 @@ public class QuestionService {
     public QuestionDTO.SearchQuestionResponse getByPk(Question question){
         QuestionDTO.SearchQuestionResponse response = QuestionDTO.SearchQuestionResponse.builder()
                 .pk(question.getPk())
+                .userName(question.getUser().getUsername())
                 .levelPk(question.getLevel().getPk())
                 .title(question.getTitle())
                 .intro(question.getIntro())
+                .categoryPk(question.getCategory().getPk())
                 .build();
 
         return response;
@@ -159,14 +181,52 @@ public class QuestionService {
     public QuestionDTO.SearchQuestionResponse getQuestion(QuestionDTO.SearchQuestionListRequest request){
         QuestionDTO.SearchQuestionResponse response = QuestionDTO.SearchQuestionResponse.builder()
                 .pk(request.getPk())
+                .userName(request.getUserName())
                 .levelPk(request.getLevelPk())
                 .title(request.getTitle())
                 .intro(request.getIntro())
+                .categoryPk(request.getCategoryPk())
                 .build();
 
         return response;
     }
 
+    public List<QuestionDTO.SearchQuestionResponse> getRecentQuestion(){
+
+
+        List<Question>questions = questionRepository.findAll();
+        List<QuestionDTO.SearchQuestionResponse>resultQuestions=new ArrayList<>();
+        List<QuestionDTO.SearchQuestionResponse> questionDTOS= new ArrayList<>();
+        for(Question question:questions){
+            User user=question.getUser();
+            QuestionDTO.SearchQuestionListRequest request = QuestionDTO.SearchQuestionListRequest.questions(
+                    question.getPk(),
+                    user.getUsername(),
+                    question.getLevel().getPk(),
+                    question.getTitle(),
+                    question.getIntro(),
+                    question.getCategory().getPk()
+            );
+
+            QuestionDTO.SearchQuestionResponse response = getQuestion(request);
+
+            QuestionDTO.SearchQuestionResponse questionDTO = QuestionDTO.SearchQuestionResponse.builder()
+                    .pk(response.getPk())
+                    .userName(response.getUserName())
+                    .levelPk(response.getLevelPk())
+                    .title(response.getTitle())
+                    .intro(response.getIntro())
+                    .categoryPk(response.getCategoryPk())
+                    .build();
+            questionDTOS.add(questionDTO);
+
+
+        }
+        for(int i=0,j=questionDTOS.size()-2; i<7; i++,j--){
+            resultQuestions.add(questionDTOS.get(j));
+        }
+        return resultQuestions;
+    }
 
     public List<QuestionDTO.SearchQuestionResponse> getLevelQuestionList(boolean isSort, Long levelPk){
         Level level = levelRepository.findById(levelPk).orElseThrow(() -> new NotFoundException("해당하는 레벨 존재하지 않음"));;
@@ -174,20 +234,25 @@ public class QuestionService {
         List<Question>questions = questionRepository.findByLevel(level);
         List<QuestionDTO.SearchQuestionResponse> questionDTOS= new ArrayList<>();
         for(Question question:questions){
+            User user=question.getUser();
             QuestionDTO.SearchQuestionListRequest request = QuestionDTO.SearchQuestionListRequest.questions(
                     question.getPk(),
+                    user.getUsername(),
                     question.getLevel().getPk(),
                     question.getTitle(),
-                    question.getIntro()
+                    question.getIntro(),
+                    question.getCategory().getPk()
             );
 
             QuestionDTO.SearchQuestionResponse response = getQuestion(request);
 
             QuestionDTO.SearchQuestionResponse questionDTO = QuestionDTO.SearchQuestionResponse.builder()
                     .pk(response.getPk())
+                    .userName(response.getUserName())
                     .levelPk(response.getLevelPk())
                     .title(response.getTitle())
                     .intro(response.getIntro())
+                    .categoryPk(response.getCategoryPk())
                     .build();
             questionDTOS.add(questionDTO);
             if(isSort==true){
@@ -205,20 +270,25 @@ public class QuestionService {
 
         List<QuestionDTO.SearchQuestionResponse> questionDTOS= new ArrayList<>();
         for(Question question:questions){
+            User user = question.getUser();
             QuestionDTO.SearchQuestionListRequest request = QuestionDTO.SearchQuestionListRequest.questions(
                     question.getPk(),
+                    user.getUsername(),
                     question.getLevel().getPk(),
                     question.getTitle(),
-                    question.getIntro()
+                    question.getIntro(),
+                    question.getCategory().getPk()
             );
 
             QuestionDTO.SearchQuestionResponse response = getQuestion(request);
 
             QuestionDTO.SearchQuestionResponse questionDTO = QuestionDTO.SearchQuestionResponse.builder()
                     .pk(response.getPk())
+                    .userName(response.getUserName())
                     .levelPk(response.getLevelPk())
                     .title(response.getTitle())
                     .intro(response.getIntro())
+                    .categoryPk(response.getCategoryPk())
                     .build();
             questionDTOS.add(questionDTO);
             if(isSort==true){
@@ -238,20 +308,25 @@ public class QuestionService {
 
         List<QuestionDTO.SearchQuestionResponse> questionDTOS = new ArrayList<>();
         for (Question question : questions) {
+            User user = question.getUser();
             QuestionDTO.SearchQuestionListRequest request = QuestionDTO.SearchQuestionListRequest.questions(
                     question.getPk(),
+                    user.getUsername(),
                     question.getLevel().getPk(),
                     question.getTitle(),
-                    question.getIntro()
+                    question.getIntro(),
+                    question.getCategory().getPk()
             );
 
             QuestionDTO.SearchQuestionResponse response = getQuestion(request);
 
             QuestionDTO.SearchQuestionResponse questionDTO = QuestionDTO.SearchQuestionResponse.builder()
                     .pk(response.getPk())
+                    .userName(response.getUserName())
                     .levelPk(response.getLevelPk())
                     .title(response.getTitle())
                     .intro(response.getIntro())
+                    .categoryPk(response.getCategoryPk())
                     .build();
 
             questionDTOS.add(questionDTO);

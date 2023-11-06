@@ -30,23 +30,23 @@ public class SecurityConfig {
 //            "/logout"
     };
 
-//    private final JwtAuthenticationFilter jwtAuthFilter;
+    //    private final JwtAuthenticationFilter jwtAuthFilter;
     private final JwtExceptionFilter jwtExceptionFilter;
     private final AuthenticationProvider authenticationProvider;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf().disable()
-            .httpBasic().disable()
-            .cors().configurationSource(corsConfigurationSource())
-            .and()
-            .authorizeHttpRequests()
-            .requestMatchers(whiteList).permitAll()
-            .requestMatchers( "/api/v1/admin/**").hasAuthority("ADMIN")
-            .anyRequest().authenticated()
-         .and()
-         .authenticationProvider(authenticationProvider);
+                .csrf().disable()
+                .httpBasic().disable()
+                .cors().configurationSource(corsConfigurationSource())
+                .and()
+                .authorizeHttpRequests()
+                .requestMatchers(whiteList).permitAll()
+                .requestMatchers( "/api/v1/admin/**").hasAuthority("ADMIN")
+                .anyRequest().authenticated()
+                .and()
+                .authenticationProvider(authenticationProvider);
 //         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
 //        .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
 

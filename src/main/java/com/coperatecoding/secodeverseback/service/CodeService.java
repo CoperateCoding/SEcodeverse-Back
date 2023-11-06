@@ -52,6 +52,29 @@ public class CodeService {
         return codeDTOS;
     }
 
+    public List<CodeDTO.SearchCodeListResponse> getCorrectQuestion(User user){
+        CodeStatus codeStatus = CodeStatus.TRUE;
+        List<Code>codes = codeRepository.findByStatusAndUser(codeStatus,user);
+        List<CodeDTO.SearchCodeListResponse>codeDTOS = new ArrayList<>();
+        for(Code code: codes){
+            CodeDTO.SearchCodeListRequest request = CodeDTO.SearchCodeListRequest.Codes(
+                    code.getPk(),
+                    code.getStatus(),
+                    code.getQuestion().getPk()
+            );
+            CodeDTO.SearchCodeListResponse response = getCodes(request);
+            CodeDTO.SearchCodeListResponse codeDTO = CodeDTO.SearchCodeListResponse.builder()
+                    .pk(response.getPk())
+                    .codeStatus(response.getCodeStatus())
+                    .questionPk(response.getQuestionPk())
+                    .build();
+            codeDTOS.add(codeDTO);
+
+
+        }
+        return codeDTOS;
+    }
+
     public List<CodeDTO.SearchCodeListResponse> getUserCodes(User user){
         List<Code>codes = codeRepository.findByUser(user);
         List<CodeDTO.SearchCodeListResponse>codeDTOS = new ArrayList<>();

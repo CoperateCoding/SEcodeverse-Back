@@ -80,7 +80,7 @@ public class QuestionController {
             questionService.deleteQuestion(questionPk);
             return ResponseEntity.noContent().build();
         }
-            catch(NotFoundException e){
+        catch(NotFoundException e){
             return ResponseEntity.notFound().build();
         }
 
@@ -100,8 +100,8 @@ public class QuestionController {
         return ResponseEntity.ok(questions);
     }
 
-@GetMapping("/wrong/user={userPk}")
-public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>> getWrongQuestion(@AuthenticationPrincipal User user){
+    @GetMapping("/wrong/user={userPk}")
+    public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>> getWrongQuestion(@AuthenticationPrincipal User user){
 
         List<CodeDTO.SearchCodeListResponse>codes=codeService.getWrongCodes(user);
         List<QuestionDTO.SearchQuestionResponse> questions=new ArrayList<>();
@@ -112,7 +112,22 @@ public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>> getWrongQuestion
 
         }
 
-    return ResponseEntity.ok(questions);
+        return ResponseEntity.ok(questions);
+    }
+
+    @GetMapping("/correct/user={userPk}")
+    public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>> getCorrectQuestion(@AuthenticationPrincipal User user){
+
+        List<CodeDTO.SearchCodeListResponse>codes=codeService.getCorrectQuestion(user);
+        List<QuestionDTO.SearchQuestionResponse> questions=new ArrayList<>();
+        for(CodeDTO.SearchCodeListResponse code: codes){
+            Question question = questionService.findByPk(code.getQuestionPk());
+            QuestionDTO.SearchQuestionResponse questionDTO=questionService.getByPk(question);
+            questions.add(questionDTO);
+
+        }
+
+        return ResponseEntity.ok(questions);
     }
 
     @GetMapping("/{questionPk}")
@@ -138,8 +153,14 @@ public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>> getWrongQuestion
 
     @GetMapping("/keyword={keyword}")
     public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>> getKeywordQuestion(@PathVariable String keyword){
-            List<QuestionDTO.SearchQuestionResponse> question= questionService.getKeywordQuestion(keyword);
+        List<QuestionDTO.SearchQuestionResponse> question= questionService.getKeywordQuestion(keyword);
         return ResponseEntity.ok(question);
+    }
+
+    @GetMapping("/recent")
+    public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>> getRecentQuestion(){
+        List<QuestionDTO.SearchQuestionResponse> questions = questionService.getRecentQuestion();
+        return ResponseEntity.ok(questions);
     }
     @GetMapping("")
     public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>> getQuestions(
@@ -152,7 +173,7 @@ public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>> getWrongQuestion
         List<QuestionDTO.SearchQuestionResponse> questions = new ArrayList<>();
 
 
-            if (sort != null) {
+        if (sort != null) {
             if (categoryPks != null && !categoryPks.isEmpty() && levelPks != null && !levelPks.isEmpty()) {
                 for (Long categoryPk : categoryPks) {
                     for (Long levelPk : levelPks) {
@@ -196,11 +217,10 @@ public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>> getWrongQuestion
             }
         }
 
-            return ResponseEntity.ok(questions);
-        }
-
-
+        return ResponseEntity.ok(questions);
     }
 
+
+}
 
 
