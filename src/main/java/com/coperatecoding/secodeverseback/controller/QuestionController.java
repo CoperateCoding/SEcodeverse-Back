@@ -115,6 +115,21 @@ public class QuestionController {
         return ResponseEntity.ok(questions);
     }
 
+    @GetMapping("/correct/user={userPk}")
+    public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>> getCorrectQuestion(@AuthenticationPrincipal User user){
+
+        List<CodeDTO.SearchCodeListResponse>codes=codeService.getCorrectQuestion(user);
+        List<QuestionDTO.SearchQuestionResponse> questions=new ArrayList<>();
+        for(CodeDTO.SearchCodeListResponse code: codes){
+            Question question = questionService.findByPk(code.getQuestionPk());
+            QuestionDTO.SearchQuestionResponse questionDTO=questionService.getByPk(question);
+            questions.add(questionDTO);
+
+        }
+
+        return ResponseEntity.ok(questions);
+    }
+
     @GetMapping("/{questionPk}")
     public ResponseEntity<QuestionAndTestAndImageDTO.QuestionAndTest> detailQuestion(@PathVariable Long questionPk) {
 
@@ -140,6 +155,12 @@ public class QuestionController {
     public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>> getKeywordQuestion(@PathVariable String keyword){
         List<QuestionDTO.SearchQuestionResponse> question= questionService.getKeywordQuestion(keyword);
         return ResponseEntity.ok(question);
+    }
+
+    @GetMapping("/recent")
+    public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>> getRecentQuestion(){
+        List<QuestionDTO.SearchQuestionResponse> questions = questionService.getRecentQuestion();
+        return ResponseEntity.ok(questions);
     }
     @GetMapping("")
     public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>> getQuestions(

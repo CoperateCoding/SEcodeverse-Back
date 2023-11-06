@@ -191,6 +191,42 @@ public class QuestionService {
         return response;
     }
 
+    public List<QuestionDTO.SearchQuestionResponse> getRecentQuestion(){
+
+
+        List<Question>questions = questionRepository.findAll();
+        List<QuestionDTO.SearchQuestionResponse>resultQuestions=new ArrayList<>();
+        List<QuestionDTO.SearchQuestionResponse> questionDTOS= new ArrayList<>();
+        for(Question question:questions){
+            User user=question.getUser();
+            QuestionDTO.SearchQuestionListRequest request = QuestionDTO.SearchQuestionListRequest.questions(
+                    question.getPk(),
+                    user.getUsername(),
+                    question.getLevel().getPk(),
+                    question.getTitle(),
+                    question.getIntro(),
+                    question.getCategory().getPk()
+            );
+
+            QuestionDTO.SearchQuestionResponse response = getQuestion(request);
+
+            QuestionDTO.SearchQuestionResponse questionDTO = QuestionDTO.SearchQuestionResponse.builder()
+                    .pk(response.getPk())
+                    .userName(response.getUserName())
+                    .levelPk(response.getLevelPk())
+                    .title(response.getTitle())
+                    .intro(response.getIntro())
+                    .categoryPk(response.getCategoryPk())
+                    .build();
+            questionDTOS.add(questionDTO);
+
+
+        }
+        for(int i=0,j=questionDTOS.size()-2; i<7; i++,j--){
+            resultQuestions.add(questionDTOS.get(j));
+        }
+        return resultQuestions;
+    }
 
     public List<QuestionDTO.SearchQuestionResponse> getLevelQuestionList(boolean isSort, Long levelPk){
         Level level = levelRepository.findById(levelPk).orElseThrow(() -> new NotFoundException("해당하는 레벨 존재하지 않음"));;
@@ -301,15 +337,6 @@ public class QuestionService {
 
         return questionDTOS;
     }
-    public List<QuestionDTO.PopularResponse> getPopularQuestionList() throws RuntimeException{
-        Pageable pageable = makePageable(QuestionSortType.POP, 1, 7);
-        Page<Question>list=questionRepository.findAll(pageable)
-    }
 
-    private Pageable makePageable(QuestionSortType sortType, Integer page, Integer pageSize) throws RuntimeException{
-        Sort sort;
-        sort = org.springframework.data.domain.Sort.by(Sort.Direction.DESC, "likeCnt");
-        return (Pageable) PageRequest.of(page,pageSize,sort);
-    }
 
 }
