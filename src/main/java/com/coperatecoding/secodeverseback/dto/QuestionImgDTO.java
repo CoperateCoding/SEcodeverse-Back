@@ -18,12 +18,12 @@ public class QuestionImgDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SearchQuestionImgListRequest {
+    public static class SearchQuestionImgRequest {
         private Long pk;
         private String imgUrl;
 
-        public static SearchQuestionImgListRequest questionImg(Long imgPk,String url){
-            return new SearchQuestionImgListRequest(imgPk,url);
+        public static SearchQuestionImgRequest questionImg(Long imgPk, String url){
+            return new SearchQuestionImgRequest(imgPk,url);
         }
 
     }
@@ -34,7 +34,7 @@ public class QuestionImgDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SearchQuestionImgListResponse {
+    public static class SearchQuestionImgResponse {
         private Long pk;
         private String imgUrl;
 

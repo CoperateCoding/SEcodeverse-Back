@@ -1,15 +1,8 @@
 package com.coperatecoding.secodeverseback.dto;
 
-import com.coperatecoding.secodeverseback.domain.TestCase;
-import com.coperatecoding.secodeverseback.domain.User;
-import com.coperatecoding.secodeverseback.domain.question.Level;
-import com.coperatecoding.secodeverseback.domain.question.QuestionCategory;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.ArrayList;
 public class QuestionDTO {
 
     @Getter
@@ -58,13 +51,27 @@ public class QuestionDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SearchQuestionListResponse {
+    public static class SearchQuestionResponse {
         private Long pk;
         private String userName;
         private Long levelPk;
         private String title;
         private String intro;
         private Long categoryPk;
+
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PopularResponse {
+        private Long pk;
+        private String userName;
+        private Long levelPk;
+        private String title;
+        private String categoryName;
 
     }
 
