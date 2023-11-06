@@ -6,7 +6,6 @@ import com.coperatecoding.secodeverseback.dto.*;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.service.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -145,7 +144,7 @@ public ResponseEntity<List<QuestionDTO.SearchQuestionListResponse>>getWrongQuest
     @GetMapping("")
     public ResponseEntity<List<QuestionDTO.SearchQuestionListResponse>> getQuestions(
             @RequestParam(value = "q", required = false) String q,
-            @RequestParam(value = "sort", required = false) SortType sort,
+            @RequestParam(value = "sort", required = false) QuestionSortType sort,
             @RequestParam(value = "categoryPk", required = false) List<Long> categoryPks,
             @RequestParam(value = "levelPk", required = false) List<Long> levelPks
     ) {

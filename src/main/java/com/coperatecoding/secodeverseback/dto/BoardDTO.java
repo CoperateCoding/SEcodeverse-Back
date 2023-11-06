@@ -54,9 +54,9 @@ public class BoardDTO {
         @Builder.Default
         @Min(value = 1, message = "page는 0보다 커야합니다")
         private Integer page = 1;
-        private SortType sort;
+        private QuestionSortType sort;
 
-        public static SearchListRequest makeRequest(Long categoryPk, String q, Integer pageSize, Integer page, SortType sort) {
+        public static SearchListRequest makeRequest(Long categoryPk, String q, Integer pageSize, Integer page, QuestionSortType sort) {
             return new SearchListRequest(categoryPk, q, pageSize, page, sort);
         }
     }
@@ -68,6 +68,7 @@ public class BoardDTO {
     @AllArgsConstructor
     public static class SearchResponse {
         private Long pk;
+        private String writerNickname;
         private String title;
         private String preview;
         private Long likeCnt;
@@ -90,6 +91,28 @@ public class BoardDTO {
         private String content;
         private List<BoardImage> imageList = new ArrayList<>();
 
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class PopularBoardResponse {
+        private Long boardPk;
+        private String title;
+        private Long likeCnt;
+        private Long commentCnt;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class PopularBoardListResponse {
+        private int cnt;
+        private List<PopularBoardResponse> list;
     }
 
 
