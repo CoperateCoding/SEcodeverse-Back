@@ -268,6 +268,29 @@ public class BoardService {
         return boardResponses;
     }
 
+    public BoardDTO.BoardDetailResponse getDetailBoard(Long boardPk) throws NoSuchElementException {
+        Board board = boardRepository.findById(boardPk)
+                .orElseThrow(() -> new NotFoundException("해당하는 게시글이 존재하지 않음"));
+
+        User writer = board.getUser();
+
+        BoardDTO.BoardDetailResponse boardDetailResponse = BoardDTO.BoardDetailResponse.builder()
+                .pk(board.getPk())
+                .writer(writer.getNickname())
+                .profileUrl(writer.getBadge().getImgUrl())
+                .category(board.getCategory())
+                .createAt(board.convertDate(board.getCreateAt()))
+                .updateAt(board.convertDate(board.getUpdateAt()))
+                .likeCnt(board.getLikeCnt())
+                .commentCnt(board.getCommentCnt())
+                .title(board.getTitle())
+                .content(board.getContent())
+                .build();
+
+        return boardDetailResponse;
+
+    }
+
 
 //    private List<BoardImage> getBoardImage(Board board, List<BoardImage> imageList) {
 //
