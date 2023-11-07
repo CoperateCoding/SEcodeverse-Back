@@ -73,4 +73,11 @@ public class BoardImgService {
     }
 
 
+    public BoardImage editBoardImg(Long imgPk, BoardImgDTO.AddBoardImgRequest addBoardImgRequest) throws RuntimeException {
+
+        BoardImage boardImage = boardImageRepository.findById(imgPk)
+                .orElseThrow(() -> new NotFoundException("해당하는 게시글 이미지가 존재하지 않음"));
+        boardImage.edit(addBoardImgRequest.getImgUrl());
+        return boardImage;
+    }
 }

@@ -121,6 +121,25 @@ public class BoardController {
     }
 
 
+//    @Operation(summary = "게시글 수정", description = """
+//      [로그인 필요] 작성자 or 관리자만 게시글을 수정 가능<br>
+//      null로 들어오면 해당 값은 수정되지 않음<br>
+//      200: 성공<br>
+//      403: 수정할 권한 없음<br>
+//      404: 해당하는 pk의 게시글이 없음
+//      """)
+//    @PatchMapping("/{boardPk}")
+//    public ResponseEntity editBoard(
+//            @AuthenticationPrincipal User user,
+//            @PathVariable Long boardPk,
+//            @RequestBody BoardDTO.AddBoardRequest addBoardRequest
+//    ) throws NoSuchElementException, ForbiddenException {
+//
+//        boardService.editBoard(user, boardPk, addBoardRequest);
+//
+//        return ResponseEntity.ok().build();
+//    }
+
     @Operation(summary = "게시글 수정", description = """
       [로그인 필요] 작성자 or 관리자만 게시글을 수정 가능<br>
       null로 들어오면 해당 값은 수정되지 않음<br>
@@ -129,15 +148,53 @@ public class BoardController {
       404: 해당하는 pk의 게시글이 없음
       """)
     @PatchMapping("/{boardPk}")
-    public ResponseEntity editBoard(
+    public ResponseEntity editBoard (
             @AuthenticationPrincipal User user,
             @PathVariable Long boardPk,
-            @RequestBody BoardDTO.AddBoardRequest addBoardRequest
+            @RequestBody BoardAndImageDTO.AddBoardAndImageRequest addBoardAndImageRequest
     ) throws NoSuchElementException, ForbiddenException {
 
-        boardService.editBoard(user, boardPk, addBoardRequest);
+        boardService.editBoard(user, boardPk, addBoardAndImageRequest.getBoard());
+//        List<BoardImgDTO.SearchResponse> boardImgDTOS = boardImgService.getBoardImg(boardPk);
+//
+//        int j=0;
+//        System.out.println(addBoardAndImageRequest.getImgList().size());
+//        for(BoardImgDTO.SearchResponse boardImg: boardImgDTOS){
+//            System.out.println(addBoardAndImageRequest.getImgList().get(j).getImgUrl());
+//            boardImgService.editBoardImg(boardImg.getPk(),addBoardAndImageRequest.getImgList().get(j));
+//            j++;
+//        }
+        // 기존 이미지 가져오기
+        List<BoardImgDTO.SearchResponse> boardImgDTOS = boardImgService.getBoardImg(boardPk);
 
-        return ResponseEntity.ok().build();
+        // 새로운 이미지 리스트가 있다면
+        if (addBoardAndImageRequest.getImgList() != null) {
+            int j = 0;
+            for (BoardImgDTO.SearchResponse boardImg : boardImgDTOS) {
+                // 새로운 이미지가 존재하면 수정
+                if (j < addBoardAndImageRequest.getImgList().size()) {
+                    boardImgService.editBoardImg(boardImg.getPk(), addBoardAndImageRequest.getImgList().get(j));
+                } else {
+                    // 새 이미지 리스트 크기를 벗어나면 이미지 삭제
+                    boardImgService.delete(boardImg.getPk());
+                }
+                j++;
+            }
+
+            // 나머지 새 이미지 추가
+            for (; j < addBoardAndImageRequest.getImgList().size(); j++) {
+                boardImgService.makeBoardImage(boardPk, addBoardAndImageRequest.getImgList().get(j));
+            }
+        } else {
+            // 새 이미지 리스트가 null이면 모든 기존 이미지 삭제
+            for (BoardImgDTO.SearchResponse boardImg : boardImgDTOS) {
+                boardImgService.delete(boardImg.getPk());
+            }
+        }
+
+
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @Operation(summary = "게시글 삭제", description = """
