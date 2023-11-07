@@ -12,9 +12,10 @@ import java.util.List;
 public interface QuestionRepository extends JpaRepository<Question, Long> {
         List<Question> findByCategory(QuestionCategory questionCategory);
         List<Question> findByLevel(Level level);
-        List<Question>findByCategoryAndLevel(QuestionCategory questionCategory, Level level);
         List<Question> findByTitleContaining(String title);
         Page<Question> findByUser(User user, Pageable pageable);
-        List<Question> findByUser(User user);}
+        List<Question> findByUser(User user);
+
+}
 
 
