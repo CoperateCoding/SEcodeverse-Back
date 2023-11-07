@@ -270,13 +270,18 @@ public class QuestionService {
 
 
         }
-        for(int i=0,j=questionDTOS.size()-2; i<7 && i<questionDTOS.size()-1 ; i++,j--){
-            resultQuestions.add(questionDTOS.get(j));
+//        for(int i=0, j=questionDTOS.size()-2; i<7 && i<questionDTOS.size()-1 ; i++,j--){
+//            resultQuestions.add(questionDTOS.get(j));
+//        }
+        int numQuestions = questionDTOS.size();
+        for (int i = numQuestions - 1; i >= 0; i--) {
+            resultQuestions.add(questionDTOS.get(i));
         }
+
         return resultQuestions;
     }
 
-    public List<QuestionDTO.SearchQuestionResponse> getLevelQuestionList(boolean isSort, Long levelPk){
+    public List<QuestionDTO.SearchQuestionResponse> getLevelQuestionList( Long levelPk){
         Level level = levelRepository.findById(levelPk).orElseThrow(() -> new NotFoundException("해당하는 레벨 존재하지 않음"));;
 
         List<Question>questions = questionRepository.findByLevel(level);
@@ -303,15 +308,11 @@ public class QuestionService {
                     .categoryPk(response.getCategoryPk())
                     .build();
             questionDTOS.add(questionDTO);
-            if(isSort==true){
-                Collections.sort(questionDTOS, (q1, q2) -> q1.getLevelPk().compareTo(q2.getLevelPk()));
-            }
-
         }
         return questionDTOS;
     }
 
-    public List<QuestionDTO.SearchQuestionResponse> getCategoryQuestion(boolean isSort, Long categoryPk){
+    public List<QuestionDTO.SearchQuestionResponse> getCategoryQuestion(Long categoryPk){
         QuestionCategory questionCategory = questionCategoryRepository.findById(categoryPk).orElseThrow(() -> new NotFoundException("해당하는 카테고리가 존재하지 않음"));;
 
         List<Question> questions = questionRepository.findByCategory(questionCategory);
@@ -339,13 +340,11 @@ public class QuestionService {
                     .categoryPk(response.getCategoryPk())
                     .build();
             questionDTOS.add(questionDTO);
-            if(isSort==true){
-                Collections.sort(questionDTOS, (q1, q2) -> q1.getLevelPk().compareTo(q2.getLevelPk()));
-            }
+
         }
         return questionDTOS;
     }
-    public List<QuestionDTO.SearchQuestionResponse> getMatchingQuestions(boolean isSort, Long categoryPk, Long levelPk) {
+    public List<QuestionDTO.SearchQuestionResponse> getMatchingQuestions(Long categoryPk, Long levelPk) {
         QuestionCategory questionCategory = questionCategoryRepository.findById(categoryPk)
                 .orElseThrow(() -> new NotFoundException("해당하는 카테고리가 존재하지 않음"));
 
@@ -379,9 +378,7 @@ public class QuestionService {
 
             questionDTOS.add(questionDTO);
         }
-        if(isSort==true){
-            Collections.sort(questionDTOS, (q1, q2) -> q1.getLevelPk().compareTo(q2.getLevelPk()));
-        }
+
 
         return questionDTOS;
     }
