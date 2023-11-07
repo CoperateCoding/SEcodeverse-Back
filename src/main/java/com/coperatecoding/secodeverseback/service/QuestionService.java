@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -472,6 +473,8 @@ public class QuestionService {
     public Page<QuestionDTO.SearchQuestionResponse> getQuestionList(int page, int pageSize, String q, QuestionSortType sort, List<Long> categoryPks, List<Long> levelPks) {
         List<Question> questions = questionRepository.findAll();
 
+
+
         List<Question> filteredQuestions = questions.stream()
                 .filter(question -> {
                     // 카테고리 필터링
@@ -498,6 +501,13 @@ public class QuestionService {
 
 //        int start = Math.min(page * pageSize, filteredQuestions.size() - 1);
 //        int end = Math.min((start + pageSize), filteredQuestions.size());
+
+        if (sort == QuestionSortType.RECENT) {
+            filteredQuestions.sort(Comparator.comparing(Question::getCreateAt).reversed());
+        }
+
+
+
         int start = page * pageSize;
         int end = Math.min(start + pageSize, filteredQuestions.size());
 
