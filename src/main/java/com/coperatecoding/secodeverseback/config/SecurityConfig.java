@@ -26,7 +26,7 @@ public class SecurityConfig {
             "/api/v1/user/login", "api/v1/user/signup", "api/v1/user/info/my",
             "/error", "api/v1/s3/*",
             "/api/v1/token/validate", "/api/v1/token/reissue", "api/v1/user/username/**", "api/v1/user/id/**",
-            "api/v1/board/**", "api/v1/comment/**","/api/v1/likes/**","api/v1/question/**","test/hello"// 이건 다 임의로 넣어둠.
+            "api/v1/board/**", "api/v1/comment/**","/api/v1/likes/**","api/v1/question/**","test/hello","api/v1/chatbot"// 이건 다 임의로 넣어둠.
 //            "/logout"
     };
 
