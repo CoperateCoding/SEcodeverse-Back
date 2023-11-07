@@ -270,7 +270,7 @@ public class QuestionService {
 
 
         }
-        for(int i=0,j=questionDTOS.size()-2; i<7; i++,j--){
+        for(int i=0,j=questionDTOS.size()-2; i<7 && i<questionDTOS.size()-1 ; i++,j--){
             resultQuestions.add(questionDTOS.get(j));
         }
         return resultQuestions;
