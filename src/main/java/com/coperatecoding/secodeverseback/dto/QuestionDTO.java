@@ -45,8 +45,40 @@ public class QuestionDTO {
         }
 
     }
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class questionPagingRequest {
+        private int cnt;
+        private Long pk;
+        private String userName;
+        private Long levelPk;
+        private String title;
+        private String intro;
+        private Long categoryPk;
 
+        public static questionPagingRequest questions(int cnt,Long pk, String userName, Long levelPk, String title, String intro, Long questionPk) {
+            return new questionPagingRequest(cnt, pk, userName, levelPk, title, intro, questionPk);
+        }
 
+    }
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class questionPagingResponse {
+        private int cnt;
+        private Long pk;
+        private String userName;
+        private Long levelPk;
+        private String title;
+        private String intro;
+        private Long categoryPk;
+
+    }
     @Getter
     @Setter
     @Builder

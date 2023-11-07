@@ -32,6 +32,9 @@ public class BoardService {
     public Board makeBoard(User user, BoardDTO.AddBoardRequest addBoardRequest) throws RuntimeException {
 
         // 카테고리 올바른지 확인
+        System.out.println(addBoardRequest.getCategoryPk());
+        System.out.println(addBoardRequest.getTitle());
+        System.out.println(addBoardRequest.getContent());
         BoardCategory category = boardCategoryRepository.findById(addBoardRequest.getCategoryPk())
                 .orElseThrow(() -> new NotFoundException("해당하는 카테고리가 존재하지 않음"));
 
