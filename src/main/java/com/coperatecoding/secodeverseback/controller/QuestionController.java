@@ -209,48 +209,56 @@ public class QuestionController {
         List<QuestionDTO.SearchQuestionResponse> questions = new ArrayList<>();
 
 
-        if (sort != null) {
+        if (sort == sort.RECENT) {
+            List<QuestionDTO.SearchQuestionResponse> tmpQ=new ArrayList<>();
+            if(categoryPks == null && levelPks == null){
+                tmpQ=questionService.getQuestion();
+            }
             if (categoryPks != null && !categoryPks.isEmpty() && levelPks != null && !levelPks.isEmpty()) {
                 for (Long categoryPk : categoryPks) {
                     for (Long levelPk : levelPks) {
-                        List<QuestionDTO.SearchQuestionResponse> matchingQuestions = questionService.getMatchingQuestions(true, categoryPk, levelPk);
-                        questions.addAll(matchingQuestions);
+                        List<QuestionDTO.SearchQuestionResponse> matchingQuestions = questionService.getMatchingQuestions( categoryPk, levelPk);
+                        tmpQ.addAll(matchingQuestions);
                     }
                 }
             } else if (categoryPks != null && !categoryPks.isEmpty()) {
                 for (Long categoryPk : categoryPks) {
-                    List<QuestionDTO.SearchQuestionResponse> categoryQuestions = questionService.getCategoryQuestion(true, categoryPk);
-                    questions.addAll(categoryQuestions);
+                    List<QuestionDTO.SearchQuestionResponse> categoryQuestions = questionService.getCategoryQuestion( categoryPk);
+                    tmpQ.addAll(categoryQuestions);
                 }
             } else if (levelPks != null && !levelPks.isEmpty()) {
                 for (Long levelPk : levelPks) {
-                    List<QuestionDTO.SearchQuestionResponse> levelQuestions = questionService.getLevelQuestionList(true, levelPk);
-                    questions.addAll(levelQuestions);
+                    List<QuestionDTO.SearchQuestionResponse> levelQuestions = questionService.getLevelQuestionList( levelPk);
+                    tmpQ.addAll(levelQuestions);
                 }
+            }
+            for(int j=tmpQ.size()-1;j>-1;j--){
+                questions.add(tmpQ.get(j));
             }
         } else {
+            if(categoryPks == null && levelPks == null){
+                questions=questionService.getQuestion();
+            }
+
             if (categoryPks != null && !categoryPks.isEmpty() && levelPks != null && !levelPks.isEmpty()) {
                 for (Long categoryPk : categoryPks) {
                     for (Long levelPk : levelPks) {
-                        List<QuestionDTO.SearchQuestionResponse> matchingQuestions = questionService.getMatchingQuestions(false, categoryPk, levelPk);
+                        List<QuestionDTO.SearchQuestionResponse> matchingQuestions = questionService.getMatchingQuestions( categoryPk, levelPk);
                         questions.addAll(matchingQuestions);
                     }
                 }
             } else if (categoryPks != null && !categoryPks.isEmpty()) {
                 for (Long categoryPk : categoryPks) {
-                    List<QuestionDTO.SearchQuestionResponse> categoryQuestions = questionService.getCategoryQuestion(false, categoryPk);
+                    List<QuestionDTO.SearchQuestionResponse> categoryQuestions = questionService.getCategoryQuestion( categoryPk);
                     questions.addAll(categoryQuestions);
                 }
             } else if (levelPks != null && !levelPks.isEmpty()) {
                 for (Long levelPk : levelPks) {
-                    List<QuestionDTO.SearchQuestionResponse> levelQuestions = questionService.getLevelQuestionList(false, levelPk);
+                    List<QuestionDTO.SearchQuestionResponse> levelQuestions = questionService.getLevelQuestionList( levelPk);
                     questions.addAll(levelQuestions);
                 }
             }
-            if (questions.isEmpty()) {
-                questions = questionService.getQuestion();
 
-            }
         }
 
         return ResponseEntity.ok(questions);
