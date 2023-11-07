@@ -45,26 +45,65 @@ public class QuestionController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+//    @PatchMapping("/{questionPk}")
+//    public ResponseEntity modifyQuestion(@PathVariable Long questionPk, @RequestBody QuestionAndTestAndImageDTO.AddQuestionAndTestAndImageRequest addQuestionAndTestRequest) {
+//        questionService.modifyQuestion(questionPk, addQuestionAndTestRequest.getQuestion());
+//        List<TestCaseDTO.SearchResponse> testCaseDTOS = testCaseService.getTestCaseList(questionPk);
+//        List<QuestionImgDTO.SearchQuestionImgResponse> questionImgDTOS = questionImgService.getQuestionImg(questionPk);
+//        System.out.println("이미지 크기는"+questionImgDTOS.size());
+//        int i=0;
+//        for (TestCaseDTO.SearchResponse testCase : testCaseDTOS) {
+//            testCaseService.modifyTestCase(testCase.getPk(),addQuestionAndTestRequest.getTestCase().get(i));
+//            i++;
+//        }
+//        int j=0;
+//        System.out.println(addQuestionAndTestRequest.getImg().size());
+//        for(QuestionImgDTO.SearchQuestionImgResponse questionImg: questionImgDTOS){
+//            System.out.println(addQuestionAndTestRequest.getImg().get(j).getImgUrl());
+//            questionImgService.modifyQuestionImg(questionImg.getPk(),addQuestionAndTestRequest.getImg().get(j));
+//            j++;
+//        }
+//        return ResponseEntity.status(HttpStatus.CREATED).build();
+//    }
+
     @PatchMapping("/{questionPk}")
     public ResponseEntity modifyQuestion(@PathVariable Long questionPk, @RequestBody QuestionAndTestAndImageDTO.AddQuestionAndTestAndImageRequest addQuestionAndTestRequest) {
         questionService.modifyQuestion(questionPk, addQuestionAndTestRequest.getQuestion());
         List<TestCaseDTO.SearchResponse> testCaseDTOS = testCaseService.getTestCaseList(questionPk);
         List<QuestionImgDTO.SearchQuestionImgResponse> questionImgDTOS = questionImgService.getQuestionImg(questionPk);
-        System.out.println("이미지 크기는"+questionImgDTOS.size());
-        int i=0;
+
+        // 수정할 테스트케이스
+        int i = 0;
         for (TestCaseDTO.SearchResponse testCase : testCaseDTOS) {
-            testCaseService.modifyTestCase(testCase.getPk(),addQuestionAndTestRequest.getTestCase().get(i));
+            if (i < addQuestionAndTestRequest.getTestCase().size()) {
+                testCaseService.modifyTestCase(testCase.getPk(), addQuestionAndTestRequest.getTestCase().get(i));
+            } else {
+                // 새로운 테스트케이스의 크기를 벗어나면 삭제
+                testCaseService.delete(testCase.getPk());
+            }
             i++;
         }
-        int j=0;
-        System.out.println(addQuestionAndTestRequest.getImg().size());
-        for(QuestionImgDTO.SearchQuestionImgResponse questionImg: questionImgDTOS){
-            System.out.println(addQuestionAndTestRequest.getImg().get(j).getImgUrl());
-            questionImgService.modifyQuestionImg(questionImg.getPk(),addQuestionAndTestRequest.getImg().get(j));
+
+        // 수정할 이미지
+        int j = 0;
+        for (QuestionImgDTO.SearchQuestionImgResponse questionImg : questionImgDTOS) {
+            if (j < addQuestionAndTestRequest.getImg().size()) {
+                questionImgService.modifyQuestionImg(questionImg.getPk(), addQuestionAndTestRequest.getImg().get(j));
+            } else {
+                // 새로운 이미지의 크기를 벗어나면 삭제
+                questionImgService.delete(questionImg.getPk());
+            }
             j++;
         }
+
+        // 나머지 새 이미지 추가
+        for (; j < addQuestionAndTestRequest.getImg().size(); j++) {
+            questionImgService.makeQuestionImg(questionPk, addQuestionAndTestRequest.getImg().get(j));
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
 
     @DeleteMapping("/{questionPk}")
     public ResponseEntity deleteQuestion(@PathVariable Long questionPk){
