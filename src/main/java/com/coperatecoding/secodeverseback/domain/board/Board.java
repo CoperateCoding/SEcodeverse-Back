@@ -4,6 +4,7 @@ import com.coperatecoding.secodeverseback.domain.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ public class Board {
     //사용자가 탈퇴했을 때 알수없음 처리를 위해 nullable
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_pk")
+    @JsonIgnore
     private User user;
 
     @ManyToOne
