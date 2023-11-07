@@ -3,6 +3,8 @@ package com.coperatecoding.secodeverseback.dto;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.List;
+
 public class QuestionDTO {
 
     @Getter
@@ -56,11 +58,10 @@ public class QuestionDTO {
         private String userName;
         private Long levelPk;
         private String title;
-        private String intro;
         private Long categoryPk;
 
-        public static questionPagingRequest questions(int cnt,Long pk, String userName, Long levelPk, String title, String intro, Long questionPk) {
-            return new questionPagingRequest(cnt, pk, userName, levelPk, title, intro, questionPk);
+        public static questionPagingRequest questions(int cnt,Long pk, String userName, Long levelPk, String title, Long questionPk) {
+            return new questionPagingRequest(cnt, pk, userName, levelPk, title, questionPk);
         }
 
     }
@@ -92,6 +93,16 @@ public class QuestionDTO {
         private String intro;
         private Long categoryPk;
 
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class SearchListResponse {
+        private int cnt;
+        private List<QuestionDTO.SearchQuestionResponse> list;
     }
 
 }

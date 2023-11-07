@@ -4,7 +4,6 @@ import com.coperatecoding.secodeverseback.domain.RoleType;
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.domain.board.Board;
 import com.coperatecoding.secodeverseback.domain.board.BoardCategory;
-import com.coperatecoding.secodeverseback.dto.BoardAndImageDTO;
 import com.coperatecoding.secodeverseback.dto.BoardDTO;
 import com.coperatecoding.secodeverseback.dto.BoardSortType;
 import com.coperatecoding.secodeverseback.exception.CategoryNotFoundException;
