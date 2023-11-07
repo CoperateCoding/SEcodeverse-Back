@@ -45,8 +45,10 @@ public class BoardController {
         Board board = boardService.makeBoard(user, addBoardAndImageRequest.getBoard());
 
         for (BoardImgDTO.AddBoardImgRequest image : addBoardAndImageRequest.getImgList())
-            boardImgService.makeBoardImage(board.getPk(), image);
-
+        {
+            if(image != null)
+                boardImgService.makeBoardImage(board.getPk(), image);
+        }
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
