@@ -270,11 +270,11 @@ public class QuestionService {
 
 
         }
-//        for(int i=0, j=questionDTOS.size()-2; i<7 && i<questionDTOS.size()-1 ; i++,j--){
-//            resultQuestions.add(questionDTOS.get(j));
-//        }
+
         int numQuestions = questionDTOS.size();
-        for (int i = numQuestions - 1; i >= 0; i--) {
+
+        int startIndex = Math.max(numQuestions - 7, 0);
+        for (int i = numQuestions - 1; i >= startIndex; i--) {
             resultQuestions.add(questionDTOS.get(i));
         }
 
