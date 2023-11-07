@@ -86,49 +86,43 @@ public class QuestionController {
 
     }
     @GetMapping("/solve/user={userPk}")
-    public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>>getUserQuestion(@AuthenticationPrincipal User user){
+    public ResponseEntity<List<QuestionDTO.questionPagingResponse>>getUserQuestion(@AuthenticationPrincipal User user,
+                                                                                   @RequestParam(defaultValue = "1") int page,
+                                                                                   @RequestParam(defaultValue = "10") int pageSize){
 
-        List<CodeDTO.SearchCodeListResponse>codes=codeService.getUserCodes(user);
+        List<CodeDTO.PageableCodeListResponse>codes=codeService.getUserCodes(user,page,pageSize);
         List<QuestionDTO.SearchQuestionResponse> questions=new ArrayList<>();
-        for(CodeDTO.SearchCodeListResponse code: codes){
+        for(CodeDTO.PageableCodeListResponse code: codes){
             Question question = questionService.findByPk(code.getQuestionPk());
             QuestionDTO.SearchQuestionResponse questionDTO=questionService.getByPk(question);
             questions.add(questionDTO);
 
         }
+        List<QuestionDTO.questionPagingResponse> pagingQuestion = questionService.userPagingQuestion(codes.get(0).getCnt(),questions);
 
-        return ResponseEntity.ok(questions);
+        return ResponseEntity.ok(pagingQuestion);
     }
 
     @GetMapping("/wrong/user={userPk}")
-    public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>> getWrongQuestion(@AuthenticationPrincipal User user){
+    public ResponseEntity<List<QuestionDTO.questionPagingResponse>> getWrongQuestion(@AuthenticationPrincipal User user,
+                                                                                     @RequestParam(defaultValue = "1") int page,
+                                                                                     @RequestParam(defaultValue = "10") int pageSize){
 
-        List<CodeDTO.SearchCodeListResponse>codes=codeService.getWrongCodes(user);
+        List<CodeDTO.PageableCodeListResponse>codes=codeService.getWrongCodes(user,page,pageSize);
         List<QuestionDTO.SearchQuestionResponse> questions=new ArrayList<>();
-        for(CodeDTO.SearchCodeListResponse code: codes){
+        for(CodeDTO.PageableCodeListResponse code: codes){
             Question question = questionService.findByPk(code.getQuestionPk());
             QuestionDTO.SearchQuestionResponse questionDTO=questionService.getByPk(question);
             questions.add(questionDTO);
 
         }
+        List<QuestionDTO.questionPagingResponse> pagingQuestion = questionService.userPagingQuestion(codes.get(0).getCnt(),questions);
 
-        return ResponseEntity.ok(questions);
+
+        return ResponseEntity.ok(pagingQuestion);
     }
 
-    @GetMapping("/correct/user={userPk}")
-    public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>> getCorrectQuestion(@AuthenticationPrincipal User user){
 
-        List<CodeDTO.SearchCodeListResponse>codes=codeService.getCorrectQuestion(user);
-        List<QuestionDTO.SearchQuestionResponse> questions=new ArrayList<>();
-        for(CodeDTO.SearchCodeListResponse code: codes){
-            Question question = questionService.findByPk(code.getQuestionPk());
-            QuestionDTO.SearchQuestionResponse questionDTO=questionService.getByPk(question);
-            questions.add(questionDTO);
-
-        }
-
-        return ResponseEntity.ok(questions);
-    }
 
     @GetMapping("/{questionPk}")
     public ResponseEntity<QuestionAndTestAndImageDTO.QuestionAndTest> detailQuestion(@PathVariable Long questionPk) {
@@ -146,8 +140,11 @@ public class QuestionController {
     }
 
     @GetMapping("post/user={userPk}")
-    public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>> userPostQuestion(@AuthenticationPrincipal User user){
-        List<QuestionDTO.SearchQuestionResponse> question= questionService.userPostQuestion(user);
+    public ResponseEntity<List<QuestionDTO.questionPagingResponse>> userPostQuestion(@AuthenticationPrincipal User user,
+                                                                                     @RequestParam(defaultValue = "1") int page,
+                                                                                     @RequestParam(defaultValue = "10") int pageSize){
+
+        List<QuestionDTO.questionPagingResponse> question= questionService.userPostQuestion(user,page,pageSize);
         return ResponseEntity.ok(question);
     }
 

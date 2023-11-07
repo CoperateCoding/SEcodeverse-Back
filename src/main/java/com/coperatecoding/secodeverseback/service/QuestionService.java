@@ -14,12 +14,12 @@ import com.coperatecoding.secodeverseback.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.print.Pageable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -72,11 +72,14 @@ public class QuestionService {
         return question;
     }
 
-    public List<QuestionDTO.SearchQuestionResponse> userPostQuestion(User user){
-        List<Question> questions = questionRepository.findByUser(user);
-        List<QuestionDTO.SearchQuestionResponse> questionDTOS= new ArrayList<>();
+    public List<QuestionDTO.questionPagingResponse> userPostQuestion(User user,int page, int size){
+        List<Question> allQuestions = questionRepository.findByUser(user);
+        Pageable pageable =  PageRequest.of(page-1, size);
+        Page<Question> questions = questionRepository.findByUser(user,pageable);
+        List<QuestionDTO.questionPagingResponse> questionDTOS= new ArrayList<>();
         for(Question question:questions){
-            QuestionDTO.SearchQuestionListRequest request = QuestionDTO.SearchQuestionListRequest.questions(
+            QuestionDTO.questionPagingRequest request = QuestionDTO.questionPagingRequest.questions(
+                    allQuestions.size(),
                     question.getPk(),
                     user.getUsername(),
                     question.getLevel().getPk(),
@@ -85,9 +88,40 @@ public class QuestionService {
                     question.getCategory().getPk()
             );
 
-            QuestionDTO.SearchQuestionResponse response = getQuestion(request);
+            QuestionDTO.questionPagingResponse response = getPagingQuestion(request);
 
-            QuestionDTO.SearchQuestionResponse questionDTO = QuestionDTO.SearchQuestionResponse.builder()
+            QuestionDTO.questionPagingResponse questionDTO = QuestionDTO.questionPagingResponse.builder()
+                    .cnt(response.getCnt())
+                    .pk(response.getPk())
+                    .userName(response.getUserName())
+                    .levelPk(response.getLevelPk())
+                    .title(response.getTitle())
+                    .intro(response.getIntro())
+                    .categoryPk(response.getCategoryPk())
+                    .build();
+            questionDTOS.add(questionDTO);
+
+        }
+        return questionDTOS;
+    }
+    public List<QuestionDTO.questionPagingResponse> userPagingQuestion(int cnt,List<QuestionDTO.SearchQuestionResponse> searchQuestion){
+
+        List<QuestionDTO.questionPagingResponse> questionDTOS= new ArrayList<>();
+        for(QuestionDTO.SearchQuestionResponse question:searchQuestion){
+            QuestionDTO.questionPagingRequest request = QuestionDTO.questionPagingRequest.questions(
+                    cnt,
+                    question.getPk(),
+                    question.getUserName(),
+                    question.getLevelPk(),
+                    question.getTitle(),
+                    question.getIntro(),
+                    question.getCategoryPk()
+            );
+
+            QuestionDTO.questionPagingResponse response = getPagingQuestion(request);
+
+            QuestionDTO.questionPagingResponse questionDTO = QuestionDTO.questionPagingResponse.builder()
+                    .cnt(response.getCnt())
                     .pk(response.getPk())
                     .userName(response.getUserName())
                     .levelPk(response.getLevelPk())
@@ -180,6 +214,20 @@ public class QuestionService {
 
     public QuestionDTO.SearchQuestionResponse getQuestion(QuestionDTO.SearchQuestionListRequest request){
         QuestionDTO.SearchQuestionResponse response = QuestionDTO.SearchQuestionResponse.builder()
+                .pk(request.getPk())
+                .userName(request.getUserName())
+                .levelPk(request.getLevelPk())
+                .title(request.getTitle())
+                .intro(request.getIntro())
+                .categoryPk(request.getCategoryPk())
+                .build();
+
+        return response;
+    }
+
+    public QuestionDTO.questionPagingResponse getPagingQuestion(QuestionDTO.questionPagingRequest request){
+        QuestionDTO.questionPagingResponse response = QuestionDTO.questionPagingResponse.builder()
+                .cnt(request.getCnt())
                 .pk(request.getPk())
                 .userName(request.getUserName())
                 .levelPk(request.getLevelPk())
