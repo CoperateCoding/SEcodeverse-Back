@@ -6,8 +6,10 @@ import com.coperatecoding.secodeverseback.dto.*;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.service.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -45,82 +47,130 @@ public class QuestionController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+//    @PatchMapping("/{questionPk}")
+//    public ResponseEntity modifyQuestion(@PathVariable Long questionPk, @RequestBody QuestionAndTestAndImageDTO.AddQuestionAndTestAndImageRequest addQuestionAndTestRequest) {
+//        questionService.modifyQuestion(questionPk, addQuestionAndTestRequest.getQuestion());
+//        List<TestCaseDTO.SearchResponse> testCaseDTOS = testCaseService.getTestCaseList(questionPk);
+//        List<QuestionImgDTO.SearchQuestionImgResponse> questionImgDTOS = questionImgService.getQuestionImg(questionPk);
+//        System.out.println("이미지 크기는"+questionImgDTOS.size());
+//        int i=0;
+//        for (TestCaseDTO.SearchResponse testCase : testCaseDTOS) {
+//            testCaseService.modifyTestCase(testCase.getPk(),addQuestionAndTestRequest.getTestCase().get(i));
+//            i++;
+//        }
+//        int j=0;
+//        System.out.println(addQuestionAndTestRequest.getImg().size());
+//        for(QuestionImgDTO.SearchQuestionImgResponse questionImg: questionImgDTOS){
+//            System.out.println(addQuestionAndTestRequest.getImg().get(j).getImgUrl());
+//            questionImgService.modifyQuestionImg(questionImg.getPk(),addQuestionAndTestRequest.getImg().get(j));
+//            j++;
+//        }
+//        return ResponseEntity.status(HttpStatus.CREATED).build();
+//    }
+
     @PatchMapping("/{questionPk}")
     public ResponseEntity modifyQuestion(@PathVariable Long questionPk, @RequestBody QuestionAndTestAndImageDTO.AddQuestionAndTestAndImageRequest addQuestionAndTestRequest) {
         questionService.modifyQuestion(questionPk, addQuestionAndTestRequest.getQuestion());
         List<TestCaseDTO.SearchResponse> testCaseDTOS = testCaseService.getTestCaseList(questionPk);
-        List<QuestionImgDTO.SearchQuestionImgListResponse> questionImgDTOS = questionImgService.getQuestionImg(questionPk);
-        System.out.println("이미지 크기는"+questionImgDTOS.size());
-        int i=0;
+        List<QuestionImgDTO.SearchQuestionImgResponse> questionImgDTOS = questionImgService.getQuestionImg(questionPk);
+
+        // 수정할 테스트케이스
+        int i = 0;
         for (TestCaseDTO.SearchResponse testCase : testCaseDTOS) {
-            testCaseService.modifyTestCase(testCase.getPk(),addQuestionAndTestRequest.getTestCase().get(i));
+            if (i < addQuestionAndTestRequest.getTestCase().size()) {
+                testCaseService.modifyTestCase(testCase.getPk(), addQuestionAndTestRequest.getTestCase().get(i));
+            } else {
+                // 새로운 테스트케이스의 크기를 벗어나면 삭제
+                testCaseService.delete(testCase.getPk());
+            }
             i++;
         }
-        int j=0;
-        System.out.println(addQuestionAndTestRequest.getImg().size());
-        for(QuestionImgDTO.SearchQuestionImgListResponse questionImg: questionImgDTOS){
-            System.out.println(addQuestionAndTestRequest.getImg().get(j).getImgUrl());
-            questionImgService.modifyQuestionImg(questionImg.getPk(),addQuestionAndTestRequest.getImg().get(j));
+
+        // 수정할 이미지
+        int j = 0;
+        for (QuestionImgDTO.SearchQuestionImgResponse questionImg : questionImgDTOS) {
+            if (j < addQuestionAndTestRequest.getImg().size()) {
+                questionImgService.modifyQuestionImg(questionImg.getPk(), addQuestionAndTestRequest.getImg().get(j));
+            } else {
+                // 새로운 이미지의 크기를 벗어나면 삭제
+                questionImgService.delete(questionImg.getPk());
+            }
             j++;
         }
+
+        // 나머지 새 이미지 추가
+        for (; j < addQuestionAndTestRequest.getImg().size(); j++) {
+            questionImgService.makeQuestionImg(questionPk, addQuestionAndTestRequest.getImg().get(j));
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
 
     @DeleteMapping("/{questionPk}")
     public ResponseEntity deleteQuestion(@PathVariable Long questionPk){
         try{
-            List<QuestionImgDTO.SearchQuestionImgListResponse> imgDTOS=questionImgService.getQuestionImg(questionPk);
-            for (QuestionImgDTO.SearchQuestionImgListResponse img : imgDTOS) {
-                questionImgService.deleteImg(img.getPk());
+            List<QuestionImgDTO.SearchQuestionImgResponse> imgDTOS=questionImgService.getQuestionImg(questionPk);
+            for (QuestionImgDTO.SearchQuestionImgResponse img : imgDTOS) {
+                questionImgService.delete(img.getPk());
             }
             List<TestCaseDTO.SearchResponse>testCaseDTOS = testCaseService.getTestCaseList(questionPk);
             for (TestCaseDTO.SearchResponse testCase : testCaseDTOS) {
-                testCaseService.deleteTestCase(testCase.getPk());
+                testCaseService.delete(testCase.getPk());
             }
             questionService.deleteQuestion(questionPk);
             return ResponseEntity.noContent().build();
         }
-            catch(NotFoundException e){
+        catch(NotFoundException e){
             return ResponseEntity.notFound().build();
         }
 
     }
     @GetMapping("/solve/user={userPk}")
-    public ResponseEntity<List<QuestionDTO.SearchQuestionListResponse>>getUserQuestion(@AuthenticationPrincipal User user){
+    public ResponseEntity<List<QuestionDTO.questionPagingResponse>> getUserQuestion(@AuthenticationPrincipal User user,
+                                                                                   @RequestParam(defaultValue = "1") int page,
+                                                                                   @RequestParam(defaultValue = "10") int pageSize){
 
-        List<CodeDTO.SearchCodeListResponse>codes=codeService.getUserCodes(user);
-        List<QuestionDTO.SearchQuestionListResponse> questions=new ArrayList<>();
-        for(CodeDTO.SearchCodeListResponse code: codes){
+        List<CodeDTO.PageableCodeListResponse>codes=codeService.getUserCodes(user,page,pageSize);
+        List<QuestionDTO.SearchQuestionResponse> questions=new ArrayList<>();
+        for(CodeDTO.PageableCodeListResponse code: codes){
             Question question = questionService.findByPk(code.getQuestionPk());
-            QuestionDTO.SearchQuestionListResponse questionDTO=questionService.getByPk(question);
+            QuestionDTO.SearchQuestionResponse questionDTO=questionService.getByPk(question);
             questions.add(questionDTO);
 
         }
+        List<QuestionDTO.questionPagingResponse> pagingQuestion = questionService.userPagingQuestion(codes.get(0).getCnt(),questions);
 
-        return ResponseEntity.ok(questions);
+        return ResponseEntity.ok(pagingQuestion);
     }
 
-@GetMapping("/wrong/user={userPk}")
-public ResponseEntity<List<QuestionDTO.SearchQuestionListResponse>>getWrongQuestion(@AuthenticationPrincipal User user){
+    @GetMapping("/wrong/user={userPk}")
+    public ResponseEntity<List<QuestionDTO.questionPagingResponse>> getWrongQuestion(@AuthenticationPrincipal User user,
+                                                                                     @RequestParam(defaultValue = "1") int page,
+                                                                                     @RequestParam(defaultValue = "10") int pageSize){
 
-        List<CodeDTO.SearchCodeListResponse>codes=codeService.getWrongCodes(user);
-        List<QuestionDTO.SearchQuestionListResponse> questions=new ArrayList<>();
-        for(CodeDTO.SearchCodeListResponse code: codes){
+        List<CodeDTO.PageableCodeListResponse>codes=codeService.getWrongCodes(user,page,pageSize);
+        List<QuestionDTO.SearchQuestionResponse> questions=new ArrayList<>();
+        for(CodeDTO.PageableCodeListResponse code: codes){
             Question question = questionService.findByPk(code.getQuestionPk());
-            QuestionDTO.SearchQuestionListResponse questionDTO=questionService.getByPk(question);
+            QuestionDTO.SearchQuestionResponse questionDTO=questionService.getByPk(question);
             questions.add(questionDTO);
 
         }
+        List<QuestionDTO.questionPagingResponse> pagingQuestion = questionService.userPagingQuestion(codes.get(0).getCnt(),questions);
 
-    return ResponseEntity.ok(questions);
+
+        return ResponseEntity.ok(pagingQuestion);
     }
+
+
 
     @GetMapping("/{questionPk}")
-    public  ResponseEntity <QuestionAndTestAndImageDTO.QuestionAndTest >detailQuestion(@PathVariable Long questionPk) {
+    public ResponseEntity<QuestionAndTestAndImageDTO.QuestionAndTest> detailQuestion(@PathVariable Long questionPk) {
 
         Question question = questionService.getDetailQuestion(questionPk);
         List<TestCaseDTO.SearchResponse> testCases = testCaseService.getTestCaseList(questionPk);
-        List<QuestionImgDTO.SearchQuestionImgListResponse> imgs = questionImgService.getQuestionImg(questionPk);
+        List<QuestionImgDTO.SearchQuestionImgResponse> imgs = questionImgService.getQuestionImg(questionPk);
         QuestionAndTestAndImageDTO.QuestionAndTest response = new QuestionAndTestAndImageDTO.QuestionAndTest();
         response.setQuestion(question);
         response.setTestCase(testCases);
@@ -131,76 +181,103 @@ public ResponseEntity<List<QuestionDTO.SearchQuestionListResponse>>getWrongQuest
     }
 
     @GetMapping("post/user={userPk}")
-    public  ResponseEntity<List<QuestionDTO.SearchQuestionListResponse>> userPostQuestion(@AuthenticationPrincipal User user){
-        List<QuestionDTO.SearchQuestionListResponse> question= questionService.userPostQuestion(user);
+    public ResponseEntity<List<QuestionDTO.questionPagingResponse>> userPostQuestion(@AuthenticationPrincipal User user,
+                                                                                     @RequestParam(defaultValue = "1") int page,
+                                                                                     @RequestParam(defaultValue = "10") int pageSize){
+
+        List<QuestionDTO.questionPagingResponse> question= questionService.userPostQuestion(user,page,pageSize);
         return ResponseEntity.ok(question);
     }
 
     @GetMapping("/keyword={keyword}")
-    public  ResponseEntity<List<QuestionDTO.SearchQuestionListResponse>> getKeywordQuestion(@PathVariable String keyword){
-            List<QuestionDTO.SearchQuestionListResponse> question= questionService.getKeywordQuestion(keyword);
+    public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>> getKeywordQuestion(@PathVariable String keyword){
+        List<QuestionDTO.SearchQuestionResponse> question= questionService.getKeywordQuestion(keyword);
         return ResponseEntity.ok(question);
     }
+
+    @GetMapping("/recent")
+    public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>> getRecentQuestion(){
+        List<QuestionDTO.SearchQuestionResponse> questions = questionService.getRecentQuestion();
+        return ResponseEntity.ok(questions);
+    }
+
     @GetMapping("")
-    public ResponseEntity<List<QuestionDTO.SearchQuestionListResponse>> getQuestions(
+    public ResponseEntity<QuestionDTO.SearchListResponse> getQuestions(
+            @RequestParam(required = false, defaultValue = "10") @Min(value = 2, message = "page 크기는 1보다 커야합니다") int pageSize,
+            @RequestParam(required = false, defaultValue = "1") @Min(value = 1, message = "page는 0보다 커야합니다") int page,
             @RequestParam(value = "q", required = false) String q,
             @RequestParam(value = "sort", required = false) QuestionSortType sort,
             @RequestParam(value = "categoryPk", required = false) List<Long> categoryPks,
             @RequestParam(value = "levelPk", required = false) List<Long> levelPks
     ) {
 
-        List<QuestionDTO.SearchQuestionListResponse> questions = new ArrayList<>();
+        Page<QuestionDTO.SearchQuestionResponse> questions = questionService.getQuestionList(page, pageSize, q, sort, categoryPks, levelPks);
 
 
-            if (sort != null) {
-            if (categoryPks != null && !categoryPks.isEmpty() && levelPks != null && !levelPks.isEmpty()) {
-                for (Long categoryPk : categoryPks) {
-                    for (Long levelPk : levelPks) {
-                        List<QuestionDTO.SearchQuestionListResponse> matchingQuestions = questionService.getMatchingQuestions(true, categoryPk, levelPk);
-                        questions.addAll(matchingQuestions);
-                    }
-                }
-            } else if (categoryPks != null && !categoryPks.isEmpty()) {
-                for (Long categoryPk : categoryPks) {
-                    List<QuestionDTO.SearchQuestionListResponse> categoryQuestions = questionService.getCategoryQuestion(true, categoryPk);
-                    questions.addAll(categoryQuestions);
-                }
-            } else if (levelPks != null && !levelPks.isEmpty()) {
-                for (Long levelPk : levelPks) {
-                    List<QuestionDTO.SearchQuestionListResponse> levelQuestions = questionService.getLevelQuestionList(true, levelPk);
-                    questions.addAll(levelQuestions);
-                }
-            }
-        } else {
-            if (categoryPks != null && !categoryPks.isEmpty() && levelPks != null && !levelPks.isEmpty()) {
-                for (Long categoryPk : categoryPks) {
-                    for (Long levelPk : levelPks) {
-                        List<QuestionDTO.SearchQuestionListResponse> matchingQuestions = questionService.getMatchingQuestions(false, categoryPk, levelPk);
-                        questions.addAll(matchingQuestions);
-                    }
-                }
-            } else if (categoryPks != null && !categoryPks.isEmpty()) {
-                for (Long categoryPk : categoryPks) {
-                    List<QuestionDTO.SearchQuestionListResponse> categoryQuestions = questionService.getCategoryQuestion(false, categoryPk);
-                    questions.addAll(categoryQuestions);
-                }
-            } else if (levelPks != null && !levelPks.isEmpty()) {
-                for (Long levelPk : levelPks) {
-                    List<QuestionDTO.SearchQuestionListResponse> levelQuestions = questionService.getLevelQuestionList(false, levelPk);
-                    questions.addAll(levelQuestions);
-                }
-            }
-            if (questions.isEmpty()) {
-                questions = questionService.getQuestion();
+        QuestionDTO.SearchListResponse response = QuestionDTO.SearchListResponse.builder()
+                .cnt((int) questions.getTotalElements())
+                .list(questions.getContent())
+                .build();
 
-            }
-        }
-
-            return ResponseEntity.ok(questions);
-        }
-
-
+        return ResponseEntity.ok(response);
     }
 
+    /*
+            if (sort == sort.RECENT) {
+            Page<QuestionDTO.SearchQuestionResponse> tmpQ;
+            if(categoryPks == null && levelPks == null){
+                tmpQ = questionService.getQuestion(page, pageSize, q, sort, categoryPks, levelPks);
+            }
+            if (categoryPks != null && !categoryPks.isEmpty() && levelPks != null && !levelPks.isEmpty()) {
+                for (Long categoryPk : categoryPks) {
+                    for (Long levelPk : levelPks) {
+                        Page<QuestionDTO.SearchQuestionResponse> matchingQuestions = questionService.getMatchingQuestions( categoryPk, levelPk);
+                        tmpQ.addAll(matchingQuestions);
+                    }
+                }
+            } else if (categoryPks != null && !categoryPks.isEmpty()) {
+                for (Long categoryPk : categoryPks) {
+                    Page<QuestionDTO.SearchQuestionResponse> categoryQuestions = questionService.getCategoryQuestion( categoryPk);
+                    tmpQ.addAll(categoryQuestions);
+                }
+            } else if (levelPks != null && !levelPks.isEmpty()) {
+                for (Long levelPk : levelPks) {
+                    Page<QuestionDTO.SearchQuestionResponse> levelQuestions = questionService.getLevelQuestionList( levelPk);
+                    tmpQ.addAll(levelQuestions);
+                }
+            }
+            for(int j=tmpQ.size()-1;j>-1;j--){
+                questions.add(tmpQ.get(j));
+            }
+        } else {
+            if(categoryPks == null && levelPks == null){
+                questions=questionService.getQuestion(page, pageSize, q, sort, categoryPks, levelPks);
+            }
+
+            if (categoryPks != null && !categoryPks.isEmpty() && levelPks != null && !levelPks.isEmpty()) {
+                for (Long categoryPk : categoryPks) {
+                    for (Long levelPk : levelPks) {
+                        Page<QuestionDTO.SearchQuestionResponse> matchingQuestions = questionService.getMatchingQuestions( categoryPk, levelPk);
+                        questions.addAll(matchingQuestions);
+                    }
+                }
+            } else if (categoryPks != null && !categoryPks.isEmpty()) {
+                for (Long categoryPk : categoryPks) {
+                    Page<QuestionDTO.SearchQuestionResponse> categoryQuestions = questionService.getCategoryQuestion( categoryPk);
+                    questions.addAll(categoryQuestions);
+                }
+            } else if (levelPks != null && !levelPks.isEmpty()) {
+                for (Long levelPk : levelPks) {
+                    Page<QuestionDTO.SearchQuestionResponse> levelQuestions = questionService.getLevelQuestionList( levelPk);
+                    questions.addAll(levelQuestions);
+                }
+            }
+
+        }
+
+    * */
+
+
+}
 
 

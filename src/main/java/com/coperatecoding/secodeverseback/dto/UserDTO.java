@@ -54,6 +54,20 @@ public class UserDTO {
 
     }
 
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserInfoResponse {
+
+        private String nickName;
+        private String badgeName;
+        private String imgUrl;
+        public static UserInfoResponse makeResponse(String nickName, String badgeName, String imgUrl) {
+            return new UserInfoResponse(nickName, badgeName, imgUrl);
+        }
+
+    }
+
 //    @Getter
 //    @Builder
 //    @AllArgsConstructor(access = AccessLevel.PROTECTED)

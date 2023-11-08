@@ -154,6 +154,12 @@ public class UserService {
 
     }
 
+    public UserDTO.UserInfoResponse getUserInfo(User user) {
+
+        return UserDTO.UserInfoResponse.makeResponse(user.getNickname(), user.getBadge().getName(), user.getBadge().getImgUrl());
+
+    }
+
 //    public UserDTO.LoginResponse login(UserDTO.LoginRequest loginRequest, HttpServletRequest request) {
 //        User user = userRepository.findById(loginRequest.getId())
 //                .orElseGet(() -> null);

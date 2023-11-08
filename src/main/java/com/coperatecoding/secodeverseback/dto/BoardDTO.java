@@ -26,8 +26,6 @@ public class BoardDTO {
         @NotNull(message = "게시글 정보 내용이 null이면 안됩니다")
         private String content;
 
-//        private List<BoardImage> imageList = new ArrayList<>();
-
     }
 
     @Getter
@@ -76,20 +74,22 @@ public class BoardDTO {
         private String createAt;
     }
 
+    @Builder
     @Getter
-    @Setter
-    @NoArgsConstructor
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class BoardDetailResponse {
-        private Long writerPk;
+        private Long pk;
+        private String writer;
         private String profileUrl;
         private BoardCategory category;
+        private String createAt;
         private String updateAt;
         private Long likeCnt;
         private Long commentCnt;
         private String title;
         private String content;
-        private List<BoardImage> imageList = new ArrayList<>();
+//        private List<BoardImage> imageList = new ArrayList<>();
 
     }
 
@@ -103,6 +103,7 @@ public class BoardDTO {
         private String title;
         private Long likeCnt;
         private Long commentCnt;
+        private String createAt;
     }
 
     @Getter
@@ -116,4 +117,15 @@ public class BoardDTO {
     }
 
 
+//    @Getter
+//    @Setter
+//    @NoArgsConstructor
+//    @AllArgsConstructor
+//    @Builder
+//    public class AddBoardAndImageRequest {
+//        private BoardDTO.AddBoardRequest board;
+//
+//        private List<BoardImgDTO.AddBoardImgRequest> imageList;
+//
+//    }
 }
