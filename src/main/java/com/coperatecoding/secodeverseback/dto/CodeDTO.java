@@ -29,4 +29,30 @@ public class CodeDTO {
         private CodeStatus codeStatus;
         private Long questionPk;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PageableCodeListRequest{
+        private int cnt;
+        private Long pk;
+        private CodeStatus codeStatus;
+        private Long questionPk;
+        public static PageableCodeListRequest Codes(int cnt,Long pk, CodeStatus CodeStatus, Long questionPk){
+            return new PageableCodeListRequest(cnt ,pk,CodeStatus,questionPk);
+        }
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class PageableCodeListResponse{
+        private int cnt;
+        private Long pk;
+        private CodeStatus codeStatus;
+        private Long questionPk;
+    }
 }

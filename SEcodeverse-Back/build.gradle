@@ -1,0 +1,76 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.0.9'
+    id 'io.spring.dependency-management' version '1.1.2'
+}
+
+jar.enabled = false  // plain-jar 생성방지
+
+group = 'com.coperatecoding'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = '17'
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    //swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4'
+
+    //security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    //jwt
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
+    implementation 'com.auth0:java-jwt:4.2.1'
+
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+    //test
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+    //aws s3
+    implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.530'
+
+    //chatbot
+    implementation 'org.tensorflow:tensorflow:1.15.0'
+
+
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+task copyPrivate(type: Copy) {
+    copy {
+        from './SEcodeverse-Back-Submodule'
+        include "*.yml"
+        into 'src/main/resources'
+    }
+}

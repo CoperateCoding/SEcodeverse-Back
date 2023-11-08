@@ -27,7 +27,7 @@ public class QuestionAndTestAndImageDTO {
 
         private List<TestCaseDTO.SearchResponse> testCase;
 
-        private List<QuestionImgDTO.SearchQuestionImgListResponse> img;
+        private List<QuestionImgDTO.SearchQuestionImgResponse> img;
     }
 
 }

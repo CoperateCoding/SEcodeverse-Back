@@ -26,8 +26,6 @@ public class BoardDTO {
         @NotNull(message = "게시글 정보 내용이 null이면 안됩니다")
         private String content;
 
-//        private List<BoardImage> imageList = new ArrayList<>();
-
     }
 
     @Getter
@@ -54,9 +52,9 @@ public class BoardDTO {
         @Builder.Default
         @Min(value = 1, message = "page는 0보다 커야합니다")
         private Integer page = 1;
-        private SortType sort;
+        private QuestionSortType sort;
 
-        public static SearchListRequest makeRequest(Long categoryPk, String q, Integer pageSize, Integer page, SortType sort) {
+        public static SearchListRequest makeRequest(Long categoryPk, String q, Integer pageSize, Integer page, QuestionSortType sort) {
             return new SearchListRequest(categoryPk, q, pageSize, page, sort);
         }
     }
@@ -68,8 +66,41 @@ public class BoardDTO {
     @AllArgsConstructor
     public static class SearchResponse {
         private Long pk;
+        private String writerNickname;
         private String title;
         private String preview;
+        private Long likeCnt;
+        private Long commentCnt;
+        private String createAt;
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class BoardDetailResponse {
+        private Long pk;
+        private String writer;
+        private String profileUrl;
+        private BoardCategory category;
+        private String createAt;
+        private String updateAt;
+        private Long likeCnt;
+        private Long commentCnt;
+        private String title;
+        private String content;
+//        private List<BoardImage> imageList = new ArrayList<>();
+
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class PopularBoardResponse {
+        private Long boardPk;
+        private String title;
         private Long likeCnt;
         private Long commentCnt;
         private String createAt;
@@ -79,18 +110,22 @@ public class BoardDTO {
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class BoardDetailResponse {
-        private Long writerPk;
-        private String profileUrl;
-        private BoardCategory category;
-        private String updateAt;
-        private Long likeCnt;
-        private Long commentCnt;
-        private String title;
-        private String content;
-        private List<BoardImage> imageList = new ArrayList<>();
-
+    @Builder
+    public static class PopularBoardListResponse {
+        private int cnt;
+        private List<PopularBoardResponse> list;
     }
 
 
+//    @Getter
+//    @Setter
+//    @NoArgsConstructor
+//    @AllArgsConstructor
+//    @Builder
+//    public class AddBoardAndImageRequest {
+//        private BoardDTO.AddBoardRequest board;
+//
+//        private List<BoardImgDTO.AddBoardImgRequest> imageList;
+//
+//    }
 }
