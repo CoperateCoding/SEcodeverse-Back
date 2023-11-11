@@ -22,11 +22,11 @@ public class S3Controller {
 
     private final S3Service s3Service;
 
-    @Operation(summary = "게시글 이미지 url 받아오기")
+    @Operation(summary = "이미지 url 받아오기")
 
-    @PostMapping("/presigned/board")
+    @PostMapping("/presigned")
     public ResponseEntity getS3PresignedBoard(@RequestBody ImageNameDTO imageNameDTO) {
-        String preSignedUrl = s3Service.getPreSignedBoard(imageNameDTO.getImageName());
+        String preSignedUrl = s3Service.getPreSigned(imageNameDTO.getFolderName(), imageNameDTO.getImageName());
 
         Map<String, String> map = new HashMap<>();
         map.put("presigned_url", preSignedUrl);
@@ -34,17 +34,6 @@ public class S3Controller {
         return ResponseEntity.ok(map);
     }
 
-    @Operation(summary = "문제 이미지 url 받아오기")
-
-    @PostMapping("/presigned/board")
-    public ResponseEntity getS3PresignedQuestion(@RequestBody ImageNameDTO imageNameDTO) {
-        String preSignedUrl = s3Service.getPreSignedQuestion(imageNameDTO.getImageName());
-
-        Map<String, String> map = new HashMap<>();
-        map.put("presigned_url", preSignedUrl);
-
-        return ResponseEntity.ok(map);
-    }
 
 
 }
