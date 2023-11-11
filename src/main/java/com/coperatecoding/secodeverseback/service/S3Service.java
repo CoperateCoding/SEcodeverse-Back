@@ -24,26 +24,11 @@ public class S3Service {
     public String bucketName;
 
     //Pre-Signed URL 받아옴
-    public String getPreSignedBoard(String fileName) {
+    public String getPreSigned(String prefix, String fileName) {
         String onlyOneFileName = onlyOneFileName(fileName);
 
         log.info("get presinged url");
 
-        String prefix = "board";
-        if (!prefix.equals("")) {
-            fileName = prefix + "/" + fileName;
-        }
-        GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePreSignedUrlRequest(fileName);
-        URL url = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
-        return url.toString();
-    }
-
-    public String getPreSignedQuestion(String fileName) {
-        String onlyOneFileName = onlyOneFileName(fileName);
-
-        log.info("get presinged url");
-
-        String prefix = "question";
         if (!prefix.equals("")) {
             fileName = prefix + "/" + fileName;
         }
