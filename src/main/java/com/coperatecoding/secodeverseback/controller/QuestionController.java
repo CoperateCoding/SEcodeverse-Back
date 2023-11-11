@@ -212,7 +212,9 @@ public class QuestionController {
     ) {
 
         Page<QuestionDTO.SearchQuestionResponse> questions = questionService.getQuestionList(page, pageSize, q, sort, categoryPks, levelPks);
-
+        System.out.println(sort);
+        System.out.println(categoryPks);
+        System.out.println(levelPks);
 
         QuestionDTO.SearchListResponse response = QuestionDTO.SearchListResponse.builder()
                 .cnt((int) questions.getTotalElements())
