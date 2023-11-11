@@ -24,7 +24,7 @@ public class SecurityConfig {
     private final String[] whiteList = {
             "/swagger-resources/**", "/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**",
             "/api/v1/user/login", "api/v1/user/signup", "api/v1/user/info/my",
-            "/error", "api/v1/s3/presigned/*",
+            "/error", "api/v1/s3/presigned",
             "/api/v1/token/validate", "/api/v1/token/reissue", "api/v1/user/username/**", "api/v1/user/id/**",
             "api/v1/board/**", "api/v1/comment/**","/api/v1/likes/**","api/v1/question/**","test/hello"// 이건 다 임의로 넣어둠.
 //            "/logout"
