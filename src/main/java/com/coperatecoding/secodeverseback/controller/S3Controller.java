@@ -2,6 +2,7 @@ package com.coperatecoding.secodeverseback.controller;
 
 import com.coperatecoding.secodeverseback.dto.ImageNameDTO;
 import com.coperatecoding.secodeverseback.service.S3Service;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,14 +22,29 @@ public class S3Controller {
 
     private final S3Service s3Service;
 
-    @PostMapping("/presigned")
-    public ResponseEntity getS3PresignedKey(@RequestBody ImageNameDTO imageNameDTO) {
-        String preSignedUrl = s3Service.getPreSignedUrl(imageNameDTO.getImage_name());
+    @Operation(summary = "게시글 이미지 url 받아오기")
+
+    @PostMapping("/presigned/board")
+    public ResponseEntity getS3PresignedBoard(@RequestBody ImageNameDTO imageNameDTO) {
+        String preSignedUrl = s3Service.getPreSignedBoard(imageNameDTO.getImageName());
 
         Map<String, String> map = new HashMap<>();
         map.put("presigned_url", preSignedUrl);
 
         return ResponseEntity.ok(map);
     }
+
+    @Operation(summary = "문제 이미지 url 받아오기")
+
+    @PostMapping("/presigned/board")
+    public ResponseEntity getS3PresignedQuestion(@RequestBody ImageNameDTO imageNameDTO) {
+        String preSignedUrl = s3Service.getPreSignedQuestion(imageNameDTO.getImageName());
+
+        Map<String, String> map = new HashMap<>();
+        map.put("presigned_url", preSignedUrl);
+
+        return ResponseEntity.ok(map);
+    }
+
 
 }
