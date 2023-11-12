@@ -5,6 +5,8 @@ import com.coperatecoding.secodeverseback.domain.question.Question;
 import com.coperatecoding.secodeverseback.dto.*;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.service.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +16,27 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Tag(name = "문제", description = "문제 관련 API")
 @RequiredArgsConstructor
@@ -34,6 +54,7 @@ public class QuestionController {
     @PostMapping("/post")
     public ResponseEntity makeQuestion(@AuthenticationPrincipal User user, @RequestBody QuestionAndTestAndImageDTO.AddQuestionAndTestAndImageRequest addQuestionAndTestAndImageRequest) {
         Question question = questionService.makeQuestion(user, addQuestionAndTestAndImageRequest.getQuestion());
+
 
         for (TestCaseDTO.AddtestCaseRequest testCase : addQuestionAndTestAndImageRequest.getTestCase()) {
             testCaseService.makeTestCase(question.getPk(), testCase);
@@ -128,8 +149,8 @@ public class QuestionController {
     }
     @GetMapping("/solve/user={userPk}")
     public ResponseEntity<List<QuestionDTO.questionPagingResponse>> getUserQuestion(@AuthenticationPrincipal User user,
-                                                                                   @RequestParam(defaultValue = "1") int page,
-                                                                                   @RequestParam(defaultValue = "10") int pageSize){
+                                                                                    @RequestParam(defaultValue = "1") int page,
+                                                                                    @RequestParam(defaultValue = "10") int pageSize){
 
         List<CodeDTO.PageableCodeListResponse>codes=codeService.getUserCodes(user,page,pageSize);
         List<QuestionDTO.SearchQuestionResponse> questions=new ArrayList<>();
@@ -212,7 +233,9 @@ public class QuestionController {
     ) {
 
         Page<QuestionDTO.SearchQuestionResponse> questions = questionService.getQuestionList(page, pageSize, q, sort, categoryPks, levelPks);
-
+        System.out.println(sort);
+        System.out.println(categoryPks);
+        System.out.println(levelPks);
 
         QuestionDTO.SearchListResponse response = QuestionDTO.SearchListResponse.builder()
                 .cnt((int) questions.getTotalElements())
@@ -220,6 +243,70 @@ public class QuestionController {
                 .build();
 
         return ResponseEntity.ok(response);
+    }
+
+    //python :28
+    //java:4
+    //
+    //Response body
+    //Download
+    //{"stdout":"hello World\n","time":"0.052","memory":26928,"stderr":null,"token":"42f06f39-2574-4d3e-9e90-35d33059ab14","compile_output":null,"message":null,"status":{"id":3,"description":"Accepted"}}
+    //{"stdout":null,"time":"0.112","memory":33472,"stderr":"  File \"/box/script.py\", line 1\n    cHJpbnQoJ2hlbGxvIFdvcmxkJyk=\n                                ^\nSyntaxError: invalid syntax\n","token":"92e5da6a-a84d-4d83-9bc6-836f56a3258d","compile_output":null,"message":"Exited with error status 1","status":{"id":11,"description":"Runtime Error (NZEC)"}}
+    @GetMapping("/solveQuestion")
+    public ResponseEntity<String> solveQuestion() throws IOException, InterruptedException {
+
+        String JUDGE0_API_URL = "https://judge0-extra-ce.p.rapidapi.com";
+        String RAPIDAPI_HOST = "judge0-extra-ce.p.rapidapi.com";
+        String RAPIDAPI_KEY = "ce1aa40351mshd1b8e179b49a600p12e79djsn3c18e4473ece";
+
+        String python3LanguageId = "28";
+        String javaLanguageId="4";
+
+        // Send the code execution request
+        String code = "print('hello World')";
+        String encodedCode = Base64.getEncoder().encodeToString(code.getBytes(StandardCharsets.UTF_8));
+        System.out.println(encodedCode);
+        String requestBody = "{\"language_id\":\"" + python3LanguageId + "\",\"source_code\":\"" + encodedCode + "\",\"stdin\":null}";
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(JUDGE0_API_URL + "/submissions"))
+                .header("X-RapidAPI-Key", RAPIDAPI_KEY)
+                .header("X-RapidAPI-Host", RAPIDAPI_HOST)
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+
+
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        System.out.println(response.body());
+        String input = response.body();
+        String token="";
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(input);
+            token = jsonNode.get("token").asText();
+
+            System.out.println(token);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        Thread.sleep(1000);
+
+        HttpRequest resultRequest = HttpRequest.newBuilder()
+                .uri(URI.create(JUDGE0_API_URL + "/submissions/"+token))
+                .header("X-RapidAPI-Key", RAPIDAPI_KEY)
+                .header("X-RapidAPI-Host", RAPIDAPI_HOST)
+                .header("Content-Type", "application/json")
+
+                .build();
+        HttpResponse<String> resultResponse = client.send(resultRequest, HttpResponse.BodyHandlers.ofString());
+        String resultBody = resultResponse.body();
+
+        return ResponseEntity.ok(resultBody);
     }
 
     /*
@@ -279,5 +366,4 @@ public class QuestionController {
 
 
 }
-
 
