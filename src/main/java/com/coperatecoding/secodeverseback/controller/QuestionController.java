@@ -5,6 +5,8 @@ import com.coperatecoding.secodeverseback.domain.question.Question;
 import com.coperatecoding.secodeverseback.dto.*;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.service.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +16,27 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Tag(name = "문제", description = "문제 관련 API")
 @RequiredArgsConstructor
@@ -34,6 +54,7 @@ public class QuestionController {
     @PostMapping("/post")
     public ResponseEntity makeQuestion(@AuthenticationPrincipal User user, @RequestBody QuestionAndTestAndImageDTO.AddQuestionAndTestAndImageRequest addQuestionAndTestAndImageRequest) {
         Question question = questionService.makeQuestion(user, addQuestionAndTestAndImageRequest.getQuestion());
+
 
         for (TestCaseDTO.AddtestCaseRequest testCase : addQuestionAndTestAndImageRequest.getTestCase()) {
             testCaseService.makeTestCase(question.getPk(), testCase);
@@ -222,6 +243,91 @@ public class QuestionController {
                 .build();
 
         return ResponseEntity.ok(response);
+    }
+
+    //python print('hello')\nprint('hello')
+    // -> /n으로 해도 될거같음
+    //자바같은 경우 String code = "public class Main{\n    public static void main(String[] args){\n    System.out.println(1);\n}\n}"; 이런식으로 전처리가 필요함 (main문 미리 줄 필요 있어보임)
+    //자바같은 경우 String code = "public class Main{\n    public static void main(String[] args){\n    System.out.println(1);\n}\n}"; 이런식으로 전처리가 필요함 (main문 미리 줄 필요 있어보임)
+    ///그리고 String형 같은 경우 String code = \\\"Hello World\\\" 큰따움표 사이에 \\\이렇게 세개 넣어주기
+    //c++,c 마찬가지로 String code = "#include <stdio.h>\\nint main(void)\\n{\\n    printf(\\\"hello, world\\\");\\n    return 0;\\n}"; #include<studio.h>은 줘야함
+    //1번 -> 파이썬 ,2번 -> 자바, 3번 ->c ,4번 ->c++
+    //{"stdout":"hello World\n","time":"0.052","memory":26928,"stderr":null,"token":"42f06f39-2574-4d3e-9e90-35d33059ab14","compile_output":null,"message":null,"status":{"id":3,"description":"Accepted"}}
+    //{"stdout":null,"time":"0.112","memory":33472,"stderr":"  File \"/box/script.py\", line 1\n    cHJpbnQoJ2hlbGxvIFdvcmxkJyk=\n                                ^\nSyntaxError: invalid syntax\n","token":"92e5da6a-a84d-4d83-9bc6-836f56a3258d","compile_output":null,"message":"Exited with error status 1","status":{"id":11,"description":"Runtime Error (NZEC)"}}
+    @GetMapping("/solveQuestion")
+    public ResponseEntity<String> solveQuestion(
+            @RequestParam(required = true ) String userCode,
+            @RequestParam(required = true) int languageNum
+
+    ) throws IOException, InterruptedException {
+
+        String JUDGE0_API_URL = "https://judge0-extra-ce.p.rapidapi.com";
+        String RAPIDAPI_HOST = "judge0-extra-ce.p.rapidapi.com";
+        String RAPIDAPI_KEY = "202b19a00dmsh5b25cbe149bbfb6p14edd3jsnf28cdbf55ac2";
+        String python3LanguageId = "28";
+        String javaLanguageId="4";
+        String cPlus ="2";
+        String c="1";
+
+        String languageNumber="";
+        if(languageNum==1)
+            languageNumber=python3LanguageId;
+        else if(languageNum==2)
+            languageNumber=javaLanguageId;
+        else if(languageNum==3)
+            languageNumber=c;
+        else if(languageNum==4)
+            languageNumber=cPlus;
+
+        // Send the code execution request
+//        "source_code": "#include <stdio.h>\n\nint main(void)\n{\n    printf(\"hello, world\\n\");\n    return 0;\n}\n",
+//        String code = "#include <stdio.h>\\nint main(void)\\n{\\n    printf(\\\"hello, world\\\");\\n    return 0;\\n}";
+
+        String requestBody = "{\"language_id\":\"" + languageNumber + "\",\"source_code\":\"" + userCode + "\",\"stdin\":null}";
+
+//                    String code = "print('hello World')";
+//        String requestBody = "{\"language_id\":\"" + python3LanguageId + "\",\"source_code\":\"" + code + "\",\"stdin\":null}";
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(JUDGE0_API_URL + "/submissions"))
+                .header("X-RapidAPI-Key", RAPIDAPI_KEY)
+                .header("X-RapidAPI-Host", RAPIDAPI_HOST)
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+
+
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        System.out.println(response.body());
+        String input = response.body();
+        System.out.println("input"+input);
+        String token="";
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(input);
+            token = jsonNode.get("token").asText();
+
+            System.out.println(token);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        Thread.sleep(1000);
+
+        HttpRequest resultRequest = HttpRequest.newBuilder()
+                .uri(URI.create(JUDGE0_API_URL + "/submissions/"+token))
+                .header("X-RapidAPI-Key", RAPIDAPI_KEY)
+                .header("X-RapidAPI-Host", RAPIDAPI_HOST)
+                .header("Content-Type", "application/json")
+
+                .build();
+        HttpResponse<String> resultResponse = client.send(resultRequest, HttpResponse.BodyHandlers.ofString());
+        String resultBody = resultResponse.body();
+
+        return ResponseEntity.ok(resultBody);
     }
 
     /*
