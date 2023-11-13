@@ -42,7 +42,7 @@ jobs:
 
     # 3. Docker 이미지 빌드
     - name: docker image build
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/secodeverse .
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/app .
 
     # 4. DockerHub 로그인
     - name: docker login
@@ -53,4 +53,4 @@ jobs:
 
     # 5. Docker Hub 이미지 푸시
     - name: docker Hub push
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/secodeverse
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/app
