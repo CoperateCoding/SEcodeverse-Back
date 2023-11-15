@@ -66,10 +66,22 @@ public class QuestionService {
         return question;
     }
 
-    public Question getDetailQuestion(Long questionPk) {
+    public QuestionDTO.AddQuestionResponse getDetailQuestion(Long questionPk) {
         Question question = questionRepository.findById(questionPk)
                 .orElseThrow(() -> new NotFoundException("해당하는 문제가 존재하지 않음"));
-        return question;
+
+        QuestionDTO.AddQuestionResponse questionResponse = QuestionDTO.AddQuestionResponse.builder()
+                .pk(question.getPk())
+                .content(question.getContent())
+                .levelPk(question.getLevel().getPk())
+                .title(question.getTitle())
+                .language(question.getLanguage())
+                .limitations(question.getLimitations())
+                .testcaseDescription(question.getTestcaseDescription())
+                .source(question.getSource())
+                .build();
+
+        return questionResponse;
     }
 
     public List<QuestionDTO.questionPagingResponse> userPostQuestion(User user, int page, int size) {
