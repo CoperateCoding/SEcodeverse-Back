@@ -42,7 +42,19 @@ public class UserController {
     public ResponseEntity signUp (@RequestBody UserDTO.RegisterRequest registerRequest) throws UserInfoDuplicatedException {
         userService.signUp(registerRequest);
 
+
+
         return ResponseEntity.status(HttpStatus.CREATED).build();
+
+
+//        return ResponseEntity.status(HttpStatus.CREATED).body(
+//                UserDTO.RegisterResponse
+//                        .builder()
+//                        .id(registerRequest.getId())
+//                        .nickname(registerRequest.getNickname())
+//                        .build()
+//        );
+
     }
 
     @Operation(summary = "로그인")

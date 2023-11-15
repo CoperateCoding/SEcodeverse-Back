@@ -1,18 +1,12 @@
 package com.coperatecoding.secodeverseback.controller;
 
-import com.coperatecoding.secodeverseback.domain.User;
-import com.coperatecoding.secodeverseback.dto.BoardDTO;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONObject;
-import org.springframework.data.domain.Page;
-import org.springframework.http.*;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.BufferedReader;
@@ -27,37 +21,43 @@ import java.net.URL;
 @RestController
 @Slf4j
 @RequestMapping("/api/v1/chatbot")
-
 public class ChatbotContorller {
 
     @GetMapping("")
-    public ResponseEntity chatbot(@RequestParam String input) {
+    public ModelAndView Test() {
+        ModelAndView mav = new ModelAndView();
+
+        String url = "http://127.0.0.1:5000/tospring";
+        String sb = "";
+        try {
+            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
 
 
-        // JSON 객체 생성 및 데이터 추가
-        JSONObject json = new JSONObject();
-        json.put("sentence", input);
-        System.out.println(input);
-        // HTTP 요청 헤더 설정
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
 
-        // HTTP 요청 바디에 JSON 데이터 설정
-        HttpEntity<String> requestEntity = new HttpEntity<>(json.toString(), headers);
+            String line = null;
 
-        // Flask 서버 URL 설정
-        String url = "http://localhost:5000";
+            while ((line = br.readLine()) != null) {
+                sb = sb + line + "\n";
+            }
+            System.out.println("========br======" + sb.toString());
+            if (sb.toString().contains("ok")) {
+                System.out.println("test");
 
-        // RestTemplate을 사용하여 POST 요청 전송
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+            }
+            br.close();
 
-        // 응답 데이터 출력
-        String response = responseEntity.getBody();
-        System.out.println(response);
-        return ResponseEntity.ok(response);
+            System.out.println("" + sb.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        mav.addObject("test1", sb.toString()); // "test1"는 jsp파일에서 받을때 이름,
+        //sb.toString은 value값(여기에선 test)
+        mav.addObject("fail", false);
+        mav.setViewName("test");   // jsp파일 이름
+        return mav;
     }
-
-
-
 }
