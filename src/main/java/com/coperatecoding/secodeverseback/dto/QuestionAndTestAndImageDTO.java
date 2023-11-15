@@ -1,8 +1,10 @@
 package com.coperatecoding.secodeverseback.dto;
 
 import com.coperatecoding.secodeverseback.domain.question.Question;
-import lombok.*;
-
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import java.util.List;
 
 public class QuestionAndTestAndImageDTO {
@@ -23,7 +25,7 @@ public class QuestionAndTestAndImageDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class QuestionAndTest{
-        private Question question;
+        private QuestionDTO.AddQuestionResponse question;
 
         private List<TestCaseDTO.SearchResponse> testCase;
 

@@ -147,6 +147,7 @@ public class QuestionController {
         }
 
     }
+
     @GetMapping("/solve/user={userPk}")
     public ResponseEntity<List<QuestionDTO.questionPagingResponse>> getUserQuestion(@AuthenticationPrincipal User user,
                                                                                     @RequestParam(defaultValue = "1") int page,
@@ -189,14 +190,13 @@ public class QuestionController {
     @GetMapping("/{questionPk}")
     public ResponseEntity<QuestionAndTestAndImageDTO.QuestionAndTest> detailQuestion(@PathVariable Long questionPk) {
 
-        Question question = questionService.getDetailQuestion(questionPk);
+        QuestionDTO.AddQuestionResponse question = questionService.getDetailQuestion(questionPk);
         List<TestCaseDTO.SearchResponse> testCases = testCaseService.getTestCaseList(questionPk);
         List<QuestionImgDTO.SearchQuestionImgResponse> imgs = questionImgService.getQuestionImg(questionPk);
         QuestionAndTestAndImageDTO.QuestionAndTest response = new QuestionAndTestAndImageDTO.QuestionAndTest();
         response.setQuestion(question);
         response.setTestCase(testCases);
         response.setImg(imgs);
-
         return ResponseEntity.ok(response);
 
     }
