@@ -31,6 +31,27 @@ public class QuestionDTO {
 
     @Getter
     @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class AddQuestionResponse {
+        private Long pk;
+        private Long levelPk;
+        private String title;
+        private String intro;
+        private String content;
+        private String limitations;
+        private String source;
+        private String language;
+        private String testcaseDescription;
+
+        public static QuestionDTO.AddQuestionResponse makeResponse(Long pk, Long levelPk, String title, String intro, String content, String limitations ,String source, String language, String testcaseDescription) {
+            return new QuestionDTO.AddQuestionResponse(pk, levelPk,title,intro,content,limitations,source,language,testcaseDescription);
+        }
+    }
+
+    @Getter
+    @Setter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
@@ -104,5 +125,7 @@ public class QuestionDTO {
         private int cnt;
         private List<QuestionDTO.SearchQuestionResponse> list;
     }
+
+
 
 }
