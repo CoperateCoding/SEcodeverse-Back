@@ -23,8 +23,10 @@ public class TestCase {
     @JoinColumn(name = "question_pk")
     private Question question;
 
+    @Column(columnDefinition = "LONGTEXT")
     private String input;
 
+    @Column(columnDefinition = "LONGTEXT")
     @NotNull
     private String output;
 
