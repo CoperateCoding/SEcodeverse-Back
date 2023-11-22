@@ -7,13 +7,16 @@ import com.coperatecoding.secodeverseback.dto.UserDTO;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.exception.UserLockedException;
 import com.coperatecoding.secodeverseback.repository.CodingBadgeRepository;
+import com.coperatecoding.secodeverseback.repository.RedisRepository;
 import com.coperatecoding.secodeverseback.repository.RefreshTokenRepository;
 import com.coperatecoding.secodeverseback.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +35,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final CodingBadgeRepository codingBadgeRepository;
+    private final RedisRepository redisRepository;
 
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
@@ -146,12 +150,16 @@ public class UserService {
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
 
-        refreshTokenRepository.save(
-                RefreshToken.makeRefreshToken(refreshToken, getClientIp(request), user, jwtService.extractExpiration(refreshToken))
-        );
-
+//        refreshTokenRepository.save(
+//                RefreshToken.makeRefreshToken(refreshToken, getClientIp(request), user, jwtService.extractExpiration(refreshToken))
+//        );
+        redisRepository.saveRefreshToken(loginRequest.getId(), refreshToken,3000);
         return UserDTO.LoginResponse.makeResponse(accessToken, refreshToken);
 
+    }
+
+    public void logout(String userId) {
+        redisRepository.deleteRefreshToken(userId);
     }
 
     public UserDTO.UserInfoResponse getUserInfo(User user) {
