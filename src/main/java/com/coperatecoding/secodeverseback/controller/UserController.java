@@ -4,6 +4,7 @@ import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.dto.UserDTO;
 //import com.coperatecoding.secodeverseback.service.JwtService;
 import com.coperatecoding.secodeverseback.exception.UserInfoDuplicatedException;
+import com.coperatecoding.secodeverseback.service.JwtService;
 import com.coperatecoding.secodeverseback.service.UserService;
 import com.nimbusds.openid.connect.sdk.UserInfoResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -65,23 +66,24 @@ public class UserController {
         return ResponseEntity.ok(loginResponse);
     }
 
-//    @Operation(summary = "로그아웃", description = """
-//    [로그인 필요] 로그아웃을 합니다.<br>
-//    jwt토큰이 만료됩니다<br>
-//    로그아웃 리다이랙트 url 꼭 넣기. &logout_redirect_uri={url} <br>
-//    200: 성공<br>
-//    """)
-//    @PostMapping("/logout")
-//    public ResponseEntity<Map> logout(@AuthenticationPrincipal User user, @RequestHeader(value="Authorization") String authHeader) {
+    @Operation(summary = "로그아웃", description = """
+    [로그인 필요] 로그아웃을 합니다.<br>
+    jwt토큰이 만료됩니다<br>
+    로그아웃 리다이랙트 url 꼭 넣기. &logout_redirect_uri={url} <br>
+    200: 성공<br>
+    """)
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@AuthenticationPrincipal User user) {
+            userService.logout(user.getId());
 //        Map<String, String> map = new HashMap<>();
-//
+
 //        String token = authHeader.substring(7);
-//
+//        JwtService jwtService = new JwtService();
 //        //jwt토큰만료처리 -> 블랙리스트
 //        jwtService.addBlackList(token);
-//
-//        return ResponseEntity.ok(map);
-//    }
+
+        return ResponseEntity.ok().build();
+    }
 
     @Operation(summary = "중복 아이디 확인")
     @GetMapping("/id/{id}/exists")
