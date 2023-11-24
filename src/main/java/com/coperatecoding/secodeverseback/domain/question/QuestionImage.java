@@ -1,7 +1,5 @@
 package com.coperatecoding.secodeverseback.domain.question;
 
-import com.coperatecoding.secodeverseback.dto.QuestionDTO;
-import com.coperatecoding.secodeverseback.dto.QuestionImgDTO;
 import jakarta.persistence.*;
 import lombok.*;
 

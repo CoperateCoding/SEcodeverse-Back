@@ -2,7 +2,7 @@ package com.coperatecoding.secodeverseback.service;
 
 import com.coperatecoding.secodeverseback.domain.TestCase;
 import com.coperatecoding.secodeverseback.domain.question.Question;
-import com.coperatecoding.secodeverseback.dto.TestCaseDTO;
+import com.coperatecoding.secodeverseback.dto.question.TestCaseDTO;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.repository.QuestionRepository;
 import com.coperatecoding.secodeverseback.repository.TestCaseRepository;

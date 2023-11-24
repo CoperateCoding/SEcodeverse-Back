@@ -1,7 +1,6 @@
 package com.coperatecoding.secodeverseback.service;
 
 import com.coperatecoding.secodeverseback.domain.CodingBadge;
-import com.coperatecoding.secodeverseback.domain.RefreshToken;
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.dto.UserDTO;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
@@ -13,10 +12,8 @@ import com.coperatecoding.secodeverseback.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,7 +50,7 @@ public class UserService {
             throw new UserInfoDuplicatedException("해당하는 닉네임이 존재합니다.");
         }
 
-        // 기본 Badge를 가져오기
+        // 기본 Badge 가져오기
         CodingBadge defaultBadge = codingBadgeRepository.findById(1L)
                 .orElseThrow(() -> new NotFoundException("Default badge with pk 1 not found."));
 
@@ -82,23 +79,6 @@ public class UserService {
 
         return (user == null)? false : true;
     }
-
-//    public UserDTO.LoginResponse authenticate(UserDTO.Login dto) {
-//        authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(
-//                        dto.getId(),
-//                        dto.getPassword()
-//                )
-//        );
-//
-//        User user = userRepository.findById(dto.getId())
-//                .orElseThrow(() -> new NotFoundException());
-//
-//        String jwtToken = jwtService.generateToken(user);
-//
-//        return new UserDTO.LoginResponse(jwtToken, user.getId(), user.getName(), user.getNickname(), user.getRoleType().name());
-//
-//    }
 
     public static String getClientIp(HttpServletRequest request) {
         String clientIp = null;
@@ -150,9 +130,6 @@ public class UserService {
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
 
-//        refreshTokenRepository.save(
-//                RefreshToken.makeRefreshToken(refreshToken, getClientIp(request), user, jwtService.extractExpiration(refreshToken))
-//        );
         redisRepository.saveRefreshToken(loginRequest.getId(), refreshToken,3000);
         return UserDTO.LoginResponse.makeResponse(accessToken, refreshToken);
 
@@ -168,46 +145,5 @@ public class UserService {
 
     }
 
-//    public UserDTO.LoginResponse login(UserDTO.LoginRequest loginRequest, HttpServletRequest request) {
-//        User user = userRepository.findById(loginRequest.getId())
-//                .orElseGet(() -> null);
-//
-//        if (!user.isAccountNonLocked()) {
-//            throw new UserLockedException();
-//        }
-//
-//        authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(
-//                        loginRequest.getId(),
-//                        loginRequest.getPassword()
-//                )
-//        );
-//
-//        //토큰 생성
-//        String accessToken = jwtService.generateAccessToken(user);
-//        String refreshToken = jwtService.generateRefreshToken(user);
-//
-//        refreshTokenRepository.save(
-//                RefreshToken.makeRefreshToken(refreshToken, getClientIp(request), user, jwtService.extractExpiration(refreshToken))
-//        );
-//
-//        return UserDTO.LoginResponse.makeResponse(accessToken, refreshToken);
-//    }
 
-//    public UserDTO.LoginResponse authenticate(UserDTO.LoginRequest loginRequest) {
-//        authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(
-//                        loginRequest.getId(),
-//                        loginRequest.getPassword()
-//                )
-//        );
-//
-//        User user = userRepository.findById(loginRequest.getId())
-//                .orElseThrow(() -> new NotFoundException());
-//
-//        String jwtToken = jwtService.generateToken(user);
-//
-//        return new UserDTO.LoginResponse(jwtToken, user.getId(), user.getNickname(), user.getRoleType().name());
-//
-//    }
 }
