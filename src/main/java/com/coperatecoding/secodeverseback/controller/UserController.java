@@ -30,8 +30,6 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
-//    private final JwtService jwtService;
-
 
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @Operation(summary = "회원가입", description = """
@@ -43,19 +41,7 @@ public class UserController {
     public ResponseEntity signUp (@RequestBody UserDTO.RegisterRequest registerRequest) throws UserInfoDuplicatedException {
         userService.signUp(registerRequest);
 
-
-
         return ResponseEntity.status(HttpStatus.CREATED).build();
-
-
-//        return ResponseEntity.status(HttpStatus.CREATED).body(
-//                UserDTO.RegisterResponse
-//                        .builder()
-//                        .id(registerRequest.getId())
-//                        .nickname(registerRequest.getNickname())
-//                        .build()
-//        );
-
     }
 
     @Operation(summary = "로그인")
@@ -74,13 +60,7 @@ public class UserController {
     """)
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@AuthenticationPrincipal User user) {
-            userService.logout(user.getId());
-//        Map<String, String> map = new HashMap<>();
-
-//        String token = authHeader.substring(7);
-//        JwtService jwtService = new JwtService();
-//        //jwt토큰만료처리 -> 블랙리스트
-//        jwtService.addBlackList(token);
+        userService.logout(user.getId());
 
         return ResponseEntity.ok().build();
     }

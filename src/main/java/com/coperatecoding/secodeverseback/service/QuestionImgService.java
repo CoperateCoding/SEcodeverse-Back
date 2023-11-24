@@ -2,7 +2,7 @@ package com.coperatecoding.secodeverseback.service;
 
 import com.coperatecoding.secodeverseback.domain.question.Question;
 import com.coperatecoding.secodeverseback.domain.question.QuestionImage;
-import com.coperatecoding.secodeverseback.dto.QuestionImgDTO;
+import com.coperatecoding.secodeverseback.dto.question.QuestionImgDTO;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.repository.QuestionImageRepository;
 import com.coperatecoding.secodeverseback.repository.QuestionRepository;
