@@ -2,6 +2,7 @@ package com.coperatecoding.secodeverseback.controller;
 
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.dto.CommentDTO;
+import com.coperatecoding.secodeverseback.dto.QuestionDTO;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.service.CommentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -44,13 +45,16 @@ public class CommentController {
         commentService.modifyComment(commentPk,modifyRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
-    @GetMapping("/{boardPk}")
-    public ResponseEntity getComments(@PathVariable Long boardPk){
-        List<CommentDTO.SearchResponse> comments = commentService.getComments(boardPk);
 
-        if (comments.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("댓글이 없음");
-        }
+    @GetMapping("/{boardPk}")
+    public ResponseEntity <List<CommentDTO.SearchResponse>>getComments(@PathVariable Long boardPk){
+        System.out.println("댓글 등록 시작함");
+        List<CommentDTO.SearchResponse> comments = commentService.getComments(boardPk);
+        System.out.println(comments.size());
+        //
+//        if (comments.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("댓글이 없음");
+//        }
 
         return ResponseEntity.ok(comments);
     }
