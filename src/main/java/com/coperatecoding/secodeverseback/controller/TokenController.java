@@ -75,8 +75,6 @@ public class TokenController {
         return ResponseEntity.ok(response);
     }
 
-
-
 //    @GetMapping("/token/validate")
 //    public ResponseEntity<Map<String, Object>> validateJwtToken(@AuthenticationPrincipal User user) {
 //        Map<String, Object> response = new HashMap<>();

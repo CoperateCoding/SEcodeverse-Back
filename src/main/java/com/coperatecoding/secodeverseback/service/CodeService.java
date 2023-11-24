@@ -3,7 +3,7 @@ package com.coperatecoding.secodeverseback.service;
 import com.coperatecoding.secodeverseback.domain.Code;
 import com.coperatecoding.secodeverseback.domain.CodeStatus;
 import com.coperatecoding.secodeverseback.domain.User;
-import com.coperatecoding.secodeverseback.dto.CodeDTO;
+import com.coperatecoding.secodeverseback.dto.question.CodeDTO;
 import com.coperatecoding.secodeverseback.repository.CodeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+
 import java.util.ArrayList;
 import java.util.List;
 
