@@ -51,6 +51,7 @@ public class CommentController {
         System.out.println("댓글 등록 시작함");
         List<CommentDTO.SearchResponse> comments = commentService.getComments(boardPk);
         System.out.println(comments.size());
+        //
 //        if (comments.isEmpty()) {
 //            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("댓글이 없음");
 //        }
