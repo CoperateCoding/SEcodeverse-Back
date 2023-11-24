@@ -1,6 +1,8 @@
 package com.coperatecoding.secodeverseback.domain;
 
 import com.coperatecoding.secodeverseback.domain.ctf.CTFTeam;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -18,6 +20,7 @@ import java.util.Collection;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "users")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User implements UserDetails {
 
     @Id

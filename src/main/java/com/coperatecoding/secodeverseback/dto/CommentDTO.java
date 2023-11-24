@@ -1,6 +1,7 @@
 package com.coperatecoding.secodeverseback.dto;
 
 import com.coperatecoding.secodeverseback.domain.User;
+import net.minidev.json.annotate.JsonIgnore;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -31,6 +32,7 @@ public class CommentDTO {
         private Long pk;
         private LocalDateTime createAt;
         private String content;
+        @JsonIgnore
         private User user;
 
         public static SearchListRequest makeRequest(Long pk,LocalDateTime createAt, String content, User user) {
@@ -46,6 +48,7 @@ public class CommentDTO {
         private Long pk;
         private LocalDateTime createAt;
         private String content;
+        @JsonIgnore
         private User user;
 
     }
