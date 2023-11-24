@@ -153,7 +153,9 @@ public class UserService {
 //        refreshTokenRepository.save(
 //                RefreshToken.makeRefreshToken(refreshToken, getClientIp(request), user, jwtService.extractExpiration(refreshToken))
 //        );
+        System.out.println("redis접근중");
         redisRepository.saveRefreshToken(loginRequest.getId(), refreshToken,3000);
+        System.out.println("redis저장 완료 ");
         return UserDTO.LoginResponse.makeResponse(accessToken, refreshToken);
 
     }
