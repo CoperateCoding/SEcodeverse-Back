@@ -30,7 +30,7 @@ public class SecurityConfig {
             "/error", "api/v1/s3/presigned",
             "/api/v1/token/validate", "/api/v1/token/reissue", "api/v1/user/nickname/**", "api/v1/user/id/**",
             "api/v1/board/**", "api/v1/comment/**","/api/v1/likes/**","api/v1/question/**","test/hello","api/v1/chatbot",
-            "api/v1/ctf/**", "api/v1/admin/**"
+            "api/v1/ctf/**", "api/v1/admin/**", "ap/v1/**"
             // 이건 다 임의로 넣어둠.
 //            "/logout"
     };
@@ -73,7 +73,11 @@ public class SecurityConfig {
         configuration.addAllowedOrigin("https://lucky-llama-7b0801.netlify.app/");
         configuration.addAllowedOrigin("https://lucky-llama-7b0801.netlify.app:443");
 //        configuration.addAllowedHeader("*");
-        configuration.addAllowedMethod("*"); // 나중에 이거 지워야함
+//        configuration.addAllowedMethod("*");
+        configuration.addAllowedOrigin("*");
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        configuration.setMaxAge(3600L);
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

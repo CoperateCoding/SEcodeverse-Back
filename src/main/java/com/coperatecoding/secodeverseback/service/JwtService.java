@@ -90,13 +90,6 @@ public class JwtService {
 
         boolean b = (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
 
-        //블랙리스트 토큰인지 확인
-//        Integer isExist = tokenBlackListRepository.isExistToken(token)
-//                .orElseGet(() -> null);
-
-//        if (isExist != null)
-//            return false;
-
         //리프레쉬 토큰인 경우 인증처리 x
         Object tokenTypeClaim = extractClaim(token, (Claims claim) -> claim.get("token_type", String.class));
         if (tokenTypeClaim != null && tokenTypeClaim.equals("refresh"))
