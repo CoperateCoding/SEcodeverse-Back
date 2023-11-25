@@ -46,6 +46,8 @@ public class CTFLeagueDTO {
 
     @Getter
     @NoArgsConstructor
+    @Builder
+    @AllArgsConstructor
     public static class BriefResponse {
         private String name;
         private String openTime;

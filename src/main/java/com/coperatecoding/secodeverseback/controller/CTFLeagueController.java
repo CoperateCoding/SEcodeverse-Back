@@ -6,8 +6,10 @@ import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.service.CTFLeagueService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,16 +43,25 @@ public class CTFLeagueController {
         return ResponseEntity.ok(league);
     }
 
-//    @Operation(summary = "ctf 리그 전체 조회")
-//    @DeleteMapping("/admin/ctf/league/all")
-//    public ResponseEntity<CTFLeagueDTO.AllListResponse> getCTFLeagueAll() throws RuntimeException {
-//
-//        CTFLeagueDTO.AllListResponse response = ctfLeagueService.getCTFLeagueAll();
-//
-//        return ResponseEntity.ok(response);
-//
-//
-//    }
+    @Operation(summary = "ctf 리그 전체 조회")
+    @DeleteMapping("/admin/ctf/league/all")
+    public ResponseEntity<CTFLeagueDTO.AllListResponse> getCTFLeagueAll(
+            @RequestParam(required = false, defaultValue = "10") @Min(value = 2, message = "page 크기는 1보다 커야합니다") int pageSize,
+            @RequestParam(required = false, defaultValue = "1") @Min(value = 1, message = "page는 0보다 커야합니다") int page
+            ) throws RuntimeException {
+
+        Page<CTFLeagueDTO.BriefResponse> briefResponses = ctfLeagueService.getCTFLeagueAll(page, pageSize);
+
+
+        CTFLeagueDTO.AllListResponse response = CTFLeagueDTO.AllListResponse.builder()
+                .cnt((int) briefResponses.getTotalElements())
+                .list(briefResponses.getContent())
+                .build();
+
+        return ResponseEntity.ok(response);
+
+
+    }
 
     @Operation(summary = "ctf 리그 수정")
     @PatchMapping("/admin/ctf/league/{leaguePk}")
