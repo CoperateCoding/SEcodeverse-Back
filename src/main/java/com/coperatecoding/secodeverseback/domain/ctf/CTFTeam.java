@@ -41,4 +41,12 @@ public class CTFTeam {
 
     @OneToMany(mappedBy = "team")
     private List<User> users = new ArrayList<>();
+
+    public static CTFTeam makeCTFTeam(CTFLeague league, String name, String pw) {
+        CTFTeam ctfTeam = new CTFTeam();
+        ctfTeam.league = league;
+        ctfTeam.name = name;
+        ctfTeam.pw = pw;
+        return ctfTeam;
+    }
 }

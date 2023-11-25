@@ -73,7 +73,7 @@ public class SecurityConfig {
         configuration.addAllowedOrigin("https://lucky-llama-7b0801.netlify.app/");
         configuration.addAllowedOrigin("https://lucky-llama-7b0801.netlify.app:443");
 //        configuration.addAllowedHeader("*");
-        configuration.addAllowedMethod("*");
+        configuration.addAllowedMethod("*"); // 나중에 이거 지워야함
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
