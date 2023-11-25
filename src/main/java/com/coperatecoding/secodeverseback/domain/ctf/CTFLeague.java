@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +51,9 @@ public class CTFLeague {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    private CTFLeagueStatus status;
+    private CTFLeagueStatus status = CTFLeagueStatus.CLOSE;
+
+
 
     @OneToMany(mappedBy = "league", cascade = CascadeType.ALL)
     private List<CTFQuestion> questionList = new ArrayList<>();
@@ -69,6 +72,20 @@ public class CTFLeague {
         ctfLeague.description = description;
         return ctfLeague;
     }
+    
+    // 현재 리그 상태 확인
+    public CTFLeagueStatus checkLeagueStatus() {
+        LocalDateTime now = LocalDateTime.now();
+        if (now.isEqual(this.openTime) || (now.isAfter(this.openTime) && now.isBefore(this.closeTime))) {
+            this.status = CTFLeagueStatus.OPEN;
+            return CTFLeagueStatus.OPEN;
+        } else {
+            this.status = CTFLeagueStatus.CLOSE;
+        }
+        return status;
+    }
 
-
+    public String convertDate(LocalDateTime dateTime) {
+        return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+    }
 }

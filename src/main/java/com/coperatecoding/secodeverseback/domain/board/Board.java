@@ -1,5 +1,6 @@
 package com.coperatecoding.secodeverseback.domain.board;
 
+import com.coperatecoding.secodeverseback.domain.Comment;
 import com.coperatecoding.secodeverseback.domain.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -59,6 +60,12 @@ public class Board {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true) //image 삭제하지 않아도 삭제됨
     private List<BoardImage> imageList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Likes> likes = new ArrayList<>();
+
     public static Board makeBoard(User user, BoardCategory category, String title, String content) {
         Board board = new Board();
         board.user = user;
@@ -105,8 +112,8 @@ public class Board {
         this.commentCnt--;
     }
 
-    public String convertDate(LocalDateTime updateAt) {
-        return updateAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+    public String convertDate(LocalDateTime dateTime) {
+        return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
     }
 
     public String convertPreviewDate(LocalDateTime updateAt) {
