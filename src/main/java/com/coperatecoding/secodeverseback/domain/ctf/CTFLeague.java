@@ -3,6 +3,7 @@ package com.coperatecoding.secodeverseback.domain.ctf;
 import com.coperatecoding.secodeverseback.domain.Comment;
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.domain.board.Board;
+import com.coperatecoding.secodeverseback.dto.ctf.CTFLeagueDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -87,5 +88,20 @@ public class CTFLeague {
 
     public String convertDate(LocalDateTime dateTime) {
         return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+    }
+
+    public LocalDateTime convertStringtoDate(String dateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        return LocalDateTime.parse(dateTime, formatter);
+    }
+
+
+    public void edit(String name, String openTime, String closeTime, int memberCnt, String notice, String description) {
+        this.name = name;
+        this.openTime = convertStringtoDate(openTime);
+        this.closeTime = convertStringtoDate(closeTime);
+        this.memberCnt = memberCnt;
+        this.notice = notice;
+        this.description = description;
     }
 }

@@ -6,9 +6,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ImageNameDTO {
-    private String image_name;
+    private String folderName;
+    private String imageName;
 
-    public ImageNameDTO(String imageName) {
-        this.image_name = imageName;
+    public ImageNameDTO(String folderName, String imageName) {
+        this.folderName = folderName;
+        this.imageName = imageName;
     }
 }

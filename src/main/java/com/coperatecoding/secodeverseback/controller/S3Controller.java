@@ -23,7 +23,7 @@ public class S3Controller {
 
     @PostMapping("/presigned")
     public ResponseEntity getS3PresignedKey(@RequestBody ImageNameDTO imageNameDTO) {
-        String preSignedUrl = s3Service.getPreSignedUrl(imageNameDTO.getImage_name());
+        String preSignedUrl = s3Service.getPreSignedUrl(imageNameDTO.getFolderName(), imageNameDTO.getImageName());
 
         Map<String, String> map = new HashMap<>();
         map.put("presigned_url", preSignedUrl);

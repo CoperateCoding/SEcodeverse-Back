@@ -24,12 +24,11 @@ public class S3Service {
     public String bucketName;
 
     //Pre-Signed URL 받아옴
-    public String getPreSignedUrl(String fileName) {
+    public String getPreSignedUrl(String prefix, String fileName) {
         String onlyOneFileName = onlyOneFileName(fileName);
 
         log.info("get presinged url");
 
-        String prefix = "";
         if (!prefix.equals("")) {
             fileName = prefix + "/" + fileName;
         }
