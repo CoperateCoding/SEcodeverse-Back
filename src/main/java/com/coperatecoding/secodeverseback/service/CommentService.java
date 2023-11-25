@@ -29,13 +29,17 @@ public class CommentService {
         Board board =  boardRepository.findById(addCommentRequest.getBoardPK()).orElseThrow(() -> new NotFoundException("해당하는 게시글이 존재하지 않음"));
 
         Comment comment = Comment.makeComment(board,user,addCommentRequest.getContent());
-                return commentRepository.save(comment);
+        board.addCommentCnt();
+
+        return commentRepository.save(comment);
 
     }
 
     public void deleteComment(Long commentID) throws RuntimeException{
 
         Comment comment = commentRepository.findById(commentID).orElseThrow(() -> new NotFoundException("해당하는 댓글이 존재하지 않음"));
+        Board board = comment.getBoard();
+        board.deleteCommentCnt();
         commentRepository.delete(comment);
 
     }
