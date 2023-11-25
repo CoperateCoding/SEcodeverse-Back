@@ -20,19 +20,17 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/likes")
 public class LikesController {
     private final LikeService likeService;
-    private final BoardService boardService;
+
     @PostMapping("/{boardPk}")
     public ResponseEntity makeLikes(@AuthenticationPrincipal User user, @PathVariable Long boardPk){
         likeService.makeLikes(user,boardPk);
-        boardService.makeLike(boardPk);
         return ResponseEntity.status(HttpStatus.CREATED).build();
-
     }
+
     @DeleteMapping("/{boardPk}")
-    public ResponseEntity deleteLikes(@PathVariable Long boardPk){
-        likeService.deleteLikes(boardPk);
-        boardService.deleteLike(boardPk);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity deleteLikes(@AuthenticationPrincipal User user, Long boardPk){
+        likeService.deleteLikes(user, boardPk);
+        return ResponseEntity.ok().build();
     }
 
 }

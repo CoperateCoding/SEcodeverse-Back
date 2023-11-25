@@ -43,13 +43,6 @@ public class BoardService {
         return boardRepository.save(board);
     }
 
-    public void makeLike(Long boardPk) throws RuntimeException{
-
-        Board board = boardRepository.findById(boardPk)
-                .orElseThrow(() -> new NotFoundException("해당하는 카테고리가 존재하지 않음"));
-        board.addLikeCnt();
-
-    }
 
     public void deleteBoard(User user, Long boardPk) throws NoSuchElementException, ForbiddenException {
 
@@ -292,7 +285,6 @@ public class BoardService {
                 .build();
 
         return boardDetailResponse;
-
     }
 
 
