@@ -1,9 +1,11 @@
 package com.coperatecoding.secodeverseback.service;
 
 import com.coperatecoding.secodeverseback.domain.Comment;
+import com.coperatecoding.secodeverseback.domain.RoleType;
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.domain.board.Board;
 import com.coperatecoding.secodeverseback.dto.CommentDTO;
+import com.coperatecoding.secodeverseback.exception.ForbiddenException;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.repository.BoardRepository;
 import com.coperatecoding.secodeverseback.repository.CommentRepository;
@@ -35,17 +37,29 @@ public class CommentService {
 
     }
 
-    public void deleteComment(Long commentID) throws RuntimeException{
+    public void deleteComment(User user, Long commentID) throws RuntimeException{
 
         Comment comment = commentRepository.findById(commentID).orElseThrow(() -> new NotFoundException("해당하는 댓글이 존재하지 않음"));
         Board board = comment.getBoard();
         board.deleteCommentCnt();
+
+        // Admin은 통과, 회원이면 댓글 확인
+        if(!user.getRoleType().equals(RoleType.ADMIN) && comment.getUser().getPk() != user.getPk()) {
+            throw new ForbiddenException("작성자만 댓글을 삭제할 수 있습니다.");
+        }
+
         commentRepository.delete(comment);
 
     }
 
-    public void modifyComment(Long commentPk, CommentDTO.modifyRequest modifyRequest) throws RuntimeException{
+    public void modifyComment(User user, Long commentPk, CommentDTO.modifyRequest modifyRequest) throws RuntimeException{
         Comment comment = commentRepository.findById(commentPk).orElseThrow(() -> new NotFoundException("해당하는 댓글이 존재하지 않음"));
+
+        // Admin은 통과, 회원이면 댓글 확인
+        if(!user.getRoleType().equals(RoleType.ADMIN) && comment.getUser().getPk() != user.getPk()) {
+            throw new ForbiddenException("작성자만 댓글을 삭제할 수 있습니다.");
+        }
+
         comment.modifyComment(modifyRequest.getContent());
 
     }

@@ -19,12 +19,12 @@ public class CTFLeagueService {
 
     private final CTFLeagueRepository ctfLeagueRepository;
 
-    public CTFLeague makeLeague(CTFLeagueDTO.AddRequest addRequest) {
+    public void makeLeague(CTFLeagueDTO.AddRequest addRequest) {
 
         CTFLeague ctfLeague = CTFLeague.makeCTFLeague(addRequest.getName(), addRequest.getOpenTime(), addRequest.getCloseTime(),
                 addRequest.getMemberCnt(), addRequest.getNotice(), addRequest.getDescription());
 
-        return ctfLeagueRepository.save(ctfLeague);
+        ctfLeagueRepository.save(ctfLeague);
     }
 
 
