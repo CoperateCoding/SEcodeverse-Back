@@ -21,19 +21,44 @@ public class LikeService {
 
     private final BoardRepository boardRepository;
 
-    public Likes makeLikes(User user, Long boardPk) throws RuntimeException{
+    public void makeLikes(User user, Long boardPk) throws RuntimeException{
 
         Board board = boardRepository.findById(boardPk)
                 .orElseThrow(() -> new NotFoundException("해당하는 게시물이 존재하지 않음"));
 
-        Likes likes = Likes.makeLikes(user,board);
+        // 이전에 좋아요 눌렀는지 확인
+        boolean isClicked = likeRepository.existsByUserAndBoard(user, board);
+        if(!isClicked) {
+            Likes likes = Likes.makeLikes(user, board);
+            likeRepository.save(likes);
+            board.addLikeCnt();
+        }
 
-        return likeRepository.save(likes);
+        // 좋아요가 이미 존재하면 무시
+
     }
 
-    public void deleteLikes(Long likePk) throws RuntimeException{
-        Likes likes = likeRepository.findById(likePk)
-                .orElseThrow(() -> new NotFoundException("해당 좋아요가 존재하지 않음"));
+//    public void deleteLikes(Long likePk) throws RuntimeException{
+//        Likes likes = likeRepository.findById(likePk)
+//                .orElseThrow(() -> new NotFoundException("해당 좋아요가 존재하지 않음"));
+//
+//        likeRepository.delete(likes);
+//    }
+
+    public void deleteLikes(User user, Long boardPk) {
+        Board board = boardRepository.findById(boardPk)
+                .orElseThrow(() -> new NotFoundException("해당하는 게시물이 존재하지 않음"));
+
+        Likes likes = likeRepository.findByUserAndBoard(user, board)
+                .orElseGet(() -> null);
+
+        //좋아요가 존재하지 않는다면 무시
+        if (likes == null)
+            return;
+
+        //이전에 좋아요를 눌렀다면 삭제
         likeRepository.delete(likes);
+        board.deleteLikeCnt();
     }
+
 }
