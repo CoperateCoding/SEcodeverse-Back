@@ -59,9 +59,11 @@ public class CTFLeague {
     private List<CTFTeam> teamList = new ArrayList<>();
 
 
-    public static CTFLeague makeCTFLeague(String name, int memberCnt, String notice, String description) {
+    public static CTFLeague makeCTFLeague(String name, LocalDateTime openTime, LocalDateTime closeTime, int memberCnt, String notice, String description) {
         CTFLeague ctfLeague = new CTFLeague();
         ctfLeague.name = name;
+        ctfLeague.openTime = openTime;
+        ctfLeague.closeTime = closeTime;
         ctfLeague.memberCnt = memberCnt;
         ctfLeague.notice = notice;
         ctfLeague.description = description;

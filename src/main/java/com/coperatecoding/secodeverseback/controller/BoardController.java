@@ -38,7 +38,6 @@ public class BoardController {
 
     @Operation(summary = "게시글 작성", description = """
     [로그인 필요]
-    일단 지금은 이미지 제외함. s3 비용때문에 최대한 나중에 구현 예정
     201: 성공<br>
     400: 필요한 값을 넣지 않음(모든 값은 not null)<br>
     403: 권한없음
