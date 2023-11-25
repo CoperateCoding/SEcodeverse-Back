@@ -63,6 +63,7 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @Operation(summary = "댓글 조회")
     @GetMapping("/{boardPk}")
     public ResponseEntity <List<CommentDTO.SearchResponse>> getComments(@PathVariable Long boardPk){
         List<CommentDTO.SearchResponse> comments = commentService.getComments(boardPk);

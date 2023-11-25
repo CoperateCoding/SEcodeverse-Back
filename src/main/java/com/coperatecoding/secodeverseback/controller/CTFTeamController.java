@@ -27,7 +27,7 @@ public class CTFTeamController {
     private final CTFTeamService ctfTeamService;
 
     @Operation(summary = "ctf 팀 등록")
-    @PostMapping("/admin/ctf/team/post")
+    @PostMapping("/post")
     public ResponseEntity makeCTFTeam(@AuthenticationPrincipal User user, @RequestBody @Valid CTFTeamDTO.AddRequest addRequest) {
 
         ctfTeamService.makeTeam(addRequest);
@@ -36,7 +36,7 @@ public class CTFTeamController {
     }
 
     @Operation(summary = "ctf 팀 상세 조회")
-    @GetMapping("/admin/ctf/team/{teamPk}")
+    @GetMapping("/{teamPk}")
     public ResponseEntity<CTFTeamDTO.DetailResponse> getCtfTeam(@PathVariable Long teamPk) throws NoSuchElementException {
 
         CTFTeamDTO.DetailResponse detailResponse = ctfTeamService.getDetailTeam(teamPk);

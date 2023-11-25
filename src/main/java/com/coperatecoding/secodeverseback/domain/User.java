@@ -1,5 +1,6 @@
 package com.coperatecoding.secodeverseback.domain;
 
+import com.coperatecoding.secodeverseback.domain.board.Likes;
 import com.coperatecoding.secodeverseback.domain.ctf.CTFTeam;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -14,7 +15,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
@@ -63,6 +66,9 @@ public class User implements UserDetails {
     private String nickname;
     
     private Integer exp; // 경험치
+
+    @OneToMany(mappedBy = "user")
+    private List<Likes> likes = new ArrayList<>();
 
     private boolean isAccountNonLocked = true;
 
