@@ -1,12 +1,14 @@
 package com.coperatecoding.secodeverseback.domain;
 
 import com.coperatecoding.secodeverseback.domain.board.Board;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -27,11 +29,13 @@ public class Comment {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="board_pk", referencedColumnName = "pk")
+    @JsonIgnore
     private Board board;
 
     //댓글을 단 사용자가 탈퇴하면 알수없음 처리 nullable
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_pk")
+    @JoinColumn(name = "user_pk")
+    @JsonIgnore
     private User user;
 
     @NotNull
