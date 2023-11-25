@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.NoSuchElementException;
@@ -40,6 +39,15 @@ public class CTFLeagueController {
         CTFLeagueDTO.DetailResponse league = ctfLeagueService.getDetailLeague(leaguePk);
 
         return ResponseEntity.ok(league);
+    }
+
+    @Operation(summary = "ctf 리그 수정")
+    @PatchMapping("/admin/ctf/league/{leaguePk}")
+    public ResponseEntity modifyLeague(@RequestBody @Valid CTFLeagueDTO.AddRequest addRequest) {
+
+        ctfLeagueService.makeLeague(addRequest);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
 
