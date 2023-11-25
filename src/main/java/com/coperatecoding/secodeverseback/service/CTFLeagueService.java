@@ -7,11 +7,13 @@ import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.repository.CTFLeagueRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -72,7 +74,35 @@ public class CTFLeagueService {
 
     }
 
-//    public Page<CTFLeagueDTO.AllListResponse> getCTFLeagueAll() throws RuntimeException {
-//
-//    }
+    private Pageable makePageable(Integer page, Integer pageSize) throws RuntimeException {
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "openTime");
+        if (page == null)
+            page = 1;
+
+        if (pageSize == null)
+            pageSize = 10;
+
+        return PageRequest.of(page-1, pageSize, sort);
+    }
+
+
+    public Page<CTFLeagueDTO.BriefResponse> getCTFLeagueAll(int page, int pageSize) throws RuntimeException {
+        Pageable pageable = makePageable(page, pageSize);
+        Page<CTFLeague> list;
+
+        list = ctfLeagueRepository.findAll(pageable);
+
+        List<CTFLeagueDTO.BriefResponse> briefResponseList = list.getContent().stream()
+                .map(ctfLeague -> CTFLeagueDTO.BriefResponse.builder()
+                        .name(ctfLeague.getName())
+                        .status(ctfLeague.getStatus())
+                        .openTime(ctfLeague.convertDate(ctfLeague.getOpenTime()))
+                        .closeTime(ctfLeague.convertDate(ctfLeague.getCloseTime()))
+                        .build()
+                ).collect(Collectors.toList());
+
+        return new PageImpl<>(briefResponseList, pageable, list.getTotalElements());
+
+    }
 }
