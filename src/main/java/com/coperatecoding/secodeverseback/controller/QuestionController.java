@@ -263,7 +263,8 @@ public class QuestionController {
     @GetMapping("/solveQuestion")
     public ResponseEntity<String> solveQuestion(
             @RequestParam(required = true) String userCode,
-            @RequestParam(required = true) int languageNum
+            @RequestParam(required = true) int languageNum,
+            @RequestParam(required = true) Long questionPk
     ) throws IOException, InterruptedException {
         System.out.println("userCode" + userCode);
         System.out.println("languageNum" + languageNum);
@@ -274,7 +275,10 @@ public class QuestionController {
         String javaLanguageId = "4";
         String cPlusLanguageId = "2";
         String cLanguageId = "1";
-
+        List<TestCaseDTO.SearchResponse> testCaseList= testCaseService.getTestCaseList(questionPk);
+        for(TestCaseDTO.SearchResponse testcase : testCaseList){
+            System.out.println(testcase.getInput());
+        }
         String languageNumber = "";
         if (languageNum == 1)
             languageNumber = cLanguageId;
@@ -284,7 +288,7 @@ public class QuestionController {
             languageNumber = cPlusLanguageId;
         else if (languageNum == 4)
             languageNumber = python3LanguageId;
-        List<String> inputs = Arrays.asList("하나", "둘");
+        List<String> inputs = Arrays.asList("1","2");
 
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode requestBody = objectMapper.createObjectNode();
@@ -294,8 +298,9 @@ public class QuestionController {
         for (String input : inputs) {
             inputArrayNode.add(input);
         }
-        requestBody.set("stdin", inputArrayNode);
+        requestBody.put("stdin", String.join("\n", inputs));
 
+        System.out.println(inputArrayNode);
         String requestBodyString = requestBody.toString();
         System.out.println(requestBodyString);
 
