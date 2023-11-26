@@ -85,23 +85,23 @@ public class JwtService {
                 .compact();
     }
 
-//    public String generateAccessToken(UserDetails userDetails) {
-//        return generateToken(new HashMap<>(), userDetails, "access");
-//    }
-//
-//    public String generateRefreshToken(UserDetails userDetails) {
-//        return generateToken(new HashMap<>(), userDetails, "refresh");
-//    }
-
     public String generateAccessToken(UserDetails userDetails) {
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-        return tokenProvider.createToken(authentication);
+        return generateToken(new HashMap<>(), userDetails, "access");
     }
 
     public String generateRefreshToken(UserDetails userDetails) {
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-        return tokenProvider.createRefreshToken(authentication);
+        return generateToken(new HashMap<>(), userDetails, "refresh");
     }
+
+//    public String generateAccessToken(UserDetails userDetails) {
+//        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+//        return tokenProvider.createToken(authentication);
+//    }
+//
+//    public String generateRefreshToken(UserDetails userDetails) {
+//        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+//        return tokenProvider.createRefreshToken(authentication);
+//    }
 
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
