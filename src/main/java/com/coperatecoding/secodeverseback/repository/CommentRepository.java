@@ -9,4 +9,5 @@ public interface CommentRepository extends JpaRepository<Comment,Long> {
     List<Comment> findByBoard(Board board);
 
 
+    List<Comment> findByBoardOrderByCreateAtDesc(Board board);
 }
