@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -119,12 +121,23 @@ public class UserService {
             throw new UserLockedException();
         }
 
-        authenticationManager.authenticate(
+//        authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(
+//                        loginRequest.getId(),
+//                        loginRequest.getPw()
+//                )
+//        );
+        // authenticate 메소드가 인증된 Authentication 객체를 반환
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getId(),
                         loginRequest.getPw()
                 )
         );
+
+        // SecurityContextHolder에 Authentication 객체 저장
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
 
         //토큰 생성
         String accessToken = jwtService.generateAccessToken(user);

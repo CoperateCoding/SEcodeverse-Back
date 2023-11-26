@@ -1,5 +1,6 @@
 package com.coperatecoding.secodeverseback.service;
 
+import com.coperatecoding.secodeverseback.config.TokenProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -7,6 +8,8 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import java.security.Key;
@@ -25,6 +28,11 @@ public class JwtService {
 
     public long accessTokenValidTime = Duration.ofMinutes(200).toMillis(); // 만료시간 30분
     public long refreshTokenValidTime = Duration.ofDays(14).toMillis(); // 만료시간 2주
+    private final TokenProvider tokenProvider;
+
+    public JwtService(TokenProvider tokenProvider) {
+        this.tokenProvider = tokenProvider;
+    }
 
 //    @Autowired
 //    private TokenBlackListRepository tokenBlackListRepository;
@@ -77,13 +85,24 @@ public class JwtService {
                 .compact();
     }
 
+//    public String generateAccessToken(UserDetails userDetails) {
+//        return generateToken(new HashMap<>(), userDetails, "access");
+//    }
+//
+//    public String generateRefreshToken(UserDetails userDetails) {
+//        return generateToken(new HashMap<>(), userDetails, "refresh");
+//    }
+
     public String generateAccessToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails, "access");
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        return tokenProvider.createToken(authentication);
     }
 
     public String generateRefreshToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails, "refresh");
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        return tokenProvider.createRefreshToken(authentication);
     }
+
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);

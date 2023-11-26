@@ -48,6 +48,7 @@ public class Comment {
 
     public static Comment makeComment(Board board, User user, String content) {
         Comment comment = new Comment();
+        comment.createAt = LocalDateTime.now();
         comment.board = board;
         comment.user = user;
         comment.content = content;
