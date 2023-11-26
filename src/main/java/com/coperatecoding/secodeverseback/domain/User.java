@@ -89,11 +89,11 @@ public class User implements UserDetails {
     }
 
     @Override
-    public String getPassword() { return pw; }
+    public String getPassword() { return this.pw; }
 
     @Override
     public String getUsername() {
-        return id;
+        return this.id;
     }
 
     @Override //만료여부

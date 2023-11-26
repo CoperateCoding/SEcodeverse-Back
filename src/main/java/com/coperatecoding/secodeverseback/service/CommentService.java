@@ -9,12 +9,14 @@ import com.coperatecoding.secodeverseback.exception.ForbiddenException;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.repository.BoardRepository;
 import com.coperatecoding.secodeverseback.repository.CommentRepository;
+import com.coperatecoding.secodeverseback.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,11 +28,15 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
 
-    public Comment makeComment(User user,  CommentDTO.AddCommentRequest addCommentRequest) throws RuntimeException{
+    private final UserRepository userRepository;
 
-        Board board =  boardRepository.findById(addCommentRequest.getBoardPK()).orElseThrow(() -> new NotFoundException("해당하는 게시글이 존재하지 않음"));
 
-        Comment comment = Comment.makeComment(board,user,addCommentRequest.getContent());
+    public Comment makeComment(User user, CommentDTO.AddCommentRequest addCommentRequest) throws RuntimeException{
+
+        Board board =  boardRepository.findById(addCommentRequest.getBoardPK())
+                .orElseThrow(() -> new NotFoundException("해당하는 게시글이 존재하지 않음"));
+
+        Comment comment = Comment.makeComment(board, user, addCommentRequest.getContent());
         board.addCommentCnt();
 
         return commentRepository.save(comment);
@@ -65,42 +71,25 @@ public class CommentService {
     }
 
     public List<CommentDTO.SearchResponse> getComments(Long boardPk){
-        Board board = boardRepository.findById(boardPk).orElseThrow(() -> new NotFoundException("해당하는 게시글이 존재하지 않음"));
-        List<Comment> comments = commentRepository.findByBoard(board);
-        List<CommentDTO.SearchResponse> commentDTOS = new ArrayList<>();
+        Board board = boardRepository.findById(boardPk)
+                .orElseThrow(() -> new NotFoundException("해당하는 게시글이 존재하지 않음"));
 
-        for (Comment comment : comments) {
-            CommentDTO.SearchListRequest request = CommentDTO.SearchListRequest.makeRequest(
-                    comment.getPk(),
-                    comment.getCreateAt(), // 여기에 필요한 필드 값을 w전달
-                    comment.getContent(),
-                    comment.getUser() // 필요한 경우 User 엔티티를 DTO로 변환
-            );
-            CommentDTO.SearchResponse response = getCommentList(request);
+        List<Comment> comments = commentRepository.findByBoardOrderByCreateAtDesc(board);
 
-            CommentDTO.SearchResponse commentDTO = CommentDTO.SearchResponse.builder()
-                    .pk(response.getPk())
-                    .createAt(response.getCreateAt())
-                    .content(response.getContent())
-                    .user(response.getUser()) // 필요한 경우 User 엔티티를 DTO로 변환
+        List<CommentDTO.SearchResponse> commentResponses = comments.stream().map(comment -> {
+            User user = comment.getUser();
+
+            return CommentDTO.SearchResponse.builder()
+                    .pk(comment.getPk())
+                    .createAt(comment.getCreateAt())
+                    .content(comment.getContent())
+                    .nickname(user.getNickname())
                     .build();
+        }).collect(Collectors.toList());
 
-            commentDTOS.add(commentDTO);
-        }
 
-        return commentDTOS;
+        return commentResponses;
 
-    }
-
-    public CommentDTO.SearchResponse getCommentList(CommentDTO.SearchListRequest request){
-        CommentDTO.SearchResponse response = CommentDTO.SearchResponse.builder()
-                .pk(request.getPk())
-                .createAt(request.getCreateAt())
-                .content(request.getContent())
-                .user(request.getUser())
-                .build();
-
-        return response;
     }
 
 

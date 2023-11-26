@@ -41,6 +41,8 @@ public class BoardController {
     """)
     @PostMapping("")
     public ResponseEntity makeBoard(@AuthenticationPrincipal User user, @RequestBody @Valid BoardAndImageDTO.AddBoardAndImageRequest addBoardAndImageRequest) {
+        System.out.println(user.getPk());
+        System.out.println(user.getName());
         Board board = boardService.makeBoard(user, addBoardAndImageRequest.getBoard());
 
         for (BoardImgDTO.AddBoardImgRequest image : addBoardAndImageRequest.getImgList())
