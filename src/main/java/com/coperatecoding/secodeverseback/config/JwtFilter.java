@@ -1,6 +1,5 @@
-package com.coperatecoding.secodeverseback;
+package com.coperatecoding.secodeverseback.config;
 
-import com.coperatecoding.secodeverseback.config.TokenProvider;
 import com.coperatecoding.secodeverseback.repository.RedisRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -42,7 +41,6 @@ public class JwtFilter extends GenericFilterBean {
 //        }
         if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
             String userId = tokenProvider.getUserId(jwt);
-            logger.info("여기~~~" + userId);
             String refreshTokenInRedis = redisService.getRefreshToken(userId);
 
             if (refreshTokenInRedis != null) {
