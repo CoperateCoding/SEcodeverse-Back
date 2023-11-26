@@ -1,5 +1,6 @@
 package com.coperatecoding.secodeverseback.config;
 
+import com.coperatecoding.secodeverseback.service.CustomUserDetailsService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -55,6 +56,11 @@ public class TokenProvider implements InitializingBean {
         long now = (new Date()).getTime();
         Date validity = new Date(now + this.tokenValidityInMilliseconds);
 
+
+//        CustomUserDetailsService customUserDetailsService = new CustomUserDetailsService();
+//        com.coperatecoding.secodeverseback.domain.User user = customUserDetailsService.loadUserByUsername(authentication.getName());
+
+
         return Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities) // 정보 저장
@@ -95,6 +101,8 @@ public class TokenProvider implements InitializingBean {
                         .collect(Collectors.toList());
 
         User principal = new User(claims.getSubject(), "", authorities);
+
+
 
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
