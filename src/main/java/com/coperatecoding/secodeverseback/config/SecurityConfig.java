@@ -1,5 +1,6 @@
 package com.coperatecoding.secodeverseback.config;
 
+import com.coperatecoding.secodeverseback.repository.RedisRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,8 +37,11 @@ public class SecurityConfig {
     };
 
     private final JwtAuthenticationFilter jwtAuthFilter;
+    private final TokenProvider tokenProvider;
     private final JwtExceptionFilter jwtExceptionFilter;
     private final AuthenticationProvider authenticationProvider;
+    private final RedisRepository redisService;
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -53,7 +57,8 @@ public class SecurityConfig {
                 .and()
                 .authenticationProvider(authenticationProvider)
          .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-        .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
+        .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class)
+        .apply(new JwtSecurityConfig(tokenProvider, redisService)); // JwtFilter를 addFilterBefore로 등록했던 JwtSecurityConfig class 적용
 
         return http.build();
     }
