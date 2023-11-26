@@ -141,6 +141,8 @@ public class User implements UserDetails {
         this.badge = codingBadge;
     }
 
+    public void setTeam(CTFTeam team) { this.team = team; }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
