@@ -26,10 +26,10 @@ public class SecurityConfig {
             "/swagger-resources/**", "/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**", "/api/v1/user/login", "api/v1/user/signup", // 원래 이것만
             "api/v1/user/info/my","api/v1/user/logout",
             "/error", "api/v1/s3/*",
-            "/api/v1/token/validate", "/api/v1/token/reissue", "api/v1/user/username/**", "api/v1/user/id/**",
+            "api/v1/user/username/**", "api/v1/user/id/**",
             "api/v1/board/**", "api/v1/comment/**","/api/v1/likes/**","api/v1/question/**","test/hello",
             "/error", "api/v1/s3/presigned",
-            "/api/v1/token/validate", "/api/v1/token/reissue", "api/v1/user/nickname/**", "api/v1/user/id/**",
+            "/api/v1/token/**", "api/v1/user/nickname/**", "api/v1/user/id/**",
             "api/v1/board/**", "api/v1/comment/**","/api/v1/likes/**","api/v1/question/**","test/hello","api/v1/chatbot",
             "api/v1/ctf/**"
             // 이건 다 임의로 넣어둠.
