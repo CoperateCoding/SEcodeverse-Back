@@ -3,7 +3,6 @@ package com.coperatecoding.secodeverseback.controller;
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.dto.CommentDTO;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
-import com.coperatecoding.secodeverseback.service.BoardService;
 import com.coperatecoding.secodeverseback.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
