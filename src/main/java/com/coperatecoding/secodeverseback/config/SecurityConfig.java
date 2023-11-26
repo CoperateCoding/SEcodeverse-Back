@@ -1,5 +1,6 @@
 package com.coperatecoding.secodeverseback.config;
 
+import com.coperatecoding.secodeverseback.repository.RedisRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,14 +31,17 @@ public class SecurityConfig {
             "/error", "api/v1/s3/presigned",
             "/api/v1/token/validate", "/api/v1/token/reissue", "api/v1/user/nickname/**", "api/v1/user/id/**",
             "api/v1/board/**", "api/v1/comment/**","/api/v1/likes/**","api/v1/question/**","test/hello","api/v1/chatbot",
-            "api/v1/ctf/**", "api/v1/admin/**", "ap/v1/**"
+            "api/v1/ctf/**"
             // 이건 다 임의로 넣어둠.
 //            "/logout"
     };
 
-    //    private final JwtAuthenticationFilter jwtAuthFilter;
+    private final JwtAuthenticationFilter jwtAuthFilter;
+    private final TokenProvider tokenProvider;
     private final JwtExceptionFilter jwtExceptionFilter;
     private final AuthenticationProvider authenticationProvider;
+    private final RedisRepository redisService;
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -48,12 +52,13 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers(whiteList).permitAll()
-//                .requestMatchers( "/api/v1/admin/**").hasAuthority("ADMIN")
+                .requestMatchers( "/api/v1/admin/**").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
                 .and()
-                .authenticationProvider(authenticationProvider);
-//         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-//        .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
+                .authenticationProvider(authenticationProvider)
+         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class)
+        .apply(new JwtSecurityConfig(tokenProvider, redisService)); // JwtFilter를 addFilterBefore로 등록했던 JwtSecurityConfig class 적용
 
         return http.build();
     }
