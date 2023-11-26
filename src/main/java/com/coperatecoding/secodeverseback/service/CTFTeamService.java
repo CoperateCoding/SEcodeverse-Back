@@ -26,13 +26,18 @@ public class CTFTeamService {
 
         CTFLeague ctfLeague = ctfLeagueRepository.findById(addRequest.getLeaguePk())
                 .orElseThrow(() -> new NotFoundException("해당하는 리그가 존재하지 않음"));
+        System.out.println("ㅣ여기~~" + ctfLeague.getName());
 
-        CTFTeam.makeCTFTeam(ctfLeague, addRequest.getName(), addRequest.getPw());
+        CTFTeam team = CTFTeam.makeCTFTeam(ctfLeague, addRequest.getName(), addRequest.getPw());
+
+        ctfTeamRepository.save(team);
+
     }
 
     public CTFTeamDTO.DetailResponse getDetailTeam(Long teamPk) throws NoSuchElementException {
         CTFTeam team = ctfTeamRepository.findById(teamPk)
                 .orElseThrow(() -> new NotFoundException("해당하는 팀이 존재하지 않음"));
+
         CTFTeamDTO.DetailResponse detailResponse = null;
 
         return detailResponse;
