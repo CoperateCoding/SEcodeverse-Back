@@ -7,7 +7,9 @@ import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.service.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,7 +54,7 @@ public class QuestionController {
     private final QuestionImgService questionImgService;
     private final CodeService codeService;
     @PostMapping("/post")
-    public ResponseEntity makeQuestion(@AuthenticationPrincipal User user, @RequestBody QuestionAndTestAndImageDTO.AddQuestionAndTestAndImageRequest addQuestionAndTestAndImageRequest) {
+    public ResponseEntity makeQuestion(@AuthenticationPrincipal User user, @RequestBody @Valid QuestionAndTestAndImageDTO.AddQuestionAndTestAndImageRequest addQuestionAndTestAndImageRequest) {
         Question question = questionService.makeQuestion(user, addQuestionAndTestAndImageRequest.getQuestion());
 
 
@@ -60,7 +62,9 @@ public class QuestionController {
             testCaseService.makeTestCase(question.getPk(), testCase);
         }
 
+
         for(QuestionImgDTO.AddQuestionImgRequest questionImg: addQuestionAndTestAndImageRequest.getImg()){
+            if(questionImg != null)
             questionImgService.makeQuestionImg(question.getPk(),questionImg);
         }
 
@@ -90,7 +94,7 @@ public class QuestionController {
 //    }
 
     @PatchMapping("/{questionPk}")
-    public ResponseEntity modifyQuestion(@PathVariable Long questionPk, @RequestBody QuestionAndTestAndImageDTO.AddQuestionAndTestAndImageRequest addQuestionAndTestRequest) {
+    public ResponseEntity modifyQuestion(@AuthenticationPrincipal User user, @PathVariable Long questionPk, @RequestBody QuestionAndTestAndImageDTO.AddQuestionAndTestAndImageRequest addQuestionAndTestRequest) {
         questionService.modifyQuestion(questionPk, addQuestionAndTestRequest.getQuestion());
         List<TestCaseDTO.SearchResponse> testCaseDTOS = testCaseService.getTestCaseList(questionPk);
         List<QuestionImgDTO.SearchQuestionImgResponse> questionImgDTOS = questionImgService.getQuestionImg(questionPk);
@@ -99,10 +103,10 @@ public class QuestionController {
         int i = 0;
         for (TestCaseDTO.SearchResponse testCase : testCaseDTOS) {
             if (i < addQuestionAndTestRequest.getTestCase().size()) {
-                testCaseService.modifyTestCase(testCase.getPk(), addQuestionAndTestRequest.getTestCase().get(i));
+                testCaseService.modifyTestCase(user,testCase.getPk(), addQuestionAndTestRequest.getTestCase().get(i));
             } else {
                 // 새로운 테스트케이스의 크기를 벗어나면 삭제
-                testCaseService.delete(testCase.getPk());
+                testCaseService.delete(user,testCase.getPk());
             }
             i++;
         }
@@ -114,7 +118,7 @@ public class QuestionController {
                 questionImgService.modifyQuestionImg(questionImg.getPk(), addQuestionAndTestRequest.getImg().get(j));
             } else {
                 // 새로운 이미지의 크기를 벗어나면 삭제
-                questionImgService.delete(questionImg.getPk());
+                questionImgService.delete(user,questionImg.getPk());
             }
             j++;
         }
@@ -129,15 +133,15 @@ public class QuestionController {
 
 
     @DeleteMapping("/{questionPk}")
-    public ResponseEntity deleteQuestion(@PathVariable Long questionPk){
+    public ResponseEntity deleteQuestion(@AuthenticationPrincipal User user, @PathVariable Long questionPk){
         try{
             List<QuestionImgDTO.SearchQuestionImgResponse> imgDTOS=questionImgService.getQuestionImg(questionPk);
             for (QuestionImgDTO.SearchQuestionImgResponse img : imgDTOS) {
-                questionImgService.delete(img.getPk());
+                questionImgService.delete(user,img.getPk());
             }
             List<TestCaseDTO.SearchResponse>testCaseDTOS = testCaseService.getTestCaseList(questionPk);
             for (TestCaseDTO.SearchResponse testCase : testCaseDTOS) {
-                testCaseService.delete(testCase.getPk());
+                testCaseService.delete(user,testCase.getPk());
             }
             questionService.deleteQuestion(questionPk);
             return ResponseEntity.noContent().build();
@@ -256,37 +260,39 @@ public class QuestionController {
     //{"stdout":null,"time":"0.112","memory":33472,"stderr":"  File \"/box/script.py\", line 1\n    cHJpbnQoJ2hlbGxvIFdvcmxkJyk=\n                                ^\nSyntaxError: invalid syntax\n","token":"92e5da6a-a84d-4d83-9bc6-836f56a3258d","compile_output":null,"message":"Exited with error status 1","status":{"id":11,"description":"Runtime Error (NZEC)"}}
     @GetMapping("/solveQuestion")
     public ResponseEntity<String> solveQuestion(
-            @RequestParam(required = true ) String userCode,
+            @RequestParam(required = true) String userCode,
             @RequestParam(required = true) int languageNum
-
     ) throws IOException, InterruptedException {
-
+        System.out.println("userCode" + userCode);
+        System.out.println("languageNum" + languageNum);
         String JUDGE0_API_URL = "https://judge0-extra-ce.p.rapidapi.com";
         String RAPIDAPI_HOST = "judge0-extra-ce.p.rapidapi.com";
-        String RAPIDAPI_KEY = "202b19a00dmsh5b25cbe149bbfb6p14edd3jsnf28cdbf55ac2";
+        String RAPIDAPI_KEY = "b3daadf5a7msh4bf3f3eb4b3caf1p105483jsne73951cb49dd";
         String python3LanguageId = "28";
-        String javaLanguageId="4";
-        String cPlus ="2";
-        String c="1";
+        String javaLanguageId = "4";
+        String cPlusLanguageId = "2";
+        String cLanguageId = "1";
 
-        String languageNumber="";
-        if(languageNum==1)
-            languageNumber=python3LanguageId;
-        else if(languageNum==2)
-            languageNumber=javaLanguageId;
-        else if(languageNum==3)
-            languageNumber=c;
-        else if(languageNum==4)
-            languageNumber=cPlus;
+        String languageNumber = "";
+        if (languageNum == 1)
+            languageNumber = cLanguageId;
+        else if (languageNum == 2)
+            languageNumber = javaLanguageId;
+        else if (languageNum == 3)
+            languageNumber = cPlusLanguageId;
+        else if (languageNum == 4)
+            languageNumber = python3LanguageId;
+        List<String>inputs =new ArrayList<>();
+        inputs.add("하나");
+        inputs.add("둘");
+        ObjectMapper objectMapper = new ObjectMapper();
+        ArrayNode inputArrayNode = objectMapper.createArrayNode();
+        for (String input : inputs) {
+            inputArrayNode.add(input);
+        }
+        String input = inputArrayNode.toString();
 
-        // Send the code execution request
-//        "source_code": "#include <stdio.h>\n\nint main(void)\n{\n    printf(\"hello, world\\n\");\n    return 0;\n}\n",
-//        String code = "#include <stdio.h>\\nint main(void)\\n{\\n    printf(\\\"hello, world\\\");\\n    return 0;\\n}";
-
-        String requestBody = "{\"language_id\":\"" + languageNumber + "\",\"source_code\":\"" + userCode + "\",\"stdin\":null}";
-
-//                    String code = "print('hello World')";
-//        String requestBody = "{\"language_id\":\"" + python3LanguageId + "\",\"source_code\":\"" + code + "\",\"stdin\":null}";
+        String requestBody = "{\"language_id\":\"" + languageNumber + "\",\"source_code\":\"" + userCode + "\",\"stdin\":" + input + "}";
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(JUDGE0_API_URL + "/submissions"))
@@ -296,39 +302,36 @@ public class QuestionController {
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
 
-
-
         HttpClient client = HttpClient.newHttpClient();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println(response.body());
-        String input = response.body();
-        System.out.println("input"+input);
-        String token="";
+        System.out.println("responseBody" + response.body());
+        String responseBody = response.body();
+        System.out.println("responseBody" + responseBody);
+        String token = "";
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(input);
+            JsonNode jsonNode = objectMapper.readTree(responseBody);
             token = jsonNode.get("token").asText();
-
             System.out.println(token);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-
         Thread.sleep(1000);
 
         HttpRequest resultRequest = HttpRequest.newBuilder()
-                .uri(URI.create(JUDGE0_API_URL + "/submissions/"+token))
+                .uri(URI.create(JUDGE0_API_URL + "/submissions/" + token))
                 .header("X-RapidAPI-Key", RAPIDAPI_KEY)
                 .header("X-RapidAPI-Host", RAPIDAPI_HOST)
                 .header("Content-Type", "application/json")
-
                 .build();
+
         HttpResponse<String> resultResponse = client.send(resultRequest, HttpResponse.BodyHandlers.ofString());
         String resultBody = resultResponse.body();
-
+        System.out.println(resultBody);
         return ResponseEntity.ok(resultBody);
     }
+
+
 
     /*
             if (sort == sort.RECENT) {

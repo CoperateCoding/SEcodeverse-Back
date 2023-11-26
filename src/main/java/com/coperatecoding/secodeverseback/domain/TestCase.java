@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.minidev.json.annotate.JsonIgnore;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -30,6 +31,10 @@ public class TestCase {
     @NotNull
     private String output;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_pk")
+    @JsonIgnore
+    private User user;
 
     public static TestCase makeTestCase(Question question,String input, String output) {
         TestCase testCase = new TestCase();
