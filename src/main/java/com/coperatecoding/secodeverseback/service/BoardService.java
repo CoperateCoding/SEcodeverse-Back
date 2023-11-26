@@ -11,6 +11,7 @@ import com.coperatecoding.secodeverseback.exception.ForbiddenException;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.repository.BoardCategoryRepository;
 import com.coperatecoding.secodeverseback.repository.BoardRepository;
+import com.coperatecoding.secodeverseback.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
@@ -27,8 +28,15 @@ import java.util.stream.Collectors;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final BoardCategoryRepository boardCategoryRepository;
+    public final UserRepository userRepository;
 
     public Board makeBoard(User user, BoardDTO.AddBoardRequest addBoardRequest) throws RuntimeException {
+
+        User findUser = userRepository.findById(user.getPk())
+                .orElseThrow(() -> new NotFoundException("해당하는 사용자가 없습니다."));
+
+        System.out.println("여기 나오는지 "+findUser.getNickname());
+
 
         // 카테고리 올바른지 확인
         System.out.println(addBoardRequest.getCategoryPk());
@@ -38,7 +46,7 @@ public class BoardService {
                 .orElseThrow(() -> new NotFoundException("해당하는 카테고리가 존재하지 않음"));
 
 
-        Board board = Board.makeBoard(user, category, addBoardRequest.getTitle(), addBoardRequest.getContent());
+        Board board = Board.makeBoard(findUser, category, addBoardRequest.getTitle(), addBoardRequest.getContent());
 
         return boardRepository.save(board);
     }

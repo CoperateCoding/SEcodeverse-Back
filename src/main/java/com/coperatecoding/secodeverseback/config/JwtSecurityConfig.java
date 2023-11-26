@@ -1,6 +1,5 @@
 package com.coperatecoding.secodeverseback.config;
 
-import com.coperatecoding.secodeverseback.JwtFilter;
 import com.coperatecoding.secodeverseback.repository.RedisRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;

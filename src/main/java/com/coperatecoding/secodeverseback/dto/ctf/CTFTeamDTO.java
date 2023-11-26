@@ -1,6 +1,5 @@
 package com.coperatecoding.secodeverseback.dto.ctf;
 
-import com.coperatecoding.secodeverseback.domain.ctf.CTFLeagueStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +11,7 @@ public class CTFTeamDTO {
     @Getter
     @NoArgsConstructor
     public static class AddRequest {
-        private Long LeaguePk;
+        private Long leaguePk;
         private String name;
         private String pw;
     }

@@ -57,8 +57,8 @@ public class SecurityConfig {
                 .and()
                 .authenticationProvider(authenticationProvider)
          .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-        .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class)
-        .apply(new JwtSecurityConfig(tokenProvider, redisService)); // JwtFilter를 addFilterBefore로 등록했던 JwtSecurityConfig class 적용
+        .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
+//        .apply(new JwtSecurityConfig(tokenProvider, redisService)); // JwtFilter를 addFilterBefore로 등록했던 JwtSecurityConfig class 적용
 
         return http.build();
     }
