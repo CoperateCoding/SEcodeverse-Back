@@ -48,8 +48,7 @@ public class CommentDTO {
         private Long pk;
         private LocalDateTime createAt;
         private String content;
-        @JsonIgnore
-        private User user;
+        private String nickname;
 
     }
     @Getter

@@ -41,20 +41,19 @@ public class Comment {
     @NotNull
     @CreationTimestamp
     @Column(name = "create_at")
-    private LocalDateTime createAt = LocalDateTime.now();
+    private LocalDateTime createAt;
 
     @NotNull
     private String content;
 
     public static Comment makeComment(Board board, User user, String content) {
         Comment comment = new Comment();
+        comment.createAt = LocalDateTime.now();
         comment.board = board;
         comment.user = user;
         comment.content = content;
         return comment;
     }
-
-
 
     public String convertDate(LocalDateTime createAt) {
         String convertedDate = createAt.format(DateTimeFormatter.ofPattern("yyyy. MM. dd. HH:mm"));
