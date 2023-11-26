@@ -1,5 +1,6 @@
 package com.coperatecoding.secodeverseback.controller;
 
+import com.coperatecoding.secodeverseback.config.TokenProvider;
 import com.coperatecoding.secodeverseback.domain.RoleType;
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.dto.UserDTO;
@@ -27,6 +28,7 @@ public class TokenController {
 
     private final RefreshTokenService refreshTokenService;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final TokenProvider tokenProvider;
 
     @Operation(summary = "토큰 유효성 검사", description = """
     항상 200을 반환<br>
@@ -45,7 +47,8 @@ public class TokenController {
             User user = userRepository.findById(uid)
                     .orElseGet(() -> null);
 
-            if (user != null && jwtService.isTokenValid(token, user))
+//            if (user != null && jwtService.isTokenValid(token, user))
+            if(tokenProvider.validateToken(token))
                 isTokenValid = true;
         }
 

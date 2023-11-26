@@ -8,6 +8,7 @@ import com.coperatecoding.secodeverseback.service.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -23,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import org.springframework.http.HttpEntity;
@@ -282,24 +284,27 @@ public class QuestionController {
             languageNumber = cPlusLanguageId;
         else if (languageNum == 4)
             languageNumber = python3LanguageId;
-        List<String>inputs =new ArrayList<>();
-        inputs.add("하나");
-        inputs.add("둘");
+        List<String> inputs = Arrays.asList("하나", "둘");
+
         ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode requestBody = objectMapper.createObjectNode();
+        requestBody.put("language_id", languageNumber);
+        requestBody.put("source_code", userCode);
         ArrayNode inputArrayNode = objectMapper.createArrayNode();
         for (String input : inputs) {
             inputArrayNode.add(input);
         }
-        String input = inputArrayNode.toString();
+        requestBody.set("stdin", inputArrayNode);
 
-        String requestBody = "{\"language_id\":\"" + languageNumber + "\",\"source_code\":\"" + userCode + "\",\"stdin\":" + input + "}";
+        String requestBodyString = requestBody.toString();
+        System.out.println(requestBodyString);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(JUDGE0_API_URL + "/submissions"))
                 .header("X-RapidAPI-Key", RAPIDAPI_KEY)
                 .header("X-RapidAPI-Host", RAPIDAPI_HOST)
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .POST(HttpRequest.BodyPublishers.ofString(requestBodyString))
                 .build();
 
         HttpClient client = HttpClient.newHttpClient();
@@ -316,7 +321,7 @@ public class QuestionController {
             e.printStackTrace();
         }
 
-        Thread.sleep(1000);
+        Thread.sleep(2000);
 
         HttpRequest resultRequest = HttpRequest.newBuilder()
                 .uri(URI.create(JUDGE0_API_URL + "/submissions/" + token))

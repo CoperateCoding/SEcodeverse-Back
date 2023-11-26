@@ -72,7 +72,7 @@ public class CommentService {
         for (Comment comment : comments) {
             CommentDTO.SearchListRequest request = CommentDTO.SearchListRequest.makeRequest(
                     comment.getPk(),
-                    comment.getCreateAt(), // 여기에 필요한 필드 값을 전달
+                    comment.getCreateAt(), // 여기에 필요한 필드 값을 w전달
                     comment.getContent(),
                     comment.getUser() // 필요한 경우 User 엔티티를 DTO로 변환
             );

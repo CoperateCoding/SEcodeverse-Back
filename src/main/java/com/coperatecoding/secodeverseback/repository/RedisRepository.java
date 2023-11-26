@@ -1,6 +1,7 @@
 package com.coperatecoding.secodeverseback.repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
@@ -10,8 +11,16 @@ public class RedisRepository {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
+//    @Autowired
+//    public RedisRepository(RedisTemplate<String, Object> redisTemplate) {
+//        this.redisTemplate = redisTemplate;
+//    }
+
+
     @Autowired
     public RedisRepository(RedisTemplate<String, Object> redisTemplate) {
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
         this.redisTemplate = redisTemplate;
     }
 
@@ -23,4 +32,10 @@ public class RedisRepository {
     public void deleteRefreshToken(String userId){
         redisTemplate.delete(userId);
     }
+
+    public String getRefreshToken(String userId) {
+        return (String) redisTemplate.opsForValue().get(userId);
+    }
+
+
 }
