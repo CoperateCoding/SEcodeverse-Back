@@ -113,7 +113,7 @@ public class UserService {
         return clientIp;
     }
 
-    public UserDTO.LoginResponse login(UserDTO.LoginRequest loginRequest, HttpServletRequest request) {
+    public UserDTO.LoginAllResponse login(UserDTO.LoginRequest loginRequest, HttpServletRequest request) {
         User user = userRepository.findById(loginRequest.getId())
                 .orElseGet(() -> null);
 
@@ -144,7 +144,18 @@ public class UserService {
         String refreshToken = jwtService.generateRefreshToken(user);
 
         redisRepository.saveRefreshToken(loginRequest.getId(), refreshToken,3000);
-        return UserDTO.LoginResponse.makeResponse(accessToken, refreshToken);
+        return UserDTO.LoginAllResponse.builder()
+                .pk(user.getPk())
+                .team(user.getTeam())
+                .codingBadge(user.getBadge())
+                .roleType(user.getRoleType())
+                .id(user.getId())
+                .name(user.getName())
+                .nickname(user.getNickname())
+                .exp(user.getExp())
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
 
     }
 

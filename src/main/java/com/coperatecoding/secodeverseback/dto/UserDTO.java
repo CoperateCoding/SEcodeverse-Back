@@ -1,8 +1,15 @@
 package com.coperatecoding.secodeverseback.dto;
 
+import com.coperatecoding.secodeverseback.domain.CodingBadge;
+import com.coperatecoding.secodeverseback.domain.RoleType;
+import com.coperatecoding.secodeverseback.domain.board.Likes;
+import com.coperatecoding.secodeverseback.domain.ctf.CTFTeam;
 import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 public class UserDTO {
 
@@ -52,6 +59,24 @@ public class UserDTO {
         }
 
 
+    }
+
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class LoginAllResponse {
+        private Long pk;
+        private CTFTeam team;
+        private CodingBadge codingBadge;
+        private RoleType roleType;
+        private String id;
+        private String name;
+        private String nickname;
+        private Integer exp;
+        private String accessToken;
+        private String refreshToken;
     }
 
     @Getter
