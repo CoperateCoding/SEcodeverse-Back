@@ -1,4 +1,4 @@
-package com.coperatecoding.secodeverseback.dto.board;
+package com.coperatecoding.secodeverseback.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;

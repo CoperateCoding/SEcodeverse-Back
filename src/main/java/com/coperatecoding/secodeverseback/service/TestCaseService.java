@@ -1,8 +1,11 @@
 package com.coperatecoding.secodeverseback.service;
 
+import com.coperatecoding.secodeverseback.domain.RoleType;
 import com.coperatecoding.secodeverseback.domain.TestCase;
+import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.domain.question.Question;
-import com.coperatecoding.secodeverseback.dto.question.TestCaseDTO;
+import com.coperatecoding.secodeverseback.dto.TestCaseDTO;
+import com.coperatecoding.secodeverseback.exception.ForbiddenException;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.repository.QuestionRepository;
 import com.coperatecoding.secodeverseback.repository.TestCaseRepository;
@@ -74,6 +77,8 @@ public class TestCaseService {
                .orElseThrow(() -> new NotFoundException("해당하는 테스트케이스가 존재하지 않음"));
 
         testCase.updateTestCase(addQuestionRequest.getInput(), addQuestionRequest.getOutput());
+
+
         return testCase;
     }
 

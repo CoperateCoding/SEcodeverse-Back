@@ -1,4 +1,4 @@
-package com.coperatecoding.secodeverseback.dto.question;
+package com.coperatecoding.secodeverseback.dto;
 
 import com.coperatecoding.secodeverseback.domain.User;
 import jakarta.validation.constraints.NotNull;

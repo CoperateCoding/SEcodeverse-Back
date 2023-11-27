@@ -1,9 +1,12 @@
-package com.coperatecoding.secodeverseback.dto.question;
+package com.coperatecoding.secodeverseback.dto;
 
+import com.coperatecoding.secodeverseback.domain.question.Question;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class QuestionAndTestAndImageDTO {
@@ -16,7 +19,7 @@ public class QuestionAndTestAndImageDTO {
 
         private List<TestCaseDTO.AddtestCaseRequest> testCase;
 
-        private List<QuestionImgDTO.AddQuestionImgRequest> img;
+        private List<QuestionImgDTO.AddQuestionImgRequest> img =new ArrayList<>();;
     }
 
     @Getter
@@ -28,7 +31,7 @@ public class QuestionAndTestAndImageDTO {
 
         private List<TestCaseDTO.SearchResponse> testCase;
 
-        private List<QuestionImgDTO.SearchQuestionImgResponse> img;
+        private List<QuestionImgDTO.SearchQuestionImgResponse> img =new ArrayList<>();;
     }
 
 }

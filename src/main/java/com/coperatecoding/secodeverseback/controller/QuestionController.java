@@ -3,12 +3,14 @@ package com.coperatecoding.secodeverseback.controller;
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.domain.question.Question;
 import com.coperatecoding.secodeverseback.dto.*;
-import com.coperatecoding.secodeverseback.dto.question.*;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.service.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,18 +19,28 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
-
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Tag(name = "문제", description = "문제 관련 API")
 @RequiredArgsConstructor
@@ -43,8 +55,9 @@ public class QuestionController {
     private final QuestionCategoryService questionCategoryService;
     private final QuestionImgService questionImgService;
     private final CodeService codeService;
+
     @PostMapping("/post")
-    public ResponseEntity makeQuestion(@AuthenticationPrincipal User user, @RequestBody QuestionAndTestAndImageDTO.AddQuestionAndTestAndImageRequest addQuestionAndTestAndImageRequest) {
+    public ResponseEntity makeQuestion(@AuthenticationPrincipal User user, @RequestBody @Valid QuestionAndTestAndImageDTO.AddQuestionAndTestAndImageRequest addQuestionAndTestAndImageRequest) {
         Question question = questionService.makeQuestion(user, addQuestionAndTestAndImageRequest.getQuestion());
 
 
@@ -52,7 +65,9 @@ public class QuestionController {
             testCaseService.makeTestCase(question.getPk(), testCase);
         }
 
+
         for(QuestionImgDTO.AddQuestionImgRequest questionImg: addQuestionAndTestAndImageRequest.getImg()){
+            if(questionImg != null)
             questionImgService.makeQuestionImg(question.getPk(),questionImg);
         }
 
@@ -82,7 +97,7 @@ public class QuestionController {
 //    }
 
     @PatchMapping("/{questionPk}")
-    public ResponseEntity modifyQuestion(@PathVariable Long questionPk, @RequestBody QuestionAndTestAndImageDTO.AddQuestionAndTestAndImageRequest addQuestionAndTestRequest) {
+    public ResponseEntity modifyQuestion(@AuthenticationPrincipal User user, @PathVariable Long questionPk, @RequestBody QuestionAndTestAndImageDTO.AddQuestionAndTestAndImageRequest addQuestionAndTestRequest) {
         questionService.modifyQuestion(questionPk, addQuestionAndTestRequest.getQuestion());
         List<TestCaseDTO.SearchResponse> testCaseDTOS = testCaseService.getTestCaseList(questionPk);
         List<QuestionImgDTO.SearchQuestionImgResponse> questionImgDTOS = questionImgService.getQuestionImg(questionPk);
@@ -121,7 +136,7 @@ public class QuestionController {
 
 
     @DeleteMapping("/{questionPk}")
-    public ResponseEntity deleteQuestion(@PathVariable Long questionPk){
+    public ResponseEntity deleteQuestion(@AuthenticationPrincipal User user, @PathVariable Long questionPk){
         try{
             List<QuestionImgDTO.SearchQuestionImgResponse> imgDTOS=questionImgService.getQuestionImg(questionPk);
             for (QuestionImgDTO.SearchQuestionImgResponse img : imgDTOS) {
@@ -131,7 +146,7 @@ public class QuestionController {
             for (TestCaseDTO.SearchResponse testCase : testCaseDTOS) {
                 testCaseService.delete(testCase.getPk());
             }
-            questionService.deleteQuestion(questionPk);
+            questionService.deleteQuestion(user,questionPk);
             return ResponseEntity.noContent().build();
         }
         catch(NotFoundException e){
@@ -246,81 +261,122 @@ public class QuestionController {
     //1번 -> 파이썬 ,2번 -> 자바, 3번 ->c ,4번 ->c++
     //{"stdout":"hello World\n","time":"0.052","memory":26928,"stderr":null,"token":"42f06f39-2574-4d3e-9e90-35d33059ab14","compile_output":null,"message":null,"status":{"id":3,"description":"Accepted"}}
     //{"stdout":null,"time":"0.112","memory":33472,"stderr":"  File \"/box/script.py\", line 1\n    cHJpbnQoJ2hlbGxvIFdvcmxkJyk=\n                                ^\nSyntaxError: invalid syntax\n","token":"92e5da6a-a84d-4d83-9bc6-836f56a3258d","compile_output":null,"message":"Exited with error status 1","status":{"id":11,"description":"Runtime Error (NZEC)"}}
+    //문제 풀기
     @GetMapping("/solveQuestion")
     public ResponseEntity<String> solveQuestion(
-            @RequestParam(required = true ) String userCode,
-            @RequestParam(required = true) int languageNum
-
+            @RequestParam(required = true) String userCode,
+            @RequestParam(required = true) int languageNum,
+            @RequestParam(required=true) String testcase
     ) throws IOException, InterruptedException {
-
+        System.out.println("userCode" + userCode);
+        System.out.println("languageNum" + languageNum);
         String JUDGE0_API_URL = "https://judge0-extra-ce.p.rapidapi.com";
         String RAPIDAPI_HOST = "judge0-extra-ce.p.rapidapi.com";
-        String RAPIDAPI_KEY = "202b19a00dmsh5b25cbe149bbfb6p14edd3jsnf28cdbf55ac2";
+        String RAPIDAPI_KEY = "b3daadf5a7msh4bf3f3eb4b3caf1p105483jsne73951cb49dd";
         String python3LanguageId = "28";
-        String javaLanguageId="4";
-        String cPlus ="2";
-        String c="1";
+        String javaLanguageId = "4";
+        String cPlusLanguageId = "2";
+        String cLanguageId = "1";
+        String languageNumber = "";
+        if (languageNum == 1)
+            languageNumber = cLanguageId;
+        else if (languageNum == 2)
+            languageNumber = javaLanguageId;
+        else if (languageNum == 3)
+            languageNumber = cPlusLanguageId;
+        else if (languageNum == 4)
+            languageNumber = python3LanguageId;
 
-        String languageNumber="";
-        if(languageNum==1)
-            languageNumber=python3LanguageId;
-        else if(languageNum==2)
-            languageNumber=javaLanguageId;
-        else if(languageNum==3)
-            languageNumber=c;
-        else if(languageNum==4)
-            languageNumber=cPlus;
 
-        // Send the code execution request
-//        "source_code": "#include <stdio.h>\n\nint main(void)\n{\n    printf(\"hello, world\\n\");\n    return 0;\n}\n",
-//        String code = "#include <stdio.h>\\nint main(void)\\n{\\n    printf(\\\"hello, world\\\");\\n    return 0;\\n}";
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode requestBody = objectMapper.createObjectNode();
+        requestBody.put("language_id", languageNumber);
+        requestBody.put("source_code", userCode);
+        ArrayNode inputArrayNode = objectMapper.createArrayNode();
+//        for (String input : inputs) {
+//            inputArrayNode.add(input);
+//        }
 
-        String requestBody = "{\"language_id\":\"" + languageNumber + "\",\"source_code\":\"" + userCode + "\",\"stdin\":null}";
+//        List<TestCaseDTO.SearchResponse> testCaseList= testCaseService.getTestCaseList(questionPk);
+//        for(TestCaseDTO.SearchResponse testcase : testCaseList){
+//            System.out.println(testcase.getInput());
+//            inputs.add(testcase.getInput());
+//        }
+        List<String> inputs = new ArrayList<>();
+        String str = testcase;
 
-//                    String code = "print('hello World')";
-//        String requestBody = "{\"language_id\":\"" + python3LanguageId + "\",\"source_code\":\"" + code + "\",\"stdin\":null}";
+        List<String> splitList = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (c == '!' || c == '@' || c == '#' || c == '*' || c == '(' || c == ')') {
+                if (sb.length() > 0) {
+                    splitList.add(sb.toString());
+                    sb.setLength(0);
+                }
+            } else {
+                sb.append(c);
+            }
+        }
+
+        // 마지막 구분자 이후의 문자열도 추가
+        if (sb.length() > 0) {
+            splitList.add(sb.toString());
+        }
+        System.out.println("size는"+splitList.size());
+        // 결과 출력
+        for (String substring : splitList) {
+            System.out.println(substring);
+            inputs.add(substring);
+        }
+
+        for(String input : inputs){
+            System.out.println(input);
+        }
+
+        requestBody.put("stdin", String.join("\n", inputs));
+
+        String requestBodyString = requestBody.toString();
+
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(JUDGE0_API_URL + "/submissions"))
                 .header("X-RapidAPI-Key", RAPIDAPI_KEY)
                 .header("X-RapidAPI-Host", RAPIDAPI_HOST)
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .POST(HttpRequest.BodyPublishers.ofString(requestBodyString))
                 .build();
-
-
 
         HttpClient client = HttpClient.newHttpClient();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println(response.body());
-        String input = response.body();
-        System.out.println("input"+input);
-        String token="";
+        System.out.println("responseBody" + response.body());
+        String responseBody = response.body();
+        System.out.println("responseBody" + responseBody);
+        String token = "";
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(input);
+            JsonNode jsonNode = objectMapper.readTree(responseBody);
             token = jsonNode.get("token").asText();
-
             System.out.println(token);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-
-        Thread.sleep(1000);
+        Thread.sleep(2000);
 
         HttpRequest resultRequest = HttpRequest.newBuilder()
-                .uri(URI.create(JUDGE0_API_URL + "/submissions/"+token))
+                .uri(URI.create(JUDGE0_API_URL + "/submissions/" + token))
                 .header("X-RapidAPI-Key", RAPIDAPI_KEY)
                 .header("X-RapidAPI-Host", RAPIDAPI_HOST)
                 .header("Content-Type", "application/json")
-
                 .build();
+
         HttpResponse<String> resultResponse = client.send(resultRequest, HttpResponse.BodyHandlers.ofString());
         String resultBody = resultResponse.body();
-
+        System.out.println(resultBody);
         return ResponseEntity.ok(resultBody);
     }
+
+
 
     /*
             if (sort == sort.RECENT) {

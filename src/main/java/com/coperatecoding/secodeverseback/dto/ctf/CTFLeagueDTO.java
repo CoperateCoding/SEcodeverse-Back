@@ -1,6 +1,6 @@
 package com.coperatecoding.secodeverseback.dto.ctf;
 import com.coperatecoding.secodeverseback.domain.ctf.CTFLeagueStatus;
-import com.coperatecoding.secodeverseback.dto.question.QuestionDTO;
+//import com.coperatecoding.secodeverseback.dto.question.QuestionDTO;
 import lombok.*;
 
 import java.time.LocalDateTime;

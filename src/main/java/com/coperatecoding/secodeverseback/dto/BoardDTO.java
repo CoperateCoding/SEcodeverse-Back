@@ -1,8 +1,7 @@
-package com.coperatecoding.secodeverseback.dto.board;
+package com.coperatecoding.secodeverseback.dto;
 
 import com.coperatecoding.secodeverseback.domain.board.BoardCategory;
 import com.coperatecoding.secodeverseback.domain.board.BoardImage;
-import com.coperatecoding.secodeverseback.dto.QuestionSortType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

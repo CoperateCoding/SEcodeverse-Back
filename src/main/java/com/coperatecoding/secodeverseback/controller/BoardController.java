@@ -3,9 +3,6 @@ package com.coperatecoding.secodeverseback.controller;
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.domain.board.Board;
 import com.coperatecoding.secodeverseback.dto.*;
-import com.coperatecoding.secodeverseback.dto.board.BoardAndImageDTO;
-import com.coperatecoding.secodeverseback.dto.board.BoardDTO;
-import com.coperatecoding.secodeverseback.dto.board.BoardImgDTO;
 import com.coperatecoding.secodeverseback.exception.CategoryNotFoundException;
 import com.coperatecoding.secodeverseback.exception.ForbiddenException;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
@@ -44,6 +41,8 @@ public class BoardController {
     """)
     @PostMapping("/board")
     public ResponseEntity makeBoard(@AuthenticationPrincipal User user, @RequestBody @Valid BoardAndImageDTO.AddBoardAndImageRequest addBoardAndImageRequest) {
+        System.out.println(user.getPk());
+        System.out.println(user.getName());
         Board board = boardService.makeBoard(user, addBoardAndImageRequest.getBoard());
 
         for (BoardImgDTO.AddBoardImgRequest image : addBoardAndImageRequest.getImgList())

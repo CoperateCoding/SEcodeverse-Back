@@ -1,4 +1,4 @@
-package com.coperatecoding.secodeverseback.dto.question;
+package com.coperatecoding.secodeverseback.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

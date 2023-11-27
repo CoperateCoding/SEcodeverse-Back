@@ -48,6 +48,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers(whiteList).permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/board").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/board/*").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/ctf/team/*").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/comment/*").permitAll()
@@ -58,8 +59,8 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
                 .and()
                 .authenticationProvider(authenticationProvider)
-         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-        .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
 //        .apply(new JwtSecurityConfig(tokenProvider, redisService)); // JwtFilter를 addFilterBefore로 등록했던 JwtSecurityConfig class 적용
 
         return http.build();

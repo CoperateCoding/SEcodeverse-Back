@@ -35,6 +35,7 @@ public class TokenController {
     """)
     @GetMapping("/token/validate")
     public ResponseEntity validateJwtToken(@RequestHeader(value="Authorization", required = false) String authHeader) {
+        System.out.println("토큰 유효성 검사 시작");
         boolean isTokenValid = false;
 
         if (authHeader != null) {
@@ -74,6 +75,8 @@ public class TokenController {
         response.put("isAdmin", isAdmin);
         return ResponseEntity.ok(response);
     }
+
+
 
 //    @GetMapping("/token/validate")
 //    public ResponseEntity<Map<String, Object>> validateJwtToken(@AuthenticationPrincipal User user) {
