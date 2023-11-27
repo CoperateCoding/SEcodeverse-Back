@@ -25,12 +25,11 @@ public class SecurityConfig {
 
     private final String[] whiteList = {
             "/swagger-resources/**", "/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**",
-            "/api/v1/user/login", "api/v1/user/signup", "api/v1/user/logout",
+            "api/v1/user/login", "api/v1/user/signup", "api/v1/user/logout",
             "/error", "api/v1/s3/*",
             "api/v1/user/nickname/**", "api/v1/user/id/**",
             "/error", "api/v1/s3/presigned",
-            "api/v1/chatbot",
-            "/logout"
+            "api/v1/chatbot"
     };
 
     private final JwtAuthenticationFilter jwtAuthFilter;

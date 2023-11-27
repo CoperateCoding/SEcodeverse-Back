@@ -1,9 +1,5 @@
 package com.coperatecoding.secodeverseback.domain.ctf;
 
-import com.coperatecoding.secodeverseback.domain.Comment;
-import com.coperatecoding.secodeverseback.domain.User;
-import com.coperatecoding.secodeverseback.domain.board.Board;
-import com.coperatecoding.secodeverseback.dto.ctf.CTFLeagueDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
