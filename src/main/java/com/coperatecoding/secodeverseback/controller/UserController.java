@@ -46,8 +46,8 @@ public class UserController {
 
     @Operation(summary = "로그인")
     @PostMapping("/login")
-    public ResponseEntity<UserDTO.LoginAllResponse> login(@RequestBody UserDTO.LoginRequest loginRequest, HttpServletRequest request) {
-        UserDTO.LoginAllResponse loginResponse = userService.login(loginRequest, request);
+    public ResponseEntity<UserDTO.LoginResponse> login(@RequestBody UserDTO.LoginRequest loginRequest, HttpServletRequest request) {
+        UserDTO.LoginResponse loginResponse = userService.login(loginRequest, request);
 
 
         return ResponseEntity.ok(loginResponse);
