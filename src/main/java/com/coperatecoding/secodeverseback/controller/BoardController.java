@@ -39,9 +39,11 @@ public class BoardController {
     400: 필요한 값을 넣지 않음(모든 값은 not null)<br>
     403: 권한없음
     """)
-    @PostMapping("/board")
+    @PostMapping("/board/")
     public ResponseEntity makeBoard(@AuthenticationPrincipal User user, @RequestBody @Valid BoardAndImageDTO.AddBoardAndImageRequest addBoardAndImageRequest) {
         System.out.println(user.getPk());
+        log.info("***********");
+        log.info(user.getId());
         System.out.println(user.getName());
         Board board = boardService.makeBoard(user, addBoardAndImageRequest.getBoard());
 
