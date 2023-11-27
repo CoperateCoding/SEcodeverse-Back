@@ -54,8 +54,8 @@ public class User implements UserDetails {
     @Column(unique = true, length =12)
     private String id;
 
+    //    @Column(length = 20)
     @NotNull
-//    @Column(length = 20)
     private String pw;
 
     @NotNull

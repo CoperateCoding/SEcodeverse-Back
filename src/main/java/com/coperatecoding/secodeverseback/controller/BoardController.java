@@ -30,7 +30,7 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 @RestController
 @Slf4j
-@RequestMapping("/api/v1/board")
+@RequestMapping("/api/v1")
 public class BoardController {
 
     private final BoardService boardService;
@@ -42,7 +42,7 @@ public class BoardController {
     400: 필요한 값을 넣지 않음(모든 값은 not null)<br>
     403: 권한없음
     """)
-    @PostMapping("")
+    @PostMapping("/board")
     public ResponseEntity makeBoard(@AuthenticationPrincipal User user, @RequestBody @Valid BoardAndImageDTO.AddBoardAndImageRequest addBoardAndImageRequest) {
         Board board = boardService.makeBoard(user, addBoardAndImageRequest.getBoard());
 
@@ -85,7 +85,7 @@ public class BoardController {
     sort: 1. POP(인기순) 2. NEW(최신순) 3. COMMENT(댓글순) <br>
     200: 성공<br>
     """)
-    @GetMapping("")
+    @GetMapping("/board")
     public ResponseEntity<BoardDTO.SearchListResponse> getBoardList(
             @RequestParam(required = false) Long categoryPk,
             @RequestParam(required = false) String q,
@@ -109,7 +109,7 @@ public class BoardController {
     200: 성공<br>
     404: 해당하는 pk의 게시글이 없음
     """)
-    @GetMapping("/{boardPk}")
+    @GetMapping("/board/{boardPk}")
     public ResponseEntity<BoardAndImageDTO.DetailResponse> getBoard(@PathVariable Long boardPk) throws NoSuchElementException {
 
         BoardDTO.BoardDetailResponse board = boardService.getDetailBoard(boardPk);
@@ -149,7 +149,7 @@ public class BoardController {
       403: 수정할 권한 없음<br>
       404: 해당하는 pk의 게시글이 없음
       """)
-    @PatchMapping("/{boardPk}")
+    @PatchMapping("/board/{boardPk}")
     public ResponseEntity editBoard (
             @AuthenticationPrincipal User user,
             @PathVariable Long boardPk,
@@ -205,7 +205,7 @@ public class BoardController {
       403: 수정할 권한 없음<br>
       404: 해당하는 pk의 게시글이 없음
       """)
-    @DeleteMapping("/{boardPk}")
+    @DeleteMapping("/board/{boardPk}")
     public ResponseEntity deleteBoard(@AuthenticationPrincipal User user, @PathVariable Long boardPk) throws NoSuchElementException, ForbiddenException {
         try{
             List<BoardImgDTO.SearchResponse> imgDTOS = boardImgService.getBoardImg(boardPk);
@@ -225,7 +225,7 @@ public class BoardController {
         [모두 접근가능] 인기 게시글을 조회합니다.<br>
         200: 성공
         """)
-    @GetMapping("/boards/popular")
+    @GetMapping("/board/popular")
     public ResponseEntity<BoardDTO.PopularBoardListResponse> getPopularBoardList() {
 
         List<BoardDTO.PopularBoardResponse> popularBoardList = boardService.getPopularBoardList();
@@ -243,7 +243,7 @@ public class BoardController {
     200: 성공<br>
     403: 로그인 필요
     """)
-    @GetMapping("/my")
+    @GetMapping("/my/board")
     public ResponseEntity<BoardDTO.SearchListResponse> getMyBoardList(
             @AuthenticationPrincipal User user,
             @RequestParam(required = false, defaultValue = "1") @Min(value = 1, message = "page는 1보다 커야합니다") int page,

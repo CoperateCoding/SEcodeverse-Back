@@ -22,13 +22,13 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 @RestController
 @Slf4j
-@RequestMapping("/api/v1/ctf/team")
+@RequestMapping("/api/v1")
 public class CTFTeamController {
 
     private final CTFTeamService ctfTeamService;
 
     @Operation(summary = "ctf 팀 등록")
-    @PostMapping("/post")
+    @PostMapping("/ctf/team/post")
     public ResponseEntity makeCTFTeam(@AuthenticationPrincipal User user, @RequestBody @Valid CTFTeamDTO.AddRequest addRequest) {
 
         ctfTeamService.makeTeam(user, addRequest);
@@ -40,7 +40,7 @@ public class CTFTeamController {
             summary = "ctf 팀 상세 조회",
             description = "관리자 or 유저의 팀이 있을때만 가능"
     )
-    @GetMapping("/{teamPk}")
+    @GetMapping("/ctf/detail/team/{teamPk}")
     public ResponseEntity<CTFTeamDTO.DetailResponse> getCtfTeam(@AuthenticationPrincipal User user, @PathVariable Long teamPk) throws NoSuchElementException {
 
         CTFTeamDTO.DetailResponse detailResponse = ctfTeamService.getDetailTeam(user, teamPk);
@@ -59,8 +59,9 @@ public class CTFTeamController {
 
     @Operation(summary = "모든 팀 정보 조회", description = """
     팀 이름, 팀원 닉네임
+    관리자만 가능
     """)
-    @GetMapping("/all/{leaguePk}")
+    @GetMapping("/admin/ctf/team/all/{leaguePk}")
     public ResponseEntity<CTFTeamDTO.SearchListResponse> getSearchTeamList(
             @AuthenticationPrincipal User user,
             @PathVariable Long leaguePk,
@@ -81,7 +82,7 @@ public class CTFTeamController {
     @Operation(summary = "상위 10개 팀 정보 조회", description = """
     팀 이름, 팀원 닉네임
     """)
-    @GetMapping("/all/rank_and_score/{leaguePk}")
+    @GetMapping("/ctf/team/all/rank_and_score/{leaguePk}")
     public ResponseEntity<CTFTeamDTO.Top10ListResponse> getTop10TeamList(
             @AuthenticationPrincipal User user,
             @PathVariable Long leaguePk)
