@@ -4,6 +4,7 @@ import com.coperatecoding.secodeverseback.repository.RedisRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,21 +24,16 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     private final String[] whiteList = {
-            "/swagger-resources/**", "/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**", "/api/v1/user/login", "api/v1/user/signup", // 원래 이것만
-            "api/v1/user/info/my","api/v1/user/logout",
+            "/swagger-resources/**", "/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**",
+            "/api/v1/user/login", "api/v1/user/signup", "api/v1/user/logout",
             "/error", "api/v1/s3/*",
-            "api/v1/user/username/**", "api/v1/user/id/**",
-            "api/v1/board/**", "api/v1/comment/**","/api/v1/likes/**","api/v1/question/**","test/hello",
+            "api/v1/user/nickname/**", "api/v1/user/id/**",
             "/error", "api/v1/s3/presigned",
-            "/api/v1/token/**", "api/v1/user/nickname/**", "api/v1/user/id/**",
-            "api/v1/board/**", "api/v1/comment/**","/api/v1/likes/**","api/v1/question/**","test/hello","api/v1/chatbot/**",
-            "api/v1/ctf/**"
-            // 이건 다 임의로 넣어둠.
-//            "/logout"
+            "api/v1/chatbot",
+            "/logout"
     };
 
     private final JwtAuthenticationFilter jwtAuthFilter;
-    private final TokenProvider tokenProvider;
     private final JwtExceptionFilter jwtExceptionFilter;
     private final AuthenticationProvider authenticationProvider;
     private final RedisRepository redisService;
@@ -52,12 +48,19 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers(whiteList).permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/board").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/board/*").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/ctf/team/*").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/comment/*").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/ctf/league/*").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/question/detail/*").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/question/search/*").permitAll()
                 .requestMatchers( "/api/v1/admin/**").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .authenticationProvider(authenticationProvider)
-         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-        .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
 //        .apply(new JwtSecurityConfig(tokenProvider, redisService)); // JwtFilter를 addFilterBefore로 등록했던 JwtSecurityConfig class 적용
 
         return http.build();
@@ -87,8 +90,6 @@ public class SecurityConfig {
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-
-
 
         return source;
     }

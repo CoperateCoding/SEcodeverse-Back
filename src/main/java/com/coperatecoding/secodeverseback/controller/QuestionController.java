@@ -193,7 +193,7 @@ public class QuestionController {
 
 
 
-    @GetMapping("/{questionPk}")
+    @GetMapping("detail/{questionPk}")
     public ResponseEntity<QuestionAndTestAndImageDTO.QuestionAndTest> detailQuestion(@PathVariable Long questionPk) {
 
         QuestionDTO.AddQuestionResponse question = questionService.getDetailQuestion(questionPk);
@@ -216,19 +216,19 @@ public class QuestionController {
         return ResponseEntity.ok(question);
     }
 
-    @GetMapping("/keyword={keyword}")
+    @GetMapping("/search/keyword={keyword}")
     public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>> getKeywordQuestion(@PathVariable String keyword){
         List<QuestionDTO.SearchQuestionResponse> question= questionService.getKeywordQuestion(keyword);
         return ResponseEntity.ok(question);
     }
 
-    @GetMapping("/recent")
+    @GetMapping("/search/recent")
     public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>> getRecentQuestion(){
         List<QuestionDTO.SearchQuestionResponse> questions = questionService.getRecentQuestion();
         return ResponseEntity.ok(questions);
     }
 
-    @GetMapping("")
+    @GetMapping("/search")
     public ResponseEntity<QuestionDTO.SearchListResponse> getQuestions(
             @RequestParam(required = false, defaultValue = "10") @Min(value = 2, message = "page 크기는 1보다 커야합니다") int pageSize,
             @RequestParam(required = false, defaultValue = "1") @Min(value = 1, message = "page는 0보다 커야합니다") int page,

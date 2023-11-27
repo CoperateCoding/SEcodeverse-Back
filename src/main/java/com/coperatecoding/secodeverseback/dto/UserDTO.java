@@ -6,6 +6,8 @@ import com.coperatecoding.secodeverseback.domain.board.Likes;
 import com.coperatecoding.secodeverseback.domain.ctf.CTFTeam;
 import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -16,14 +18,27 @@ public class UserDTO {
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
+    @Builder
     public static class RegisterRequest {
         @NotNull
+        @Size(min = 6, max = 12, message ="아이디는 6에서 12자 사이 입니다.")
+        @Pattern(regexp = "^[a-zA-Z0-9]*[a-zA-Z]+[a-zA-Z0-9]*$", message = "아이디 형식이 일치하지 않습니다.")
         private String id;
+
         @NotNull
+        @Size(min = 12, max = 20,message ="비밀번호는 12에서 20자 사이 입니다.")
+        @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[~!@#$%^&*()_=+|{};:<>/?])[a-zA-Z0-9~!@#$%^&*()_=+|{};:,.<>/?]*$"
+                , message = "비밀번호 형식이 일치하지 않습니다.")
         private String pw;
+
         @NotNull
+        @Size(min = 2, max = 10, message = "이름은 10자 이하이어야 합니다.")
+        @Pattern(regexp = "^[가-힣]*$", message = "이름은 한글이어야 합니다.")
         private String name;
+
         @NotNull
+        @Size(min = 2, max = 10, message = "닉네임은 2에서 10자 사이 입니다.")
+        @Pattern(regexp = "^[가-힣a-zA-Z0-9]*$", message = "닉네임은 한글 또는 영문이 필수이며, 숫자는 선택입니다.")
         private String nickname;
     }
 
@@ -50,12 +65,12 @@ public class UserDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    @Builder
     public static class LoginResponse {
-        private String token;
         private String accessToken;
         private String refreshToken;
         public static LoginResponse makeResponse(String accessToken, String refreshToken) {
-            return new LoginResponse(accessToken, accessToken, refreshToken);
+            return new LoginResponse(accessToken, refreshToken);
         }
 
 
