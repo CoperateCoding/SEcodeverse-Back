@@ -55,7 +55,7 @@ public class QuestionController {
     private final QuestionCategoryService questionCategoryService;
     private final QuestionImgService questionImgService;
     private final CodeService codeService;
-    //
+
     @PostMapping("/post")
     public ResponseEntity makeQuestion(@AuthenticationPrincipal User user, @RequestBody @Valid QuestionAndTestAndImageDTO.AddQuestionAndTestAndImageRequest addQuestionAndTestAndImageRequest) {
         Question question = questionService.makeQuestion(user, addQuestionAndTestAndImageRequest.getQuestion());
@@ -261,7 +261,7 @@ public class QuestionController {
     //1번 -> 파이썬 ,2번 -> 자바, 3번 ->c ,4번 ->c++
     //{"stdout":"hello World\n","time":"0.052","memory":26928,"stderr":null,"token":"42f06f39-2574-4d3e-9e90-35d33059ab14","compile_output":null,"message":null,"status":{"id":3,"description":"Accepted"}}
     //{"stdout":null,"time":"0.112","memory":33472,"stderr":"  File \"/box/script.py\", line 1\n    cHJpbnQoJ2hlbGxvIFdvcmxkJyk=\n                                ^\nSyntaxError: invalid syntax\n","token":"92e5da6a-a84d-4d83-9bc6-836f56a3258d","compile_output":null,"message":"Exited with error status 1","status":{"id":11,"description":"Runtime Error (NZEC)"}}
-
+    //문제 풀기
     @GetMapping("/solveQuestion")
     public ResponseEntity<String> solveQuestion(
             @RequestParam(required = true) String userCode,
