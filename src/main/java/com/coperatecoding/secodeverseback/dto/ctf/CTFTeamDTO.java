@@ -1,6 +1,6 @@
 package com.coperatecoding.secodeverseback.dto.ctf;
 
-import com.coperatecoding.secodeverseback.dto.board.BoardDTO;
+//import com.coperatecoding.secodeverseback.dto.board.BoardDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

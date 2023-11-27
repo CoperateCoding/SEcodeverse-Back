@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.minidev.json.annotate.JsonIgnore;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,7 +30,6 @@ public class TestCase {
     @Column(columnDefinition = "LONGTEXT")
     @NotNull
     private String output;
-
 
     public static TestCase makeTestCase(Question question,String input, String output) {
         TestCase testCase = new TestCase();

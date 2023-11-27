@@ -1,7 +1,11 @@
 package com.coperatecoding.secodeverseback.domain.question;
 
+import com.coperatecoding.secodeverseback.domain.User;
+import com.coperatecoding.secodeverseback.dto.QuestionDTO;
+import com.coperatecoding.secodeverseback.dto.QuestionImgDTO;
 import jakarta.persistence.*;
 import lombok.*;
+import net.minidev.json.annotate.JsonIgnore;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -16,6 +20,7 @@ public class QuestionImage {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_pk", referencedColumnName = "pk")
     private Question question;
+
 
     @JoinColumn(name = "img_url")
     private String imgUrl;
