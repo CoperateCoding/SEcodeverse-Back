@@ -16,6 +16,7 @@ public class CTFTeamDTO {
     public static class AddRequest {
         private Long leaguePk;
         private String name;
+
         private String pw;
     }
 

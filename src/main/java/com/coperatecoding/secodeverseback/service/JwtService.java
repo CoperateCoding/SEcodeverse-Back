@@ -1,6 +1,5 @@
 package com.coperatecoding.secodeverseback.service;
 
-import com.coperatecoding.secodeverseback.config.TokenProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -8,12 +7,9 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import java.security.Key;
-import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,17 +22,10 @@ public class JwtService {
     @Value("${jwt.secretKey}")
     private String SECRET_KEY;
 
-    public long accessTokenValidTime = Duration.ofMinutes(200).toMillis(); // 만료시간 30분
-    public long refreshTokenValidTime = Duration.ofDays(14).toMillis(); // 만료시간 2주
-    private final TokenProvider tokenProvider;
-
-    public JwtService(TokenProvider tokenProvider) {
-        this.tokenProvider = tokenProvider;
-    }
-
-//    @Autowired
-//    private TokenBlackListRepository tokenBlackListRepository;
-
+    @Value("${jwt.token-validity-in-seconds}")
+    public long accessTokenValidTime;
+    @Value("${jwt.refreshtoken-validity-in-seconds}")
+    public long refreshTokenValidTime;
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
@@ -64,7 +53,7 @@ public class JwtService {
     }
 
     public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails, accessTokenValidTime);
+        return generateToken(new HashMap<>(), userDetails, accessTokenValidTime * 1000);
     }
 
     public String generateToken(
@@ -78,7 +67,6 @@ public class JwtService {
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-//                .setExpiration(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + durationTime))
                 .claim("token_type", tokenType)
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
@@ -92,17 +80,6 @@ public class JwtService {
     public String generateRefreshToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails, "refresh");
     }
-
-//    public String generateAccessToken(UserDetails userDetails) {
-//        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-//        return tokenProvider.createToken(authentication);
-//    }
-//
-//    public String generateRefreshToken(UserDetails userDetails) {
-//        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-//        return tokenProvider.createRefreshToken(authentication);
-//    }
-
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
@@ -146,19 +123,6 @@ public class JwtService {
 
         return Keys.hmacShaKeyFor(keyBytes);
     }
-//
-//    @Transactional
-//    public void addBlackList(String token) {
-//        JwtTokenBlackList blackList = JwtTokenBlackList.makeEntity(
-//                token,
-//                extractExpiration(token)
-//                        .toInstant()
-//                        .atZone(ZoneId.systemDefault())
-//                        .toLocalDateTime()
-//        );
-//
-//        tokenBlackListRepository.save(blackList);
-//    }
 
 
 }
