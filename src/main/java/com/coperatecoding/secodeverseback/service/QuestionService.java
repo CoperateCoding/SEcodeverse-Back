@@ -1,5 +1,6 @@
 package com.coperatecoding.secodeverseback.service;
 
+import com.coperatecoding.secodeverseback.domain.RoleType;
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.domain.question.Level;
 import com.coperatecoding.secodeverseback.domain.question.Question;
@@ -7,10 +8,15 @@ import com.coperatecoding.secodeverseback.domain.question.QuestionCategory;
 import com.coperatecoding.secodeverseback.dto.BoardSortType;
 import com.coperatecoding.secodeverseback.dto.QuestionDTO;
 import com.coperatecoding.secodeverseback.dto.QuestionSortType;
+import com.coperatecoding.secodeverseback.exception.ForbiddenException;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.repository.LevelRepository;
 import com.coperatecoding.secodeverseback.repository.QuestionCategoryRepository;
 import com.coperatecoding.secodeverseback.repository.QuestionRepository;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +24,11 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -82,6 +90,15 @@ public class QuestionService {
                 .build();
 
         return questionResponse;
+    }
+    private Question verifyWriterAndfindQuestion(User user, Long questionPk) {
+        Question question = questionRepository.findById(questionPk)
+                .orElseThrow(() -> new NoSuchElementException("해당하는 게시글이 없습니다"));
+
+        //글 작성자거나, admin이 아니라면 수정 불가능
+        if (user.getRoleType() != RoleType.ADMIN && question.getUser().getPk() != user.getPk())
+            throw new ForbiddenException("권한이 없는 사용자");
+        return question;
     }
 
     public List<QuestionDTO.questionPagingResponse> userPostQuestion(User user, int page, int size) {
@@ -173,8 +190,9 @@ public class QuestionService {
         return questionDTOS;
     }
 
-    public void deleteQuestion(Long questionPK) {
-        Question question = questionRepository.findById(questionPK).orElseThrow(() -> new NotFoundException("해당하는 댓글이 존재하지 않음"));
+    public void deleteQuestion(User user,Long questionPK) {
+        Question question =verifyWriterAndfindQuestion(user,questionPK);
+
         questionRepository.delete(question);
     }
 
@@ -291,6 +309,8 @@ public class QuestionService {
 
         return response;
     }
+
+
 
     public List<QuestionDTO.SearchQuestionResponse> getRecentQuestion() {
 

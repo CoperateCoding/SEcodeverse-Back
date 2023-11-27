@@ -30,7 +30,7 @@ public class SecurityConfig {
             "api/v1/board/**", "api/v1/comment/**","/api/v1/likes/**","api/v1/question/**","test/hello",
             "/error", "api/v1/s3/presigned",
             "/api/v1/token/**", "api/v1/user/nickname/**", "api/v1/user/id/**",
-            "api/v1/board/**", "api/v1/comment/**","/api/v1/likes/**","api/v1/question/**","test/hello","api/v1/chatbot",
+            "api/v1/board/**", "api/v1/comment/**","/api/v1/likes/**","api/v1/question/**","test/hello","api/v1/chatbot/**",
             "api/v1/ctf/**"
             // 이건 다 임의로 넣어둠.
 //            "/logout"

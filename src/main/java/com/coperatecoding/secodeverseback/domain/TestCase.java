@@ -31,11 +31,6 @@ public class TestCase {
     @NotNull
     private String output;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_pk")
-    @JsonIgnore
-    private User user;
-
     public static TestCase makeTestCase(Question question,String input, String output) {
         TestCase testCase = new TestCase();
         testCase.question=question;

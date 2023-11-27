@@ -105,10 +105,10 @@ public class QuestionController {
         int i = 0;
         for (TestCaseDTO.SearchResponse testCase : testCaseDTOS) {
             if (i < addQuestionAndTestRequest.getTestCase().size()) {
-                testCaseService.modifyTestCase(user,testCase.getPk(), addQuestionAndTestRequest.getTestCase().get(i));
+                testCaseService.modifyTestCase(testCase.getPk(), addQuestionAndTestRequest.getTestCase().get(i));
             } else {
                 // 새로운 테스트케이스의 크기를 벗어나면 삭제
-                testCaseService.delete(user,testCase.getPk());
+                testCaseService.delete(testCase.getPk());
             }
             i++;
         }
@@ -120,7 +120,7 @@ public class QuestionController {
                 questionImgService.modifyQuestionImg(questionImg.getPk(), addQuestionAndTestRequest.getImg().get(j));
             } else {
                 // 새로운 이미지의 크기를 벗어나면 삭제
-                questionImgService.delete(user,questionImg.getPk());
+                questionImgService.delete(questionImg.getPk());
             }
             j++;
         }
@@ -139,13 +139,13 @@ public class QuestionController {
         try{
             List<QuestionImgDTO.SearchQuestionImgResponse> imgDTOS=questionImgService.getQuestionImg(questionPk);
             for (QuestionImgDTO.SearchQuestionImgResponse img : imgDTOS) {
-                questionImgService.delete(user,img.getPk());
+                questionImgService.delete(img.getPk());
             }
             List<TestCaseDTO.SearchResponse>testCaseDTOS = testCaseService.getTestCaseList(questionPk);
             for (TestCaseDTO.SearchResponse testCase : testCaseDTOS) {
-                testCaseService.delete(user,testCase.getPk());
+                testCaseService.delete(testCase.getPk());
             }
-            questionService.deleteQuestion(questionPk);
+            questionService.deleteQuestion(user,questionPk);
             return ResponseEntity.noContent().build();
         }
         catch(NotFoundException e){
@@ -260,11 +260,12 @@ public class QuestionController {
     //1번 -> 파이썬 ,2번 -> 자바, 3번 ->c ,4번 ->c++
     //{"stdout":"hello World\n","time":"0.052","memory":26928,"stderr":null,"token":"42f06f39-2574-4d3e-9e90-35d33059ab14","compile_output":null,"message":null,"status":{"id":3,"description":"Accepted"}}
     //{"stdout":null,"time":"0.112","memory":33472,"stderr":"  File \"/box/script.py\", line 1\n    cHJpbnQoJ2hlbGxvIFdvcmxkJyk=\n                                ^\nSyntaxError: invalid syntax\n","token":"92e5da6a-a84d-4d83-9bc6-836f56a3258d","compile_output":null,"message":"Exited with error status 1","status":{"id":11,"description":"Runtime Error (NZEC)"}}
+
     @GetMapping("/solveQuestion")
     public ResponseEntity<String> solveQuestion(
             @RequestParam(required = true) String userCode,
             @RequestParam(required = true) int languageNum,
-            @RequestParam(required = true) Long questionPk
+            @RequestParam(required=true) String testcase
     ) throws IOException, InterruptedException {
         System.out.println("userCode" + userCode);
         System.out.println("languageNum" + languageNum);
@@ -275,10 +276,6 @@ public class QuestionController {
         String javaLanguageId = "4";
         String cPlusLanguageId = "2";
         String cLanguageId = "1";
-        List<TestCaseDTO.SearchResponse> testCaseList= testCaseService.getTestCaseList(questionPk);
-        for(TestCaseDTO.SearchResponse testcase : testCaseList){
-            System.out.println(testcase.getInput());
-        }
         String languageNumber = "";
         if (languageNum == 1)
             languageNumber = cLanguageId;
@@ -288,21 +285,58 @@ public class QuestionController {
             languageNumber = cPlusLanguageId;
         else if (languageNum == 4)
             languageNumber = python3LanguageId;
-        List<String> inputs = Arrays.asList("1","2");
+
 
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode requestBody = objectMapper.createObjectNode();
         requestBody.put("language_id", languageNumber);
         requestBody.put("source_code", userCode);
         ArrayNode inputArrayNode = objectMapper.createArrayNode();
-        for (String input : inputs) {
-            inputArrayNode.add(input);
+//        for (String input : inputs) {
+//            inputArrayNode.add(input);
+//        }
+
+//        List<TestCaseDTO.SearchResponse> testCaseList= testCaseService.getTestCaseList(questionPk);
+//        for(TestCaseDTO.SearchResponse testcase : testCaseList){
+//            System.out.println(testcase.getInput());
+//            inputs.add(testcase.getInput());
+//        }
+        List<String> inputs = new ArrayList<>();
+        String str = testcase;
+
+        List<String> splitList = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (c == '!' || c == '@' || c == '#' || c == '*' || c == '(' || c == ')') {
+                if (sb.length() > 0) {
+                    splitList.add(sb.toString());
+                    sb.setLength(0);
+                }
+            } else {
+                sb.append(c);
+            }
         }
+
+        // 마지막 구분자 이후의 문자열도 추가
+        if (sb.length() > 0) {
+            splitList.add(sb.toString());
+        }
+        System.out.println("size는"+splitList.size());
+        // 결과 출력
+        for (String substring : splitList) {
+            System.out.println(substring);
+            inputs.add(substring);
+        }
+
+        for(String input : inputs){
+            System.out.println(input);
+        }
+
         requestBody.put("stdin", String.join("\n", inputs));
 
-        System.out.println(inputArrayNode);
         String requestBodyString = requestBody.toString();
-        System.out.println(requestBodyString);
+
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(JUDGE0_API_URL + "/submissions"))

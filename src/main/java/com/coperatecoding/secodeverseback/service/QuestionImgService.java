@@ -76,12 +76,9 @@ public class QuestionImgService {
 
         return response;
     }
-    public void delete(User user, Long imgPk) throws RuntimeException {
+    public void delete(Long imgPk) throws RuntimeException {
         QuestionImage questionImage = questionImageRepository.findById(imgPk)
                 .orElseThrow(() -> new NotFoundException("해당하는 이미지가 존재하지 않음"));
-        if(!user.getRoleType().equals(RoleType.ADMIN) && questionImage.getUser().getPk() != user.getPk()) {
-            throw new ForbiddenException("작성자만 댓글을 삭제할 수 있습니다.");
-        }
 
         questionImageRepository.delete(questionImage);
     }

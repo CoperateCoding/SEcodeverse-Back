@@ -1,7 +1,10 @@
 package com.coperatecoding.secodeverseback.domain.question;
 
+import com.coperatecoding.secodeverseback.domain.RoleType;
 import com.coperatecoding.secodeverseback.domain.TestCase;
 import com.coperatecoding.secodeverseback.domain.User;
+import com.coperatecoding.secodeverseback.domain.board.Board;
+import com.coperatecoding.secodeverseback.exception.ForbiddenException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -12,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -86,7 +90,10 @@ public class Question {
         return createAt.format(DateTimeFormatter.ofPattern("yyyy. MM. dd. HH:mm"));
     }
 
-public static Question  makeQuestion(User user,QuestionCategory category,Level level,String title, String intro, String content, String limitations, String source, String language, String testcaseDescription){
+
+
+
+    public static Question  makeQuestion(User user,QuestionCategory category,Level level,String title, String intro, String content, String limitations, String source, String language, String testcaseDescription){
         Question question = new Question();
 
         question.level=level;

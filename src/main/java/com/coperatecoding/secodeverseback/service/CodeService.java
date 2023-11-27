@@ -3,8 +3,11 @@ package com.coperatecoding.secodeverseback.service;
 import com.coperatecoding.secodeverseback.domain.Code;
 import com.coperatecoding.secodeverseback.domain.CodeStatus;
 import com.coperatecoding.secodeverseback.domain.User;
+import com.coperatecoding.secodeverseback.domain.question.Question;
 import com.coperatecoding.secodeverseback.dto.CodeDTO;
+import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.repository.CodeRepository;
+import com.coperatecoding.secodeverseback.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +25,8 @@ import java.util.List;
 @Service
 public class CodeService {
     private final CodeRepository codeRepository;
+
+    private final QuestionRepository questionRepository;
 
     public CodeDTO.SearchCodeListResponse getCodes(CodeDTO.SearchCodeListRequest request){
         CodeDTO.SearchCodeListResponse response = CodeDTO.SearchCodeListResponse.builder()
@@ -41,6 +46,11 @@ public class CodeService {
         return response;
     }
 
+//    public Code code(User user, CodeDTO.addCodeRequest addCodeRequest) throws RuntimeException{
+//        Question question = questionRepository.findById(addCodeRequest.getQuestionPk())
+//                 .orElseThrow(() -> new NotFoundException("해당하는 문제가 존재하지 않음"));
+//
+//    }
     public List<CodeDTO.PageableCodeListResponse> getWrongCodes(User user, int page, int size){
 
         CodeStatus codeStatus = CodeStatus.FALSE;

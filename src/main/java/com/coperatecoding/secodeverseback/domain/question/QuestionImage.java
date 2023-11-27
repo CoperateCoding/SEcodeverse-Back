@@ -21,10 +21,6 @@ public class QuestionImage {
     @JoinColumn(name = "question_pk", referencedColumnName = "pk")
     private Question question;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_pk")
-    @JsonIgnore
-    private User user;
 
     @JoinColumn(name = "img_url")
     private String imgUrl;

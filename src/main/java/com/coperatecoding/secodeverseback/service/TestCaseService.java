@@ -72,25 +72,19 @@ public class TestCaseService {
         return response;
     }
 
-    public TestCase modifyTestCase(User user, Long testCasePK, TestCaseDTO.AddtestCaseRequest addQuestionRequest) throws RuntimeException{
+    public TestCase modifyTestCase(Long testCasePK, TestCaseDTO.AddtestCaseRequest addQuestionRequest) throws RuntimeException{
        TestCase testCase = testCaseRepository.findById(testCasePK)
                .orElseThrow(() -> new NotFoundException("해당하는 테스트케이스가 존재하지 않음"));
 
         testCase.updateTestCase(addQuestionRequest.getInput(), addQuestionRequest.getOutput());
-        if(!user.getRoleType().equals(RoleType.ADMIN) && testCase.getUser().getPk() != user.getPk()) {
-            throw new ForbiddenException("작성자만 댓글을 삭제할 수 있습니다.");
-        }
 
 
         return testCase;
     }
 
-    public void delete(User user,Long testCasePK) throws RuntimeException{
+    public void delete(Long testCasePK) throws RuntimeException{
         TestCase testCase = testCaseRepository.findById(testCasePK)
                 .orElseThrow(() -> new NotFoundException("해당하는 테스트케이스가 존재하지 않음"));
-        if(!user.getRoleType().equals(RoleType.ADMIN) && testCase.getUser().getPk() != user.getPk()) {
-            throw new ForbiddenException("작성자만 댓글을 삭제할 수 있습니다.");
-        }
 
         testCaseRepository.delete(testCase);
     }
