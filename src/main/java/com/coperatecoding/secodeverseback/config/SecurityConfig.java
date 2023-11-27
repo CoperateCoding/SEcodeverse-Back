@@ -47,7 +47,6 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers(whiteList).permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/board").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/board/*").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/ctf/team/*").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/comment/*").permitAll()
