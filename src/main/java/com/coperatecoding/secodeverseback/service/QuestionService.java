@@ -503,9 +503,7 @@ public class QuestionService {
 
 
     public Page<QuestionDTO.SearchQuestionResponse> getQuestionList(int page, int pageSize, String q, QuestionSortType sort, List<Long> categoryPks, List<Long> levelPks) {
-        List<Question> questions = questionRepository.findAll();
-
-
+         List<Question> questions = questionRepository.findAll();
 
         List<Question> filteredQuestions = questions.stream()
                 .filter(question -> {
@@ -531,21 +529,18 @@ public class QuestionService {
                 })
                 .collect(Collectors.toList());
 
-//        int start = Math.min(page * pageSize, filteredQuestions.size() - 1);
-//        int end = Math.min((start + pageSize), filteredQuestions.size());
-
         if (sort == QuestionSortType.RECENT) {
             filteredQuestions.sort(Comparator.comparing(Question::getCreateAt).reversed());
         }
 
 
 
-        int start = page * pageSize;
+        int start = (page - 1) * pageSize;
         int end = Math.min(start + pageSize, filteredQuestions.size());
 
-        start = Math.min(start, filteredQuestions.size() - 1);
-
+        start = Math.max(0, Math.min(start, filteredQuestions.size() - 1));
         end = Math.min(end, filteredQuestions.size());
+
 
 
         List<QuestionDTO.SearchQuestionResponse> searchList = filteredQuestions.subList(start, end).stream()

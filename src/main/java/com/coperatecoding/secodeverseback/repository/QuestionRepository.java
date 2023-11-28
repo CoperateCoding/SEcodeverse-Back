@@ -16,6 +16,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
         Page<Question> findByUser(User user, Pageable pageable);
         List<Question> findByUser(User user);
 
+
 }
 
 
