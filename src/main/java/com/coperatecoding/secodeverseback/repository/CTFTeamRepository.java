@@ -1,5 +1,6 @@
 package com.coperatecoding.secodeverseback.repository;
 
+import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.domain.ctf.CTFTeam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,5 +15,7 @@ public interface CTFTeamRepository extends JpaRepository<CTFTeam, Long> {
 
     List<CTFTeam> findTop10ByLeaguePkOrderByTeamRankAsc(Long leaguePk);
     Optional<CTFTeam> findByName(String name);
+    Optional<CTFTeam> findByUsers(User user);
+
 
 }
