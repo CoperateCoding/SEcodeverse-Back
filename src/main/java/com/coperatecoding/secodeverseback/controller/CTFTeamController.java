@@ -14,6 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @Tag(name = "CTF팀", description = "CTF 팀 관련 API")
@@ -88,6 +91,15 @@ public class CTFTeamController {
         CTFTeamDTO.Top10ListResponse response = ctfTeamService.getTop10TeamList(user, leaguePk);
 
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "CTF팀 이름 중복 확인")
+    @GetMapping("/ctf/team/name/{teamName}/exists")
+    public ResponseEntity<Map> isExistTeamName(@PathVariable("teamName") String teamName) {
+        Map<String, Boolean> map = new HashMap<>();
+        map.put("exists", ctfTeamService.isExistTeamName(teamName));
+
+        return ResponseEntity.status(HttpStatus.OK).body(map);
     }
 
 

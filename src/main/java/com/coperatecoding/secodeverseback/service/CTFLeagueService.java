@@ -57,12 +57,18 @@ public class CTFLeagueService {
 
     }
 
-    public CTFLeagueStatus getCTFLeagueStatus(Long leaguePk) {
+    public CTFLeagueDTO.StatusResponse getCTFLeagueStatus(Long leaguePk) {
         CTFLeague league = ctfLeagueRepository.findById(leaguePk)
                 .orElseThrow(() -> new NotFoundException("해당하는 리그가 존재하지 않음"));
 
         CTFLeagueStatus ctfLeagueStatus = league.checkLeagueStatus();
-        return ctfLeagueStatus;
+
+        CTFLeagueDTO.StatusResponse statusResponse = CTFLeagueDTO.StatusResponse.builder()
+                .ctfLeagueStatus(ctfLeagueStatus)
+                .build();
+
+        ctfLeagueRepository.save(league);
+        return statusResponse;
     }
 
     public void deleteCTFLeague(Long leaguePk) throws RuntimeException {
@@ -103,6 +109,16 @@ public class CTFLeagueService {
                 ).collect(Collectors.toList());
 
         return new PageImpl<>(briefResponseList, pageable, list.getTotalElements());
+
+    }
+
+    public Long getOngoingLeague() throws RuntimeException {
+        List<CTFLeague> ongoingLeagues = ctfLeagueRepository.findByStatus(CTFLeagueStatus.OPEN);
+        if (ongoingLeagues.isEmpty()) {
+            throw new RuntimeException("현재 진행 중인 리그가 없습니다.");
+        }
+        // 여러 개의 진행 중인 리그 중 첫 번째 리그의 pk를 반환
+        return ongoingLeagues.get(0).getPk();
 
     }
 }

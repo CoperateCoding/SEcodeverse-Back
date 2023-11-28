@@ -136,4 +136,12 @@ public class CTFTeamService {
         }
 
     }
+
+    @Transactional(readOnly = true)
+    public Boolean isExistTeamName(String teamName) {
+        CTFTeam team = ctfTeamRepository.findByName(teamName)
+                .orElseGet(() -> null);
+
+        return (team == null)? false: true;
+    }
 }
