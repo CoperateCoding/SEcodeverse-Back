@@ -1,15 +1,13 @@
 package com.coperatecoding.secodeverseback.domain.ctf;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Builder
 @Table(name = "ctf_image")
 public class CTFImage {
     @Id
