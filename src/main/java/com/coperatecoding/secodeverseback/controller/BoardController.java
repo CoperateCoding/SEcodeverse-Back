@@ -97,7 +97,7 @@ public class BoardController {
         Page<BoardDTO.SearchResponse> boardPage = boardService.getBoardList(categoryPk, q, page, pageSize, sort);
 
         BoardDTO.SearchListResponse response = BoardDTO.SearchListResponse.builder()
-                .cnt(boardPage.getContent().size())
+                .cnt((int) boardPage.getTotalElements())
                 .list(boardPage.getContent())
                 .build();
 
