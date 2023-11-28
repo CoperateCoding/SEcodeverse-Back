@@ -75,11 +75,15 @@ public class CTFLeague {
         LocalDateTime now = LocalDateTime.now();
         if (now.isEqual(this.openTime) || (now.isAfter(this.openTime) && now.isBefore(this.closeTime))) {
             this.status = CTFLeagueStatus.OPEN;
-            return CTFLeagueStatus.OPEN;
         } else {
             this.status = CTFLeagueStatus.CLOSE;
         }
         return status;
+    }
+
+    public void setLeagueStatus(CTFLeagueStatus leagueStatus)
+    {
+        this.status = leagueStatus;
     }
 
     public String convertDate(LocalDateTime dateTime) {

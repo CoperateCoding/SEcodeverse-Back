@@ -8,6 +8,7 @@ import com.coperatecoding.secodeverseback.service.CTFLeagueService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -36,9 +37,16 @@ public class CTFLeagueController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @Operation(summary = "현재 진행중인 리그 조회")
+    @GetMapping("/ctf/league/current")
+    public ResponseEntity<Long> getOngoingLeague() throws RuntimeException {
+        Long leaguePk = ctfLeagueService.getOngoingLeague();
+        return ResponseEntity.ok(leaguePk);
+    }
+
     @Operation(summary = "ctf 리그 상세 조회")
     @GetMapping("/ctf/league/{leaguePk}")
-    public ResponseEntity<CTFLeagueDTO.DetailResponse> getCtfLeague(@AuthenticationPrincipal User user, @PathVariable Long leaguePk) throws NoSuchElementException {
+    public ResponseEntity<CTFLeagueDTO.DetailResponse> getCtfLeague(@PathVariable Long leaguePk) throws RuntimeException {
 
         CTFLeagueDTO.DetailResponse league = ctfLeagueService.getDetailLeague(leaguePk);
 
@@ -76,10 +84,10 @@ public class CTFLeagueController {
     }
 
     @Operation(summary = "ctf 리그 현재 상태 받아오기")
-    @PatchMapping("/ctf/league/{leaguePk}/status")
-    public ResponseEntity getCTFLeagueStatus(@AuthenticationPrincipal User user, @RequestBody @PathVariable Long leaguePk) {
+    @GetMapping("/ctf/league/{leaguePk}/status")
+    public ResponseEntity<CTFLeagueDTO.StatusResponse> getCTFLeagueStatus(@PathVariable Long leaguePk) {
 
-        CTFLeagueStatus ctfLeagueStatus = ctfLeagueService.getCTFLeagueStatus(leaguePk);
+        CTFLeagueDTO.StatusResponse  ctfLeagueStatus = ctfLeagueService.getCTFLeagueStatus(leaguePk);
 
         return ResponseEntity.ok(ctfLeagueStatus);
     }
