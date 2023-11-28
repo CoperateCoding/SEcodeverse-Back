@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.coperatecoding.secodeverseback.exception.UserInfoDuplicatedException;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +43,7 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
 
 
-    public void signUp(UserDTO.RegisterRequest dto) throws UserInfoDuplicatedException {
+    public void signUp(@Validated UserDTO.RegisterRequest dto) throws UserInfoDuplicatedException {
 
         if (isExistId(dto.getId())) {
             throw new UserInfoDuplicatedException("해당하는 id가 존재합니다.");
