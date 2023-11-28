@@ -51,6 +51,17 @@ public class                                                                    
     @OneToMany(mappedBy = "code", cascade = CascadeType.ALL)
     private List<CodeLanguage> languageList = new ArrayList<>();
 
+    public static Code makeCode(User user,Question question , String content, Time compileTime, Long memory , Integer accuracy){
+        Code code = new Code();
+        code.user= user;
+        code.question = question;
+        code.content = content;
+        code.compileTime = compileTime;
+        code.memory = memory;
+        code.accuracy = accuracy;
 
+        return code;
+
+    }
 
 }
