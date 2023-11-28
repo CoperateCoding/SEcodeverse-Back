@@ -154,6 +154,13 @@ public class User implements UserDetails {
         return authorities;
     }
 
+    public void addExp(Integer exp) {
+        if(this.exp == null)
+            this.exp = exp;
+        else this.exp += exp;
+    }
+
+
 
 
 }

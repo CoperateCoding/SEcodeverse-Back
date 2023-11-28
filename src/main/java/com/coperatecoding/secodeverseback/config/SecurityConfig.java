@@ -53,6 +53,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/ctf/league/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/question/detail/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/question/search/**").permitAll()
+                .requestMatchers("/api/v1/question/delete/*").hasAuthority("ADMIN")
                 .requestMatchers( "/api/v1/admin/**").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
                 .and()
