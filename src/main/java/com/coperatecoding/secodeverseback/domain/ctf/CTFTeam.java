@@ -57,4 +57,8 @@ public class CTFTeam {
             this.score += score;
         }
     }
+
+    public void setRank(int rank) {
+        this.teamRank = rank;
+    }
 }
