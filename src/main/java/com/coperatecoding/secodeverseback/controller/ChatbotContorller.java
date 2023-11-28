@@ -121,4 +121,99 @@ public class ChatbotContorller {
 
         return ResponseEntity.ok(responseAnswer);
     }
+//    @PostMapping("/codeReview")
+//    public ResponseEntity codeReview(@RequestParam String code) {
+//        System.out.println(code);
+//
+//        String url = "http://127.0.0.1:5000";
+//        String responseAnswer = "";
+//        try {
+//            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+//            conn.setRequestMethod("POST");
+//            conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+//            conn.setDoOutput(true);
+//
+//            JSONObject requestData = new JSONObject();
+//            requestData.put("code", code);
+//            requestData.put("sentence","리뷰");
+//
+//            OutputStream os = conn.getOutputStream();
+//            OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
+//            osw.write(requestData.toString());
+//            osw.flush();
+//            osw.close();
+//
+//            int responseCode = conn.getResponseCode();
+//            if (responseCode == HttpURLConnection.HTTP_OK) {
+//                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+//                StringBuilder response = new StringBuilder();
+//                String line;
+//                while ((line = br.readLine()) != null) {
+//                    response.append(line);
+//                }
+//                br.close();
+//
+//                // 응답 처리
+//                System.out.println("서버 응답: " + response.toString());
+//                responseAnswer = response.toString();
+//            } else {
+//                System.out.println("서버 요청 실패. 응답 코드: " + responseCode);
+//            }
+//
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return ResponseEntity.ok(responseAnswer);
+//    }
+@PostMapping("/codeReview")
+public ResponseEntity codeReview(@RequestBody Map<String, String> requestBody) {
+    String code = requestBody.get("code");
+    System.out.println("입력받은 코드: " + code);
+
+    String url = "http://127.0.0.1:5000";
+    String responseAnswer = "";
+    try {
+        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+        conn.setDoOutput(true);
+
+        JSONObject requestData = new JSONObject();
+        requestData.put("code", code);
+        requestData.put("sentence","리뷰");
+
+        OutputStream os = conn.getOutputStream();
+        OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
+        osw.write(requestData.toString());
+        osw.flush();
+        osw.close();
+
+        int responseCode = conn.getResponseCode();
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+            StringBuilder response = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                response.append(line);
+            }
+            br.close();
+
+            // 응답 처리
+            System.out.println("서버 응답: " + response.toString());
+            responseAnswer = response.toString();
+        } else {
+            System.out.println("서버 요청 실패. 응답 코드: " + responseCode);
+        }
+
+    } catch (MalformedURLException e) {
+        e.printStackTrace();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+
+    return ResponseEntity.ok(responseAnswer);
+}
     }
