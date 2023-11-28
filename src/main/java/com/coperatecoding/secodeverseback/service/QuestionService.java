@@ -81,6 +81,7 @@ public class QuestionService {
                 .limitations(question.getLimitations())
                 .testcaseDescription(question.getTestcaseDescription())
                 .source(question.getSource())
+                .categoryPk(question.getCategory().getPk())
                 .build();
 
         return questionResponse;
