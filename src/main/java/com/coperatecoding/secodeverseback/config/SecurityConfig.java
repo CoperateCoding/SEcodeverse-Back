@@ -30,6 +30,7 @@ public class SecurityConfig {
             "api/v1/user/nickname/**", "api/v1/user/id/**",
             "/error", "api/v1/s3/presigned",
             "api/v1/chatbot/**",
+            "api/v1/code/**"
     };
 
     private final JwtAuthenticationFilter jwtAuthFilter;
@@ -79,6 +80,7 @@ public class SecurityConfig {
         configuration.addAllowedOrigin("https://lucky-llama-7b0801.netlify.app");
         configuration.addAllowedOrigin("https://lucky-llama-7b0801.netlify.app/");
         configuration.addAllowedOrigin("https://lucky-llama-7b0801.netlify.app:443");
+        configuration.addAllowedOrigin("http://secodeverse-front.s3-website.ap-northeast-2.amazonaws.com");
 //        configuration.addAllowedHeader("*");
 //        configuration.addAllowedMethod("*");
         configuration.addAllowedOrigin("*");

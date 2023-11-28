@@ -46,10 +46,13 @@ public class CodeService {
         return response;
     }
 
-//    public Code code(User user, CodeDTO.addCodeRequest addCodeRequest) throws RuntimeException{
-//        Question question = questionRepository.findById(addCodeRequest.getQuestionPk())
-//                 .orElseThrow(() -> new NotFoundException("해당하는 문제가 존재하지 않음"));
+//    public Code makeCode(User user, Long questionPk,CodeDTO.addCodeRequest addCodeRequest) throws RuntimeException{
+//        Question question = questionRepository.findById(questionPk)
+//                .orElseThrow(() -> new NotFoundException("해당하는 문제가 없습니다."));
 //
+//       Code code = Code.makeCode(user,question,addCodeRequest.getContent(),addCodeRequest.getCompileTime(), addCodeRequest.getMemory(), addCodeRequest.getAccuracy());
+//
+//        return codeRepository.save(code);
 //    }
     public List<CodeDTO.PageableCodeListResponse> getWrongCodes(User user, int page, int size){
 
