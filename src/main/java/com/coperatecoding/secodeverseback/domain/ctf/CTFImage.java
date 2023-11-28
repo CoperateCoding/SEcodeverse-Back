@@ -21,4 +21,7 @@ public class CTFImage {
     @JoinColumn(name = "img_url")
     private String imgUrl;
 
+    public void updateImgUrl(String s) {
+        this.imgUrl = imgUrl;
+    }
 }
