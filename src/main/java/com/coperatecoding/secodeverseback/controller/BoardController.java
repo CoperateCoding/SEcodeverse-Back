@@ -86,7 +86,7 @@ public class BoardController {
     sort: 1. POP(인기순) 2. NEW(최신순) 3. COMMENT(댓글순) <br>
     200: 성공<br>
     """)
-    @GetMapping("/board/")
+    @GetMapping("/board/ ")
     public ResponseEntity<BoardDTO.SearchListResponse> getBoardList(
             @RequestParam(required = false) Long categoryPk,
             @RequestParam(required = false) String q,
@@ -97,7 +97,7 @@ public class BoardController {
         Page<BoardDTO.SearchResponse> boardPage = boardService.getBoardList(categoryPk, q, page, pageSize, sort);
 
         BoardDTO.SearchListResponse response = BoardDTO.SearchListResponse.builder()
-                .cnt((int) boardPage.getTotalElements())
+                .cnt(boardPage.getContent().size())
                 .list(boardPage.getContent())
                 .build();
 

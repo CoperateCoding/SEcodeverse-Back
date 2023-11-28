@@ -229,7 +229,7 @@ public class QuestionController {
         return ResponseEntity.ok(questions);
     }
 
-    @GetMapping("/search")
+    @GetMapping("/search/")
     public ResponseEntity<QuestionDTO.SearchListResponse> getQuestions(
             @RequestParam(required = false, defaultValue = "10") @Min(value = 2, message = "page 크기는 1보다 커야합니다") int pageSize,
             @RequestParam(required = false, defaultValue = "1") @Min(value = 1, message = "page는 0보다 커야합니다") int page,
@@ -245,7 +245,7 @@ public class QuestionController {
         System.out.println(levelPks);
 
         QuestionDTO.SearchListResponse response = QuestionDTO.SearchListResponse.builder()
-                .cnt((int) questions.getTotalElements())
+                .cnt(questions.getContent().size())
                 .list(questions.getContent())
                 .build();
 

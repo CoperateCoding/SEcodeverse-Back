@@ -94,7 +94,8 @@ public class CTFTeamController {
     }
 
     @Operation(summary = "CTF팀 이름 중복 확인")
-    @GetMapping("/ctf/team/name/{teamName}/exists")
+    @GetMapping("/" +
+            "ctf/team/name/{teamName}/exists")
     public ResponseEntity<Map> isExistTeamName(@PathVariable("teamName") String teamName) {
         Map<String, Boolean> map = new HashMap<>();
         map.put("exists", ctfTeamService.isExistTeamName(teamName));

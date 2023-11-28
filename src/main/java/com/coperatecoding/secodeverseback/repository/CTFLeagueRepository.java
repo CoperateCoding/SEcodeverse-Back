@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface CTFLeagueRepository extends JpaRepository<CTFLeague, Long> {
-    List<CTFLeague> findByStatus(CTFLeagueStatus open);
+    List<CTFLeague> findByStatus(CTFLeagueStatus status);
 }

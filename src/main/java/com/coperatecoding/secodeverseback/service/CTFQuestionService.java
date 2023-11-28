@@ -15,8 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.NoSuchElementException;
-
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
@@ -48,14 +46,14 @@ public class CTFQuestionService {
 
         ctfQuestionRepository.save(ctfQuestion);
 
-        if (request.getImgUrlList() != null) {
-            for (String imgUrl : request.getImgUrlList()) {
-                CTFImage ctfImage = CTFImage.builder()
-                        .ctfQuestion(ctfQuestion)
-                        .imgUrl(imgUrl)
-                        .build();
-                ctfImageRepository.save(ctfImage);
-            }
-        }
+//        if (request.getImgUrlList() != null) {
+//            for (String imgUrl : request.getImgUrlList()) {
+//                CTFImage ctfImage = CTFImage.builder()
+//                        .ctfQuestion(ctfQuestion)
+//                        .imgUrl(imgUrl)
+//                        .build();
+//                ctfImageRepository.save(ctfImage);
+//            }
+//        }
     }
 }
