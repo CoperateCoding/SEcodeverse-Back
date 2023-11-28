@@ -75,5 +75,13 @@ public class CTFQuestionController {
         return ResponseEntity.status(HttpStatus.OK).body(map);
     }
 
+    @Operation(summary = "ctf 문제 수정")
+    @PatchMapping("/admin/ctf/question/{ctfQuestionPk}")
+    public ResponseEntity editCTFQuestion(@AuthenticationPrincipal User user, @PathVariable Long ctfQuestionPk,
+                                           @RequestBody @Valid CTFQuestionDTO.EditRequest request) throws RuntimeException {
+        ctfQuestionService.editRequest(ctfQuestionPk, request);
+        return ResponseEntity.ok().build();
+    }
+
 }
 

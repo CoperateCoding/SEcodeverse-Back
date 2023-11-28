@@ -2,7 +2,6 @@ package com.coperatecoding.secodeverseback.service;
 
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.domain.ctf.*;
-import com.coperatecoding.secodeverseback.dto.ctf.CTFLeagueDTO;
 import com.coperatecoding.secodeverseback.dto.ctf.CTFQuestionDTO;
 import com.coperatecoding.secodeverseback.exception.CategoryNotFoundException;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
@@ -14,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -121,7 +122,7 @@ public class CTFQuestionService {
 
     }
 
-    public boolean solveCTFQuestion(User user, Long ctfQuestionPk, CTFQuestionDTO.SolveRequest request) {
+    public boolean solveCTFQuestion(User user, Long ctfQuestionPk, CTFQuestionDTO.SolveRequest request) throws RuntimeException {
 
         boolean isTrue;
         CTFQuestion ctfQuestion = ctfQuestionRepository.findById(ctfQuestionPk)
@@ -143,4 +144,45 @@ public class CTFQuestionService {
         return isTrue;
 
     }
+
+    public void editRequest(Long ctfQuestionPk, CTFQuestionDTO.EditRequest request) throws RuntimeException {
+
+        CTFQuestion question = ctfQuestionRepository.findById(ctfQuestionPk)
+                .orElseThrow(() -> new IllegalArgumentException("해당하는 CTF 문제가 없습니다."));
+
+        CTFCategory ctfCategory = ctfCategoryRepository.findById(request.getCategoryPk())
+                .orElseThrow(() -> new CategoryNotFoundException("해당하는 CTF 카테고리를 찾을 수 없습니다."));
+
+        question.edit(ctfCategory,
+                request.getCtfQuestionType(),
+                request.getName(),
+                request.getScore(),
+                request.getDescription(),
+                request.getAnswer());
+
+        List<CTFImage> ctfImages = ctfImageRepository.findByCtfQuestion(question);
+
+        // 새로운 이미지 리스트가 있다면
+        if (request.getImgUrlList() != null) {
+            // 기존 이미지 리스트를 모두 삭제
+            for (CTFImage ctfImage : ctfImages) {
+                ctfImageRepository.delete(ctfImage);
+            }
+
+            // 새로운 이미지 리스트를 추가
+            for (String newImgUrl : request.getImgUrlList()) {
+                CTFImage image = CTFImage.builder()
+                        .ctfQuestion(question)
+                        .imgUrl(newImgUrl)
+                        .build();
+                ctfImageRepository.save(image);
+            }
+        } else {
+            // 새 이미지 리스트가 null이면 모든 기존 이미지 삭제
+            for (CTFImage ctfImage : ctfImages) {
+                ctfImageRepository.delete(ctfImage);
+            }
+        }
+    }
+
 }

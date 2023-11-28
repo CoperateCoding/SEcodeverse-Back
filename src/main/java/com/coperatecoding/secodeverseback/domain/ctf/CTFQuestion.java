@@ -41,4 +41,13 @@ public class CTFQuestion {
     @Enumerated(EnumType.STRING)
     private CTFQuestionType type;
 
+    public void edit(CTFCategory ctfCategory, CTFQuestionType ctfQuestionType, String name,
+                     Integer score, String description, String answer) {
+        this.category = ctfCategory;
+        this.type = ctfQuestionType;
+        this.name = name;
+        this.score = score;
+        this.description = description;
+        this.answer = answer;
+    }
 }
