@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 public class CTFQuestionDTO {
 
 
@@ -22,5 +24,44 @@ public class CTFQuestionDTO {
         private String description;
         private String answer;
         private String[] imgUrlList;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class AllListResponse {
+        private int cnt;
+        private List<CTFQuestionDTO.BriefResponse> list;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class BriefResponse {
+        private Long questionPk;
+        private String questionName;
+        private Integer score;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class DetailResponse {
+        private String questionName;
+        private String description;
+        private CTFQuestionType ctfQuestionType;
+        private Integer score;
+        private String[] imgUrlList;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class SolveRequest {
+        private String answer;
     }
 }
