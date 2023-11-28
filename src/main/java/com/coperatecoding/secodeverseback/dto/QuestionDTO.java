@@ -44,9 +44,10 @@ public class QuestionDTO {
         private String source;
         private String language;
         private String testcaseDescription;
+        private Long categoryPk;
 
-        public static QuestionDTO.AddQuestionResponse makeResponse(Long pk, Long levelPk, String title, String intro, String content, String limitations ,String source, String language, String testcaseDescription) {
-            return new QuestionDTO.AddQuestionResponse(pk, levelPk,title,intro,content,limitations,source,language,testcaseDescription);
+        public static QuestionDTO.AddQuestionResponse makeResponse(Long pk, Long levelPk, String title, String intro, String content, String limitations ,String source, String language, String testcaseDescription,Long categoryPk) {
+            return new QuestionDTO.AddQuestionResponse(pk, levelPk,title,intro,content,limitations,source,language,testcaseDescription,categoryPk);
         }
     }
 

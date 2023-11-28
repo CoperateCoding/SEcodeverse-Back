@@ -194,7 +194,7 @@ public class QuestionController {
 
 
 
-    @GetMapping("detail/{questionPk}")
+    @GetMapping("/detail/{questionPk}")
     public ResponseEntity<QuestionAndTestAndImageDTO.QuestionAndTest> detailQuestion(@PathVariable Long questionPk) {
 
         QuestionDTO.AddQuestionResponse question = questionService.getDetailQuestion(questionPk);
