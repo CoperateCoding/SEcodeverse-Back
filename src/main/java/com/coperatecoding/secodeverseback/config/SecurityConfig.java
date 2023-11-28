@@ -80,6 +80,7 @@ public class SecurityConfig {
         configuration.addAllowedOrigin("https://lucky-llama-7b0801.netlify.app");
         configuration.addAllowedOrigin("https://lucky-llama-7b0801.netlify.app/");
         configuration.addAllowedOrigin("https://lucky-llama-7b0801.netlify.app:443");
+        configuration.addAllowedOrigin("http://secodeverse-front.s3-website.ap-northeast-2.amazonaws.com");
 //        configuration.addAllowedHeader("*");
 //        configuration.addAllowedMethod("*");
         configuration.addAllowedOrigin("*");
