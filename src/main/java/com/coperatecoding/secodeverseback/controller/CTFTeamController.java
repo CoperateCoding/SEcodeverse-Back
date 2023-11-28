@@ -2,6 +2,7 @@ package com.coperatecoding.secodeverseback.controller;
 
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.dto.ctf.CTFTeamDTO;
+import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.service.CTFTeamService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -103,6 +104,15 @@ public class CTFTeamController {
         return ResponseEntity.status(HttpStatus.OK).body(map);
     }
 
+    @Operation(summary = "ctf 팀 등수 매기기", description = """
+            리그가 종료되어야 함."""
+    )
+    @PostMapping("/ctf/team/all/end/{leaguePk}")
+    public ResponseEntity<CTFTeamDTO.TeamRankListResponse> getTeamRankAll(@AuthenticationPrincipal User user, @RequestBody @PathVariable Long leaguePk) {
+        CTFTeamDTO.TeamRankListResponse teamRankListResponse = ctfTeamService.getTeamRankList(leaguePk);
+
+        return ResponseEntity.ok(teamRankListResponse);
+    }
 
 
 }

@@ -63,4 +63,25 @@ public class CTFTeamDTO {
         private String name;
         private List<String> memberList;
     }
+
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class TeamRankListResponse {
+        private int cnt;
+        private List<CTFTeamDTO.TeamRankResponse> list;
+    }
+
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class TeamRankResponse {
+        private String teamName;
+        private Integer rank;
+    }
+
 }
