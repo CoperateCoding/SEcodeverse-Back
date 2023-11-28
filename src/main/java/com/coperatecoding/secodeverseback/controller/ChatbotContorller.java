@@ -77,6 +77,7 @@ public class ChatbotContorller {
             @RequestParam int categoryPk
     ) {
         System.out.println(levelPk);
+        System.out.println("유사문제 추천 시작합니다.");
         System.out.println(categoryPk);
         String url = "http://127.0.0.1:5000/similarRecommend";
         String responseAnswer = "";
