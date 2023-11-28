@@ -1,6 +1,5 @@
 package com.coperatecoding.secodeverseback.dto.ctf;
 import com.coperatecoding.secodeverseback.domain.ctf.CTFLeagueStatus;
-//import com.coperatecoding.secodeverseback.dto.question.QuestionDTO;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -10,7 +9,7 @@ public class CTFLeagueDTO {
 
     @Getter
     @NoArgsConstructor
-    public static class PostRequest {
+    public static class AddLeagueRequest {
         private String name;
         private LocalDateTime openTime;
         private LocalDateTime closeTime;
@@ -23,7 +22,7 @@ public class CTFLeagueDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class DetailResponse {
+    public static class CTFLeagueDetailResponse {
         private String name;
         private String openTime;
         private String closeTime;
@@ -60,7 +59,7 @@ public class CTFLeagueDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class AllListResponse {
+    public static class CTFListAllResponse {
         private int cnt;
         private List<BriefResponse> list;
     }
@@ -71,7 +70,7 @@ public class CTFLeagueDTO {
     @AllArgsConstructor
     @Builder
     public static class OngoingResponse {
-        private Long LeaguePk;
+        private Long leaguePk;
     }
 
     @Getter
