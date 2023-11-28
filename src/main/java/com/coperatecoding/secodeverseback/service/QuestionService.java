@@ -12,6 +12,7 @@ import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.repository.LevelRepository;
 import com.coperatecoding.secodeverseback.repository.QuestionCategoryRepository;
 import com.coperatecoding.secodeverseback.repository.QuestionRepository;
+import com.coperatecoding.secodeverseback.repository.UserRepository;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,7 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final LevelRepository levelRepository;
     private final QuestionCategoryRepository questionCategoryRepository;
+    private final UserRepository userRepository;
 
     public Question makeQuestion(User user, QuestionDTO.AddQuestionRequest addQuestionRequest) throws RuntimeException {
 
@@ -606,4 +608,15 @@ public class QuestionService {
         }
     }
 
+    public void increaseExp(User user, Long questionPk) {
+        Question question = questionRepository.findById(questionPk)
+                .orElseThrow(() -> new NotFoundException("해당하는 문제가 없습니다."));
+
+        Level level = question.getLevel();
+        Integer exp = level.getExp();
+        user.addExp(exp);
+
+        userRepository.save(user);
+
+    }
 }

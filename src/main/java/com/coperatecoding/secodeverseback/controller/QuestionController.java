@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -68,33 +69,12 @@ public class QuestionController {
 
         for(QuestionImgDTO.AddQuestionImgRequest questionImg: addQuestionAndTestAndImageRequest.getImg()){
             if(questionImg != null)
-            questionImgService.makeQuestionImg(question.getPk(),questionImg);
+                questionImgService.makeQuestionImg(question.getPk(),questionImg);
         }
 
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
-
-//    @PatchMapping("/{questionPk}")
-//    public ResponseEntity modifyQuestion(@PathVariable Long questionPk, @RequestBody QuestionAndTestAndImageDTO.AddQuestionAndTestAndImageRequest addQuestionAndTestRequest) {
-//        questionService.modifyQuestion(questionPk, addQuestionAndTestRequest.getQuestion());
-//        List<TestCaseDTO.SearchResponse> testCaseDTOS = testCaseService.getTestCaseList(questionPk);
-//        List<QuestionImgDTO.SearchQuestionImgResponse> questionImgDTOS = questionImgService.getQuestionImg(questionPk);
-//        System.out.println("이미지 크기는"+questionImgDTOS.size());
-//        int i=0;
-//        for (TestCaseDTO.SearchResponse testCase : testCaseDTOS) {
-//            testCaseService.modifyTestCase(testCase.getPk(),addQuestionAndTestRequest.getTestCase().get(i));
-//            i++;
-//        }
-//        int j=0;
-//        System.out.println(addQuestionAndTestRequest.getImg().size());
-//        for(QuestionImgDTO.SearchQuestionImgResponse questionImg: questionImgDTOS){
-//            System.out.println(addQuestionAndTestRequest.getImg().get(j).getImgUrl());
-//            questionImgService.modifyQuestionImg(questionImg.getPk(),addQuestionAndTestRequest.getImg().get(j));
-//            j++;
-//        }
-//        return ResponseEntity.status(HttpStatus.CREATED).build();
-//    }
 
     @PatchMapping("/{questionPk}")
     public ResponseEntity modifyQuestion(@AuthenticationPrincipal User user, @PathVariable Long questionPk, @RequestBody QuestionAndTestAndImageDTO.AddQuestionAndTestAndImageRequest addQuestionAndTestRequest) {
@@ -135,7 +115,7 @@ public class QuestionController {
     }
 
 
-    @DeleteMapping("/{questionPk}")
+    @DeleteMapping("/delete/{questionPk}")
     public ResponseEntity deleteQuestion(@AuthenticationPrincipal User user, @PathVariable Long questionPk){
         try{
             List<QuestionImgDTO.SearchQuestionImgResponse> imgDTOS=questionImgService.getQuestionImg(questionPk);
@@ -338,7 +318,6 @@ public class QuestionController {
 
         String requestBodyString = requestBody.toString();
 
-
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(JUDGE0_API_URL + "/submissions"))
                 .header("X-RapidAPI-Key", RAPIDAPI_KEY)
@@ -376,62 +355,14 @@ public class QuestionController {
         return ResponseEntity.ok(resultBody);
     }
 
-
-
-    /*
-            if (sort == sort.RECENT) {
-            Page<QuestionDTO.SearchQuestionResponse> tmpQ;
-            if(categoryPks == null && levelPks == null){
-                tmpQ = questionService.getQuestion(page, pageSize, q, sort, categoryPks, levelPks);
-            }
-            if (categoryPks != null && !categoryPks.isEmpty() && levelPks != null && !levelPks.isEmpty()) {
-                for (Long categoryPk : categoryPks) {
-                    for (Long levelPk : levelPks) {
-                        Page<QuestionDTO.SearchQuestionResponse> matchingQuestions = questionService.getMatchingQuestions( categoryPk, levelPk);
-                        tmpQ.addAll(matchingQuestions);
-                    }
-                }
-            } else if (categoryPks != null && !categoryPks.isEmpty()) {
-                for (Long categoryPk : categoryPks) {
-                    Page<QuestionDTO.SearchQuestionResponse> categoryQuestions = questionService.getCategoryQuestion( categoryPk);
-                    tmpQ.addAll(categoryQuestions);
-                }
-            } else if (levelPks != null && !levelPks.isEmpty()) {
-                for (Long levelPk : levelPks) {
-                    Page<QuestionDTO.SearchQuestionResponse> levelQuestions = questionService.getLevelQuestionList( levelPk);
-                    tmpQ.addAll(levelQuestions);
-                }
-            }
-            for(int j=tmpQ.size()-1;j>-1;j--){
-                questions.add(tmpQ.get(j));
-            }
-        } else {
-            if(categoryPks == null && levelPks == null){
-                questions=questionService.getQuestion(page, pageSize, q, sort, categoryPks, levelPks);
-            }
-
-            if (categoryPks != null && !categoryPks.isEmpty() && levelPks != null && !levelPks.isEmpty()) {
-                for (Long categoryPk : categoryPks) {
-                    for (Long levelPk : levelPks) {
-                        Page<QuestionDTO.SearchQuestionResponse> matchingQuestions = questionService.getMatchingQuestions( categoryPk, levelPk);
-                        questions.addAll(matchingQuestions);
-                    }
-                }
-            } else if (categoryPks != null && !categoryPks.isEmpty()) {
-                for (Long categoryPk : categoryPks) {
-                    Page<QuestionDTO.SearchQuestionResponse> categoryQuestions = questionService.getCategoryQuestion( categoryPk);
-                    questions.addAll(categoryQuestions);
-                }
-            } else if (levelPks != null && !levelPks.isEmpty()) {
-                for (Long levelPk : levelPks) {
-                    Page<QuestionDTO.SearchQuestionResponse> levelQuestions = questionService.getLevelQuestionList( levelPk);
-                    questions.addAll(levelQuestions);
-                }
-            }
-
-        }
-
-    * */
+    @Operation(summary = "사용자의 경험치 증가", description = """
+           사용자가 문제를 맞췄을때, 문제의 레벨에 따라 경험치를 증가 시킴. 
+           """)
+    @PostMapping("/corret/exp")
+    public ResponseEntity increaseExp(@AuthenticationPrincipal User user, Long questionPk) {
+        questionService.increaseExp(user, questionPk);
+        return ResponseEntity.ok().build();
+    }
 
 
 }

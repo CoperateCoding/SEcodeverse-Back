@@ -16,6 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Tag(name = "CTF문제", description = "CTF 문제 관련 API")
 @RequiredArgsConstructor
 @RestController
@@ -60,6 +63,16 @@ public class CTFQuestionController {
 
         return ResponseEntity.ok(response);
 
+    }
+
+    @Operation(summary = "ctf 문제 풀기")
+    @PostMapping("/ctf/question/{ctfQuestionPk}/solve")
+    public ResponseEntity<Map> solveCTFQuestion(@AuthenticationPrincipal User user,
+                                                @PathVariable Long ctfQuestionPk,
+                                                @RequestBody CTFQuestionDTO.SolveRequest request) throws RuntimeException {
+        Map<String, Boolean> map = new HashMap<>();
+        map.put("isTrue", ctfQuestionService.solveCTFQuestion(user, ctfQuestionPk, request));
+        return ResponseEntity.status(HttpStatus.OK).body(map);
     }
 
 }
