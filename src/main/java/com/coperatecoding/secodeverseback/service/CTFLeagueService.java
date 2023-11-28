@@ -23,20 +23,26 @@ public class CTFLeagueService {
 
     private final CTFLeagueRepository ctfLeagueRepository;
 
-    public void makeLeague(CTFLeagueDTO.PostRequest addRequest) {
+    public void makeLeague(CTFLeagueDTO.AddLeagueRequest addRequest) {
 
-        CTFLeague ctfLeague = CTFLeague.makeCTFLeague(addRequest.getName(), addRequest.getOpenTime(), addRequest.getCloseTime(),
-                addRequest.getMemberCnt(), addRequest.getNotice(), addRequest.getDescription());
+        CTFLeague league = CTFLeague.builder()
+                .name(addRequest.getName())
+                .openTime(addRequest.getOpenTime())
+                .closeTime(addRequest.getCloseTime())
+                .memberCnt(addRequest.getMemberCnt())
+                .notice(addRequest.getNotice())
+                .description(addRequest.getDescription())
+                .build();
 
-        ctfLeagueRepository.save(ctfLeague);
+        ctfLeagueRepository.save(league);
     }
 
 
-    public CTFLeagueDTO.DetailResponse getDetailLeague(Long leaguePk) throws NoSuchElementException {
+    public CTFLeagueDTO.CTFLeagueDetailResponse getDetailLeague(Long leaguePk) throws NoSuchElementException {
         CTFLeague league = ctfLeagueRepository.findById(leaguePk)
                 .orElseThrow(() -> new NotFoundException("해당하는 리그가 존재하지 않음"));
 
-        CTFLeagueDTO.DetailResponse detailResponse = CTFLeagueDTO.DetailResponse.builder()
+        CTFLeagueDTO.CTFLeagueDetailResponse detailResponse = CTFLeagueDTO.CTFLeagueDetailResponse.builder()
                 .name(league.getName())
                 .openTime(league.convertDate(league.getOpenTime()))
                 .closeTime(league.convertDate(league.getCloseTime()))
