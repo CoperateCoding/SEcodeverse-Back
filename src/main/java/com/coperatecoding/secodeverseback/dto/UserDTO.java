@@ -97,14 +97,13 @@ public class UserDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    @Builder
     public static class UserInfoResponse {
 
         private String nickName;
         private String badgeName;
+        private Integer exp;
         private String imgUrl;
-        public static UserInfoResponse makeResponse(String nickName, String badgeName, String imgUrl) {
-            return new UserInfoResponse(nickName, badgeName, imgUrl);
-        }
 
     }
 

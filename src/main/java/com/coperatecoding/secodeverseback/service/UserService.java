@@ -156,10 +156,42 @@ public class UserService {
         redisRepository.deleteRefreshToken(userId);
     }
 
+    private CodingBadge findBadgeByExp(Integer exp) {
+        Long badgeId;
+        if (exp >= 5000) {
+            badgeId = 6L;
+        } else if (exp >= 1200) {
+            badgeId = 5L;
+        } else if (exp >= 800) {
+            badgeId = 4L;
+        } else if (exp >= 500) {
+            badgeId = 3L;
+        } else if (exp >= 100) {
+            badgeId = 2L;
+        } else {
+            badgeId = 1L;
+        }
+        return codingBadgeRepository.findById(badgeId)
+                .orElseThrow(() -> new NotFoundException("해당하는 코딩뱃지가 존재하지 않습니다."));
+    }
+
+
     public UserDTO.UserInfoResponse getUserInfo(User user) {
+        Integer userExp = user.getExp();
+        if (userExp != null) {
+            CodingBadge newBadge = findBadgeByExp(userExp);
+            user.setBadge(newBadge);
+            userRepository.save(user);
+        }
 
-        return UserDTO.UserInfoResponse.makeResponse(user.getNickname(), user.getBadge().getName(), user.getBadge().getImgUrl());
+        UserDTO.UserInfoResponse userInfoResponse = UserDTO.UserInfoResponse.builder()
+                .nickName(user.getNickname())
+                .exp(userExp)
+                .badgeName(user.getBadge().getName())
+                .imgUrl(user.getBadge().getImgUrl())
+                .build();
 
+        return userInfoResponse;
     }
 
 
