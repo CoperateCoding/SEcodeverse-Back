@@ -1,17 +1,12 @@
 package com.coperatecoding.secodeverseback.service;
 
-import com.coperatecoding.secodeverseback.domain.ctf.CTFCategory;
-import com.coperatecoding.secodeverseback.domain.ctf.CTFImage;
-import com.coperatecoding.secodeverseback.domain.ctf.CTFLeague;
-import com.coperatecoding.secodeverseback.domain.ctf.CTFQuestion;
+import com.coperatecoding.secodeverseback.domain.User;
+import com.coperatecoding.secodeverseback.domain.ctf.*;
 import com.coperatecoding.secodeverseback.dto.ctf.CTFLeagueDTO;
 import com.coperatecoding.secodeverseback.dto.ctf.CTFQuestionDTO;
 import com.coperatecoding.secodeverseback.exception.CategoryNotFoundException;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
-import com.coperatecoding.secodeverseback.repository.CTFCategoryRepository;
-import com.coperatecoding.secodeverseback.repository.CTFImageRepository;
-import com.coperatecoding.secodeverseback.repository.CTFLeagueRepository;
-import com.coperatecoding.secodeverseback.repository.CTFQuestionRepository;
+import com.coperatecoding.secodeverseback.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
@@ -31,6 +26,7 @@ public class CTFQuestionService {
     private final CTFQuestionRepository ctfQuestionRepository;
     private final CTFImageRepository ctfImageRepository;
     private final CTFCategoryRepository ctfCategoryRepository;
+    private final CTFTeamRepository ctfTeamRepository;
 
     // ctf 문제 등록
     public void makeQuestion(CTFQuestionDTO.PostRequest request) {
@@ -122,6 +118,29 @@ public class CTFQuestionService {
                 .build();
 
         return response;
+
+    }
+
+    public boolean solveCTFQuestion(User user, Long ctfQuestionPk, CTFQuestionDTO.SolveRequest request) {
+
+        boolean isTrue;
+        CTFQuestion ctfQuestion = ctfQuestionRepository.findById(ctfQuestionPk)
+                .orElseThrow(() -> new NotFoundException("해당하는 ctf 문제가 없습니다."));
+
+        if (ctfQuestion.getAnswer().equals(request.getAnswer())) {
+            // 정답이면 user의 ctfTeam의 점수가 증가
+            CTFTeam ctfTeam = ctfTeamRepository.findByUsers(user)
+                    .orElseThrow(() -> new NotFoundException("해당하는 팀이 없습니다."));
+
+            ctfTeam.addScore(ctfQuestion.getScore());
+            // 변경된 점수를 DB에 저장
+            ctfTeamRepository.save(ctfTeam);
+            isTrue = true;
+        }
+        else
+            isTrue = false;
+
+        return isTrue;
 
     }
 }
