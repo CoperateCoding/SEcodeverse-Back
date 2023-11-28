@@ -14,8 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 import java.util.NoSuchElementException;
 
 @Tag(name = "CTF팀", description = "CTF 팀 관련 API")
@@ -48,14 +46,14 @@ public class CTFTeamController {
         return ResponseEntity.ok(detailResponse);
     }
 
-//    @Operation(summary = "ctf 팀 참가")
-//    @PostMapping("/post")
-//    public ResponseEntity joinCTFTeam(@AuthenticationPrincipal User user, @RequestBody @Valid CTFTeamDTO.JoinRequest request) {
-//
-//        ctfTeamService.joinTeam(user, request);
-//
-//        return ResponseEntity.status(HttpStatus.CREATED).build();
-//    }
+    @Operation(summary = "ctf 팀 참가")
+    @PostMapping("/ctf/team/join")
+    public ResponseEntity joinCTFTeam(@AuthenticationPrincipal User user, @RequestBody @Valid CTFTeamDTO.JoinRequest request) {
+
+        ctfTeamService.joinTeam(user, request);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 
     @Operation(summary = "모든 팀 정보 조회", description = """
     팀 이름, 팀원 닉네임

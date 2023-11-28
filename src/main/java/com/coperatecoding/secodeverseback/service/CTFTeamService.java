@@ -73,10 +73,6 @@ public class CTFTeamService {
 
     }
 
-//    public void joinTeam(User user, CTFTeamDTO.JoinRequest request) {
-//
-//    }
-
     private Pageable makePageable(Integer page, Integer pageSize) throws RuntimeException {
         if (page == null)
             page = 1;
@@ -123,6 +119,21 @@ public class CTFTeamService {
 
         return new CTFTeamDTO.Top10ListResponse(responses.size(), responses);
 
+
+    }
+
+    public void joinTeam(User user, CTFTeamDTO.JoinRequest request) {
+        CTFTeam ctfTeam = ctfTeamRepository.findByName(request.getTeamName())
+                .orElseThrow(() -> new NotFoundException("해당하는 ctf 팀이 존재하지 않습니다."));
+
+        if(user.getTeam() == null)
+        {
+            user.setTeam(ctfTeam);
+            userRepository.save(user);
+        }
+        else {
+            throw new ForbiddenException("해당 유저는 ctf 팀이 존재합니다.");
+        }
 
     }
 }
