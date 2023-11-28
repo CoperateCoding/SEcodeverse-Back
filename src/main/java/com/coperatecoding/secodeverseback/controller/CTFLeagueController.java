@@ -1,14 +1,12 @@
 package com.coperatecoding.secodeverseback.controller;
 
 import com.coperatecoding.secodeverseback.domain.User;
-import com.coperatecoding.secodeverseback.domain.ctf.CTFLeagueStatus;
 import com.coperatecoding.secodeverseback.dto.ctf.CTFLeagueDTO;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.service.CTFLeagueService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -17,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.NoSuchElementException;
 
 @Tag(name = "CTF리그", description = "CTF 리그 관련 API")
 @RequiredArgsConstructor
@@ -30,9 +27,9 @@ public class CTFLeagueController {
 
     @Operation(summary = "ctf 리그 등록")
     @PostMapping("/admin/ctf/league/post")
-    public ResponseEntity makeCTFLeague(@AuthenticationPrincipal User user, @RequestBody CTFLeagueDTO.PostRequest addRequest) throws RuntimeException {
+    public ResponseEntity makeCTFLeague(@AuthenticationPrincipal User user, @RequestBody CTFLeagueDTO.AddLeagueRequest addLeagueRequest) throws RuntimeException {
 
-        ctfLeagueService.makeLeague(addRequest);
+        ctfLeagueService.makeLeague(addLeagueRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -46,16 +43,16 @@ public class CTFLeagueController {
 
     @Operation(summary = "ctf 리그 상세 조회")
     @GetMapping("/ctf/league/{leaguePk}")
-    public ResponseEntity<CTFLeagueDTO.DetailResponse> getCtfLeague(@PathVariable Long leaguePk) throws RuntimeException {
+    public ResponseEntity<CTFLeagueDTO.CTFLeagueDetailResponse> getCtfLeague(@PathVariable Long leaguePk) throws RuntimeException {
 
-        CTFLeagueDTO.DetailResponse league = ctfLeagueService.getDetailLeague(leaguePk);
+        CTFLeagueDTO.CTFLeagueDetailResponse league = ctfLeagueService.getDetailLeague(leaguePk);
 
         return ResponseEntity.ok(league);
     }
 
     @Operation(summary = "ctf 리그 전체 조회")
     @DeleteMapping("/admin/ctf/league/all")
-    public ResponseEntity<CTFLeagueDTO.AllListResponse> getCTFLeagueAll(
+    public ResponseEntity<CTFLeagueDTO.CTFListAllResponse> getCTFLeagueAll(
             @AuthenticationPrincipal User user,
             @RequestParam(required = false, defaultValue = "10") @Min(value = 2, message = "page 크기는 1보다 커야합니다") int pageSize,
             @RequestParam(required = false, defaultValue = "1") @Min(value = 1, message = "page는 0보다 커야합니다") int page
@@ -64,7 +61,7 @@ public class CTFLeagueController {
         Page<CTFLeagueDTO.BriefResponse> briefResponses = ctfLeagueService.getCTFLeagueAll(page, pageSize);
 
 
-        CTFLeagueDTO.AllListResponse response = CTFLeagueDTO.AllListResponse.builder()
+        CTFLeagueDTO.CTFListAllResponse response = CTFLeagueDTO.CTFListAllResponse.builder()
                 .cnt((int) briefResponses.getTotalElements())
                 .list(briefResponses.getContent())
                 .build();
