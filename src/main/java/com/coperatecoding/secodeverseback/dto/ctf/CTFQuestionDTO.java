@@ -30,6 +30,20 @@ public class CTFQuestionDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
+    public static class EditRequest {
+        private Long categoryPk;
+        private CTFQuestionType ctfQuestionType;
+        private String name;
+        private Integer score;
+        private String description;
+        private String answer;
+        private String[] imgUrlList;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
     public static class AllListResponse {
         private int cnt;
         private List<CTFQuestionDTO.BriefResponse> list;

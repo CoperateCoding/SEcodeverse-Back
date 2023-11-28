@@ -34,6 +34,8 @@ public class CTFLeagueService {
                 .description(addRequest.getDescription())
                 .build();
 
+        league.checkLeagueStatus();
+
         ctfLeagueRepository.save(league);
     }
 
