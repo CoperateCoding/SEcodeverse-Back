@@ -49,4 +49,12 @@ public class CTFTeam {
         ctfTeam.pw = pw;
         return ctfTeam;
     }
+
+    public void addScore(Integer score) {
+        if (this.score == null) {
+            this.score = score;
+        } else {
+            this.score += score;
+        }
+    }
 }
