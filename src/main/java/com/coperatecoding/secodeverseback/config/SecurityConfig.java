@@ -30,6 +30,7 @@ public class SecurityConfig {
             "api/v1/user/nickname/**", "api/v1/user/id/**",
             "/error", "api/v1/s3/presigned",
             "api/v1/chatbot/**",
+            "api/v1/code/**"
     };
 
     private final JwtAuthenticationFilter jwtAuthFilter;
