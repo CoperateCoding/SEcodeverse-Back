@@ -19,7 +19,7 @@ import java.util.Map;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
-@Tag(name = "쳇봇", description = "쳇봇 관련 API")
+@Tag(name = "챗봇", description = "챗봇 관련 API")
 @RequiredArgsConstructor
 @RestController
 @Slf4j
