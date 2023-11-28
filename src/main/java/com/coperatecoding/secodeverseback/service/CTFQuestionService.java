@@ -46,14 +46,14 @@ public class CTFQuestionService {
 
         ctfQuestionRepository.save(ctfQuestion);
 
-//        if (request.getImgUrlList() != null) {
-//            for (String imgUrl : request.getImgUrlList()) {
-//                CTFImage ctfImage = CTFImage.builder()
-//                        .ctfQuestion(ctfQuestion)
-//                        .imgUrl(imgUrl)
-//                        .build();
-//                ctfImageRepository.save(ctfImage);
-//            }
-//        }
+        if (request.getImgUrlList() != null) {
+            for (String imgUrl : request.getImgUrlList()) {
+                CTFImage ctfImage = CTFImage.builder()
+                        .ctfQuestion(ctfQuestion)
+                        .imgUrl(imgUrl)
+                        .build();
+                ctfImageRepository.save(ctfImage);
+            }
+        }
     }
 }
