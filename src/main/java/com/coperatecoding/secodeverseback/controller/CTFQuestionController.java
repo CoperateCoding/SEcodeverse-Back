@@ -83,5 +83,12 @@ public class CTFQuestionController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "ctf 문제 삭제")
+    @DeleteMapping("/admin/ctf/question/{ctfQuestionPk}")
+    public ResponseEntity deleteCTFQuestion(@AuthenticationPrincipal User user, @PathVariable Long ctfQuestionPk) throws RuntimeException {
+        ctfQuestionService.deleteCTFQouestion(ctfQuestionPk);
+        return ResponseEntity.ok().build();
+    }
+
 }
 

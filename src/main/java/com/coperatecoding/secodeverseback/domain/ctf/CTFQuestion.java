@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
@@ -40,6 +43,9 @@ public class CTFQuestion {
     @NotNull
     @Enumerated(EnumType.STRING)
     private CTFQuestionType type;
+
+    @OneToMany(mappedBy = "ctfQuestion", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<CTFImage> ctfImages = new ArrayList<>();
 
     public void edit(CTFCategory ctfCategory, CTFQuestionType ctfQuestionType, String name,
                      Integer score, String description, String answer) {

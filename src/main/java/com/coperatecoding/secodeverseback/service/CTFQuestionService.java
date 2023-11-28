@@ -185,4 +185,11 @@ public class CTFQuestionService {
         }
     }
 
+    public void deleteCTFQouestion(Long ctfQuestionPk) {
+        CTFQuestion ctfQuestion = ctfQuestionRepository.findById(ctfQuestionPk)
+                .orElseThrow(() -> new IllegalArgumentException("해당하는 CTF 문제가 없습니다."));
+
+        ctfQuestionRepository.delete(ctfQuestion);
+
+    }
 }
