@@ -16,6 +16,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -143,5 +144,29 @@ public class CTFTeamService {
                 .orElseGet(() -> null);
 
         return (team == null)? false: true;
+    }
+
+    public CTFTeamDTO.TeamRankListResponse getTeamRankList(Long leaguePk) {
+        CTFLeague ctfLeague = ctfLeagueRepository.findById(leaguePk)
+                .orElseThrow(() -> new NotFoundException("해당하는 리그가 존재하지 않습니다."));
+
+        List<CTFTeam> teams = ctfTeamRepository.findByLeagueOrderByScoreDesc(ctfLeague);
+
+        List<CTFTeamDTO.TeamRankResponse> responses = new ArrayList<>();
+
+        for (int i = 0; i < teams.size(); i++) {
+            CTFTeam team = teams.get(i);
+            team.setRank(i + 1);
+            ctfTeamRepository.save(team);
+
+            CTFTeamDTO.TeamRankResponse teamRankResponse = CTFTeamDTO.TeamRankResponse.builder()
+                    .teamName(teams.get(i).getName())
+                    .rank(i + 1)
+                    .build();
+            responses.add(teamRankResponse);
+        }
+
+        return new CTFTeamDTO.TeamRankListResponse(responses.size(), responses);
+
     }
 }
