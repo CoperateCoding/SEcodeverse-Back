@@ -65,6 +65,21 @@ public class CTFLeagueDTO {
         private List<BriefResponse> list;
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class OngoingResponse {
+        private Long LeaguePk;
+    }
 
-
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class StatusResponse {
+        private CTFLeagueStatus ctfLeagueStatus;
+    }
 }

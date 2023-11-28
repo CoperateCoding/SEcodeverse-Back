@@ -29,7 +29,7 @@ public class SecurityConfig {
             "/error", "api/v1/s3/*",
             "api/v1/user/nickname/**", "api/v1/user/id/**",
             "/error", "api/v1/s3/presigned",
-            "api/v1/chatbot"
+            "api/v1/chatbot",
     };
 
     private final JwtAuthenticationFilter jwtAuthFilter;
@@ -47,12 +47,12 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers(whiteList).permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/board/*").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/ctf/team/*").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/comment/*").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/ctf/league/*").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/question/detail/*").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/question/search/*").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/board/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/comment/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/ctf/team/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/ctf/league/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/question/detail/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/question/search/**").permitAll()
                 .requestMatchers( "/api/v1/admin/**").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
                 .and()

@@ -23,7 +23,7 @@ public class CTFTeamDTO {
     @Getter
     @NoArgsConstructor
     public static class JoinRequest {
-        private Long teamPk;
+        private String teamName;
         private String pw;
     }
 
