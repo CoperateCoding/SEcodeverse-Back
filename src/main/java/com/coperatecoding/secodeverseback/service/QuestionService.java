@@ -5,7 +5,6 @@ import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.domain.question.Level;
 import com.coperatecoding.secodeverseback.domain.question.Question;
 import com.coperatecoding.secodeverseback.domain.question.QuestionCategory;
-import com.coperatecoding.secodeverseback.dto.BoardSortType;
 import com.coperatecoding.secodeverseback.dto.QuestionDTO;
 import com.coperatecoding.secodeverseback.dto.QuestionSortType;
 import com.coperatecoding.secodeverseback.exception.ForbiddenException;
@@ -13,21 +12,14 @@ import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.repository.LevelRepository;
 import com.coperatecoding.secodeverseback.repository.QuestionCategoryRepository;
 import com.coperatecoding.secodeverseback.repository.QuestionRepository;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import jakarta.validation.constraints.Min;
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -503,59 +495,115 @@ public class QuestionService {
 //}
 
 
+//    public Page<QuestionDTO.SearchQuestionResponse> getQuestionList(int page, int pageSize, String q, QuestionSortType sort, List<Long> categoryPks, List<Long> levelPks) {
+//         List<Question> questions = questionRepository.findAll();
+//
+//        List<Question> filteredQuestions = questions.stream()
+//                .filter(question -> {
+//                    // 카테고리 필터링
+//                    if (categoryPks != null && !categoryPks.isEmpty()) {
+//                        if (!categoryPks.contains(question.getCategory().getPk())) {
+//                            return false;
+//                        }
+//                    }
+//                    // 레벨 필터링
+//                    if (levelPks != null && !levelPks.isEmpty()) {
+//                        if (!levelPks.contains(question.getLevel().getPk())) {
+//                            return false;
+//                        }
+//                    }
+//                    // 제목 또는 내용 필터링
+//                    if (q != null && !q.isEmpty()) {
+//                        String queryLowerCase = q.toLowerCase();
+//                        String titleLowerCase = question.getTitle().toLowerCase();
+//                        return titleLowerCase.contains(queryLowerCase);
+//                    }
+//                    return true;
+//                })
+//                .collect(Collectors.toList());
+//
+//        if (sort == QuestionSortType.RECENT) {
+//            filteredQuestions.sort(Comparator.comparing(Question::getCreateAt).reversed());
+//        }
+//
+//
+//
+//        int start = (page - 1) * pageSize;
+//        int end = Math.min(start + pageSize, filteredQuestions.size());
+//
+//        start = Math.max(0, Math.min(start, filteredQuestions.size() - 1));
+//        end = Math.min(end, filteredQuestions.size());
+//
+//
+//        List<QuestionDTO.SearchQuestionResponse> searchList = filteredQuestions.subList(start, end).stream()
+//                .map(question -> QuestionDTO.SearchQuestionResponse.builder()
+//                        .pk(question.getPk())
+//                        .userName(question.getUser().getNickname())
+//                        .categoryPk(question.getCategory().getPk())
+//                        .title(question.getTitle())
+//                        .levelPk(question.getLevel().getPk())
+//                        .build()
+//                )
+//                .collect(Collectors.toList());
+//
+//        return new PageImpl<>(searchList, PageRequest.of(page, pageSize), filteredQuestions.size());
+//    }
     public Page<QuestionDTO.SearchQuestionResponse> getQuestionList(int page, int pageSize, String q, QuestionSortType sort, List<Long> categoryPks, List<Long> levelPks) {
-         List<Question> questions = questionRepository.findAll();
+        Pageable pageable = makePageable(page, pageSize, sort);
 
-        List<Question> filteredQuestions = questions.stream()
-                .filter(question -> {
-                    // 카테고리 필터링
-                    if (categoryPks != null && !categoryPks.isEmpty()) {
-                        if (!categoryPks.contains(question.getCategory().getPk())) {
-                            return false;
-                        }
-                    }
-                    // 레벨 필터링
-                    if (levelPks != null && !levelPks.isEmpty()) {
-                        if (!levelPks.contains(question.getLevel().getPk())) {
-                            return false;
-                        }
-                    }
-                    // 제목 또는 내용 필터링
-                    if (q != null && !q.isEmpty()) {
-                        String queryLowerCase = q.toLowerCase();
-                        String titleLowerCase = question.getTitle().toLowerCase();
-                        return titleLowerCase.contains(queryLowerCase);
-                    }
-                    return true;
+        Specification<Question> spec = (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            // 카테고리 필터링
+            if (categoryPks != null && !categoryPks.isEmpty()) {
+                predicates.add(root.get("category").get("pk").in(categoryPks));
+            }
+            // 레벨 필터링
+            if (levelPks != null && !levelPks.isEmpty()) {
+                predicates.add(root.get("level").get("pk").in(levelPks));
+            }
+            // 제목 또는 내용 필터링
+            if (q != null && !q.isEmpty()) {
+                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), "%" + q.toLowerCase() + "%"));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
+        Page<Question> questions = questionRepository.findAll(spec, pageable);
+        System.out.println("size1============="+questions.getTotalElements());
+
+
+        List<QuestionDTO.SearchQuestionResponse> searchList = questions.stream()
+                .map(question -> {
+                    User user = question.getUser();
+                    if (user == null) return null;
+                    if (question.getCategory() == null) return null;
+                    if (question.getLevel() == null) return null;
+
+                    return QuestionDTO.SearchQuestionResponse.builder()
+                            .pk(question.getPk())
+                            .userName(user.getNickname())
+                            .categoryPk(question.getCategory().getPk())
+                            .title(question.getTitle())
+                            .levelPk(question.getLevel().getPk())
+                            .build();
                 })
+                .filter(Objects::nonNull)  // null인 요소 제거
                 .collect(Collectors.toList());
 
+        System.out.println("size============="+searchList.size());
+
+        return new PageImpl<>(searchList, pageable, questions.getTotalElements());
+    }
+
+    private Pageable makePageable(int page, int pageSize, QuestionSortType sort) {
+        page = page - 1;
         if (sort == QuestionSortType.RECENT) {
-            filteredQuestions.sort(Comparator.comparing(Question::getCreateAt).reversed());
+            return PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createAt"));
+        } else {
+            return PageRequest.of(page, pageSize, Sort.by(Sort.Direction.ASC, "createAt"));
         }
-
-
-
-        int start = (page - 1) * pageSize;
-        int end = Math.min(start + pageSize, filteredQuestions.size());
-
-        start = Math.max(0, Math.min(start, filteredQuestions.size() - 1));
-        end = Math.min(end, filteredQuestions.size());
-
-
-
-        List<QuestionDTO.SearchQuestionResponse> searchList = filteredQuestions.subList(start, end).stream()
-                .map(question -> QuestionDTO.SearchQuestionResponse.builder()
-                        .pk(question.getPk())
-                        .userName(question.getUser().getNickname())
-                        .categoryPk(question.getCategory().getPk())
-                        .title(question.getTitle())
-                        .levelPk(question.getLevel().getPk())
-                        .build()
-                )
-                .collect(Collectors.toList());
-
-        return new PageImpl<>(searchList, PageRequest.of(page, pageSize), filteredQuestions.size());
     }
 
 }

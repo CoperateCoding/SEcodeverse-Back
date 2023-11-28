@@ -7,9 +7,11 @@ import com.coperatecoding.secodeverseback.domain.question.QuestionCategory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+
 import java.util.List;
 
-public interface QuestionRepository extends JpaRepository<Question, Long> {
+public interface QuestionRepository extends JpaRepository<Question, Long>, JpaSpecificationExecutor<Question> {
         List<Question> findByCategory(QuestionCategory questionCategory);
         List<Question> findByLevel(Level level);
         List<Question> findByTitleContaining(String title);

@@ -245,7 +245,7 @@ public class QuestionController {
         System.out.println(levelPks);
 
         QuestionDTO.SearchListResponse response = QuestionDTO.SearchListResponse.builder()
-                .cnt(questions.getContent().size())
+                .cnt((int) questions.getTotalElements())
                 .list(questions.getContent())
                 .build();
 
