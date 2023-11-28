@@ -29,7 +29,7 @@ public class SecurityConfig {
             "/error", "api/v1/s3/*",
             "api/v1/user/nickname/**", "api/v1/user/id/**",
             "/error", "api/v1/s3/presigned",
-            "api/v1/chatbot",
+            "api/v1/chatbot/**",
     };
 
     private final JwtAuthenticationFilter jwtAuthFilter;
