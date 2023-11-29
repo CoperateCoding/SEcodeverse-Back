@@ -1,5 +1,6 @@
 package com.coperatecoding.secodeverseback.service;
 
+import com.coperatecoding.secodeverseback.domain.CodingBadge;
 import com.coperatecoding.secodeverseback.domain.RoleType;
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.domain.board.Board;
@@ -237,11 +238,12 @@ public class BoardService {
     public Page<BoardDTO.SearchResponse> getMyBoardList(User user, int page, int pageSize) throws RuntimeException {
         Pageable pageable = makePageable(page, pageSize);
         Page<Board> boardList = boardRepository.findByUser(user, pageable);
-
+        CodingBadge codingBadge = user.getBadge();
         List<BoardDTO.SearchResponse> boardResponses = boardList.getContent().stream()
                 .map(board -> BoardDTO.SearchResponse.builder()
                         .pk(board.getPk())
                         .writerNickname(board.getUser().getNickname())
+                        .badgeImgUrl(codingBadge.getImgUrl())
                         .title(board.getTitle())
                         .preview(board.getPreview())
                         .likeCnt(board.getLikeCnt())
