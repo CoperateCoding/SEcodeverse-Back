@@ -67,6 +67,7 @@ public class BoardDTO {
     public static class SearchResponse {
         private Long pk;
         private String writerNickname;
+        private String badgeImgUrl;
         private String title;
         private String preview;
         private Long likeCnt;
