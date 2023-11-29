@@ -195,6 +195,7 @@ public class BoardService {
                 .map(board -> BoardDTO.SearchResponse.builder()
                         .pk(board.getPk())
                         .writerNickname(board.getUser().getNickname())
+                        .badgeImgUrl(board.getUser().getBadge().getImgUrl())
                         .title(board.getTitle())
                         .preview(board.getPreview())
                         .likeCnt(board.getLikeCnt())
