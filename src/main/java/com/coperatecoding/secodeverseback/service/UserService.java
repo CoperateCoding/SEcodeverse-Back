@@ -148,6 +148,7 @@ public class UserService {
         return UserDTO.LoginResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .roleType(user.getRoleType())
                 .build();
 
     }

@@ -9,6 +9,7 @@ import com.coperatecoding.secodeverseback.repository.RefreshTokenRepository;
 import com.coperatecoding.secodeverseback.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,7 +66,13 @@ public class RefreshTokenService {
 
         refreshTokenRepository.save(RefreshToken.makeRefreshToken(refreshTokenString, UserService.getClientIp(request), user, jwtService.extractExpiration(refreshTokenString)));
 
-        return LoginResponse.makeResponse(accessToken, refreshTokenString);
+        LoginResponse loginResponse = LoginResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshTokenString)
+                .roleType(user.getRoleType())
+                .build();
+
+        return loginResponse;
 
     }
 
