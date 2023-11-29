@@ -153,7 +153,7 @@ public class QuestionController {
         return ResponseEntity.ok(pagingQuestion);
     }
 
-    @GetMapping("/wrong/user={userPk}")
+    @GetMapping("/wrong")
     public ResponseEntity<List<QuestionDTO.questionPagingResponse>> getWrongQuestion(@AuthenticationPrincipal User user,
                                                                                      @RequestParam(defaultValue = "1") int page,
                                                                                      @RequestParam(defaultValue = "10") int pageSize){
@@ -165,9 +165,11 @@ public class QuestionController {
             QuestionDTO.SearchQuestionResponse questionDTO=questionService.getByPk(question);
             questions.add(questionDTO);
 
-        }
-        List<QuestionDTO.questionPagingResponse> pagingQuestion = questionService.userPagingQuestion(codes.get(0).getCnt(),questions);
+        }List<QuestionDTO.questionPagingResponse> pagingQuestion = new ArrayList<>();
+        if(questionService.userPagingQuestion(codes.get(0).getCnt(),questions).size()>0){
+            pagingQuestion = questionService.userPagingQuestion(codes.get(0).getCnt(),questions);}
 
+//        List<QuestionDTO.questionPagingResponse> pagingQuestion = questionService.userPagingQuestion(codes.get(0).getCnt(),questions);
 
         return ResponseEntity.ok(pagingQuestion);
     }
