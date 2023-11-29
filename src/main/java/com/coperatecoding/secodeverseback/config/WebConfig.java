@@ -21,4 +21,5 @@ public class WebConfig implements WebMvcConfigurer, ErrorController {
     @GetMapping({"/", "/error"})
     public String index() {
         return "index.html";
+    }
 }
