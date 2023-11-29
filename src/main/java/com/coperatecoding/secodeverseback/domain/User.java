@@ -85,6 +85,7 @@ public class User implements UserDetails {
         user.pw = pw;
         user.name = name;
         user.nickname = nickname;
+        user.exp = 0;
         return user;
     }
 
