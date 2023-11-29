@@ -69,11 +69,7 @@ public class UserDTO {
     public static class LoginResponse {
         private String accessToken;
         private String refreshToken;
-        public static LoginResponse makeResponse(String accessToken, String refreshToken) {
-            return new LoginResponse(accessToken, refreshToken);
-        }
-
-
+        private RoleType roleType;
     }
 
 
