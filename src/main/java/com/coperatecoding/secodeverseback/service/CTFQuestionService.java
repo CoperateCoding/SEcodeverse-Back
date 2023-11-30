@@ -28,6 +28,7 @@ public class CTFQuestionService {
     private final CTFImageRepository ctfImageRepository;
     private final CTFCategoryRepository ctfCategoryRepository;
     private final CTFTeamRepository ctfTeamRepository;
+    private final CTFTeamQuestionRepository ctfTeamQuestionRepository;
 
     // ctf 문제 등록
     public void makeQuestion(CTFQuestionDTO.PostRequest request) {
@@ -111,6 +112,7 @@ public class CTFQuestionService {
         }
 
         CTFQuestionDTO.DetailResponse response = CTFQuestionDTO.DetailResponse.builder()
+                .categoryName(ctfQuestion.getCategory().getName())
                 .ctfQuestionType(ctfQuestion.getType())
                 .questionName(ctfQuestion.getName())
                 .description(ctfQuestion.getDescription())
@@ -131,10 +133,15 @@ public class CTFQuestionService {
         if (ctfQuestion.getAnswer().equals(request.getAnswer())) {
             // 정답이면 user의 ctfTeam의 점수가 증가
             CTFTeam ctfTeam = ctfTeamRepository.findByUsers(user)
-                    .orElseThrow(() -> new NotFoundException("해당하는 팀이 없습니다."));
+                    .orElseThrow(() -> new NotFoundException("해당하는 ctf 팀이 없습니다."));
 
-            ctfTeam.addScore(ctfQuestion.getScore());
-            // 변경된 점수를 DB에 저장
+            int score = ctfQuestion.getScore() != null ? ctfQuestion.getScore() : 0;
+
+            ctfTeam.addScore(score);
+
+            CTFTeamQuestion ctfTeamQuestion = CTFTeamQuestion.makeCTFTeamQuestion(ctfQuestion, ctfTeam, ctfQuestion.getCategory(), score);
+            ctfTeamQuestionRepository.save(ctfTeamQuestion);
+
             ctfTeamRepository.save(ctfTeam);
             isTrue = true;
         }
