@@ -122,12 +122,6 @@ public class UserService {
             throw new UserLockedException();
         }
 
-//        authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(
-//                        loginRequest.getId(),
-//                        loginRequest.getPw()
-//                )
-//        );
         // authenticate 메소드가 인증된 Authentication 객체를 반환
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -138,7 +132,6 @@ public class UserService {
 
         // SecurityContextHolder에 Authentication 객체 저장
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
 
         //토큰 생성
         String accessToken = jwtService.generateAccessToken(user);
