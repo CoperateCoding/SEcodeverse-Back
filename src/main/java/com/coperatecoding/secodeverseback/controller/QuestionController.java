@@ -254,7 +254,7 @@ public class QuestionController {
         System.out.println("languageNum" + languageNum);
         String JUDGE0_API_URL = "https://judge0-extra-ce.p.rapidapi.com";
         String RAPIDAPI_HOST = "judge0-extra-ce.p.rapidapi.com";
-        String RAPIDAPI_KEY = "b3daadf5a7msh4bf3f3eb4b3caf1p105483jsne73951cb49dd";
+        String RAPIDAPI_KEY = "ce1aa40351mshd1b8e179b49a600p12e79djsn3c18e4473ece"; // -> 언니 이거이거
         String python3LanguageId = "28";
         String javaLanguageId = "4";
         String cPlusLanguageId = "2";
