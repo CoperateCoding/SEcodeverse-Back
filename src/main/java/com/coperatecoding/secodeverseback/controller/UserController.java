@@ -42,6 +42,7 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity signUp (@RequestBody UserDTO.RegisterRequest registerRequest) throws UserInfoDuplicatedException {
         userService.signUp(registerRequest);
+
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -49,7 +50,6 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<UserDTO.LoginResponse> login(@RequestBody UserDTO.LoginRequest loginRequest, HttpServletRequest request) {
         UserDTO.LoginResponse loginResponse = userService.login(loginRequest, request);
-
 
         return ResponseEntity.ok(loginResponse);
     }
@@ -62,13 +62,7 @@ public class UserController {
     """)
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@AuthenticationPrincipal User user) {
-            userService.logout(user.getId());
-//        Map<String, String> map = new HashMap<>();
-
-//        String token = authHeader.substring(7);
-//        JwtService jwtService = new JwtService();
-//        //jwt토큰만료처리 -> 블랙리스트
-//        jwtService.addBlackList(token);
+        userService.logout(user.getId());
 
         return ResponseEntity.ok().build();
     }
