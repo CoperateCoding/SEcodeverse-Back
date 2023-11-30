@@ -47,6 +47,7 @@ public class CTFTeam {
         ctfTeam.league = league;
         ctfTeam.name = name;
         ctfTeam.pw = pw;
+        ctfTeam.score = 0;
         return ctfTeam;
     }
 
@@ -61,4 +62,5 @@ public class CTFTeam {
     public void setRank(int rank) {
         this.teamRank = rank;
     }
+
 }

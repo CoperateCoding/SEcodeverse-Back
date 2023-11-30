@@ -62,6 +62,7 @@ public class CTFTeamDTO {
     public static class SearchResponse {
         private String name;
         private List<String> memberList;
+        private int totalScore;
     }
 
 
