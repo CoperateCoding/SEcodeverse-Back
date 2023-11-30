@@ -83,7 +83,7 @@ public class SecurityConfig {
         configuration.addAllowedOrigin("http://secodeverse.s3-website.ap-northeast-2.amazonaws.com/");
 //        configuration.addAllowedHeader("*");
 //        configuration.addAllowedMethod("*");
-        configuration.addAllowedOrigin("*");
+        // configuration.addAllowedOrigin("*");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setMaxAge(3600L);
