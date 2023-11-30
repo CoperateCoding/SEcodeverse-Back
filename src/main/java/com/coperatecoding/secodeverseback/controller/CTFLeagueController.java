@@ -51,7 +51,7 @@ public class CTFLeagueController {
     }
 
     @Operation(summary = "ctf 리그 전체 조회")
-    @DeleteMapping("/admin/ctf/league/all")
+    @GetMapping("/admin/ctf/league/all")
     public ResponseEntity<CTFLeagueDTO.CTFListAllResponse> getCTFLeagueAll(
             @AuthenticationPrincipal User user,
             @RequestParam(required = false, defaultValue = "10") @Min(value = 2, message = "page 크기는 1보다 커야합니다") int pageSize,

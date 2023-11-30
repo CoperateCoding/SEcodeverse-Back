@@ -1,8 +1,10 @@
 package com.coperatecoding.secodeverseback.controller;
 
 import com.coperatecoding.secodeverseback.domain.User;
+import com.coperatecoding.secodeverseback.dto.CTFTeamSortType;
 import com.coperatecoding.secodeverseback.dto.ctf.CTFTeamDTO;
-import com.coperatecoding.secodeverseback.exception.NotFoundException;
+import com.coperatecoding.secodeverseback.dto.ctf.CTFTeamQuestionDTO;
+import com.coperatecoding.secodeverseback.exception.CategoryNotFoundException;
 import com.coperatecoding.secodeverseback.service.CTFTeamService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -68,9 +70,11 @@ public class CTFTeamController {
             @AuthenticationPrincipal User user,
             @PathVariable Long leaguePk,
             @RequestParam(required = false, defaultValue = "1") @Min(value = 1, message = "page는 1보다 커야합니다") int page,
-            @RequestParam(required = false, defaultValue = "10") @Min(value = 1, message = "pageSize는 1보다 커야합니다") int pageSize) {
+            @RequestParam(required = false, defaultValue = "10") @Min(value = 1, message = "pageSize는 1보다 커야합니다") int pageSize,
+            @RequestParam(required = false, defaultValue = "HIGH") CTFTeamSortType sort)
+    throws CategoryNotFoundException {
 
-        Page<CTFTeamDTO.SearchResponse> ctfPage = ctfTeamService.getSearchTeam(user, leaguePk, page, pageSize);
+        Page<CTFTeamDTO.SearchResponse> ctfPage = ctfTeamService.getSearchTeam(user, leaguePk, page, pageSize, sort);
 
         CTFTeamDTO.SearchListResponse response = CTFTeamDTO.SearchListResponse.builder()
                 .cnt((int) ctfPage.getTotalElements())
@@ -89,7 +93,7 @@ public class CTFTeamController {
             @AuthenticationPrincipal User user,
             @PathVariable Long leaguePk)
     {
-        CTFTeamDTO.Top10ListResponse response = ctfTeamService.getTop10TeamList(user, leaguePk);
+        CTFTeamDTO.Top10ListResponse response = ctfTeamService.getTop10TeamList(leaguePk);
 
         return ResponseEntity.ok(response);
     }
@@ -113,6 +117,17 @@ public class CTFTeamController {
 
         return ResponseEntity.ok(teamRankListResponse);
     }
+
+    @Operation(summary = "ctf 본인 팀 카테고리별 점수 확인", description = """
+            본인 팀의 카테고리별 점수 확인"""
+    )
+    @PostMapping("/ctf/team/category/scores")
+    public ResponseEntity<CTFTeamQuestionDTO.TeamScoreByCategoryListResponse> getMyTeamScoresByCategory(@AuthenticationPrincipal User user) {
+        CTFTeamQuestionDTO.TeamScoreByCategoryListResponse response = ctfTeamService.getMyTeamScoresByCategory(user);
+
+        return ResponseEntity.ok(response);
+    }
+
 
 
 }
