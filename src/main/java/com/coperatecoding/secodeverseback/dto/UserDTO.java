@@ -70,6 +70,7 @@ public class UserDTO {
         private String accessToken;
         private String refreshToken;
         private RoleType roleType;
+        private String nickName;
     }
 
 
