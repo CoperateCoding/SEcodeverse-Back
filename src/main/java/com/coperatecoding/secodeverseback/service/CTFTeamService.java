@@ -3,11 +3,17 @@ package com.coperatecoding.secodeverseback.service;
 import com.coperatecoding.secodeverseback.domain.RoleType;
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.domain.ctf.CTFLeague;
+import com.coperatecoding.secodeverseback.domain.ctf.CTFQuestion;
 import com.coperatecoding.secodeverseback.domain.ctf.CTFTeam;
+import com.coperatecoding.secodeverseback.domain.ctf.CTFTeamQuestion;
+import com.coperatecoding.secodeverseback.dto.CTFTeamSortType;
 import com.coperatecoding.secodeverseback.dto.ctf.CTFTeamDTO;
+import com.coperatecoding.secodeverseback.dto.ctf.CTFTeamQuestionDTO;
+import com.coperatecoding.secodeverseback.exception.CategoryNotFoundException;
 import com.coperatecoding.secodeverseback.exception.ForbiddenException;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.repository.CTFLeagueRepository;
+import com.coperatecoding.secodeverseback.repository.CTFTeamQuestionRepository;
 import com.coperatecoding.secodeverseback.repository.CTFTeamRepository;
 import com.coperatecoding.secodeverseback.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +22,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -30,6 +33,8 @@ public class CTFTeamService {
     private final CTFLeagueRepository ctfLeagueRepository;
     private final CTFTeamRepository ctfTeamRepository;
     private final UserRepository userRepository;
+
+    private final CTFTeamQuestionRepository ctfTeamQuestionRepository;
 
     public void makeTeam(User user, CTFTeamDTO.AddRequest addRequest) {
 
@@ -74,48 +79,46 @@ public class CTFTeamService {
 
     }
 
-    private Pageable makePageable(Integer page, Integer pageSize) throws RuntimeException {
-        if (page == null)
-            page = 1;
+    private Pageable makePageable(CTFTeamSortType sortType, Integer page, Integer pageSize) throws RuntimeException {
 
-        if (pageSize == null)
-            pageSize = 10;
+        Sort.Direction direction = (sortType == CTFTeamSortType.HIGH) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Sort sort = Sort.by(direction, "score");
 
-        return PageRequest.of(page-1, pageSize);
+        int pageNumber = page != null && page > 0 ? page - 1 : 0;
+        int size = pageSize != null && pageSize > 1 ? pageSize : 10;
+
+        return PageRequest.of(pageNumber, size, sort);
     }
 
-    public Page<CTFTeamDTO.SearchResponse> getSearchTeam(User user, Long leaguePk, int page, int pageSize) {
-        Pageable pageable = makePageable(page, pageSize);
+    public Page<CTFTeamDTO.SearchResponse> getSearchTeam(User user, Long leaguePk, int page, int pageSize, CTFTeamSortType sort)
+    throws CategoryNotFoundException {
+        Pageable pageable = makePageable(sort, page, pageSize);
 
         if(user.getRoleType() == RoleType.ADMIN)
         {
-//            CTFLeague league = ctfLeagueRepository.findById(leaguePk)
-//                    .orElseThrow(() -> new NotFoundException("리그가 존재하지 않습니다."));
-
             Page<CTFTeam> teams = ctfTeamRepository.findByLeaguePk(leaguePk, pageable);
             List<CTFTeamDTO.SearchResponse> responses = teams.getContent().stream()
                     .map(team -> CTFTeamDTO.SearchResponse.builder()
+                            .totalScore((team.getScore() != null) ? team.getScore() : 0)
                             .name(team.getName())
                             .memberList(team.getUsers().stream().map(User::getNickname).collect(Collectors.toList()))
                             .build())
                     .collect(Collectors.toList());
 
             return new PageImpl<>(responses, pageable, teams.getTotalElements());
-
         }
         else
             throw new ForbiddenException("관리자만 접근 가능합니다.");
-
     }
 
-    public CTFTeamDTO.Top10ListResponse getTop10TeamList(User user, Long leaguePk) {
+    public CTFTeamDTO.Top10ListResponse getTop10TeamList(Long leaguePk) {
 
         List<CTFTeam> teams = ctfTeamRepository.findTop10ByLeaguePkOrderByTeamRankAsc(leaguePk);
         List<CTFTeamDTO.DetailResponse> responses = teams.stream()
                 .map(team -> new CTFTeamDTO.DetailResponse(
                         team.getName(),
                         team.getScore(),
-                        team.getTeamRank()))
+                        (team.getScore() != null) ? team.getScore() : 0))
                 .collect(Collectors.toList());
 
         return new CTFTeamDTO.Top10ListResponse(responses.size(), responses);
@@ -167,6 +170,19 @@ public class CTFTeamService {
         }
 
         return new CTFTeamDTO.TeamRankListResponse(responses.size(), responses);
+
+    }
+
+    public CTFTeamQuestionDTO.TeamScoreByCategoryListResponse getMyTeamScoresByCategory(User user) {
+        CTFTeam ctfTeam = user.getTeam();
+
+        List<Object[]> scoresByCategory = ctfTeamQuestionRepository.findTotalScoreByCategoryForTeam(ctfTeam);
+
+        List<CTFTeamQuestionDTO.TeamScoreByCategoryResponse> list = scoresByCategory.stream()
+                .map(objects -> new CTFTeamQuestionDTO.TeamScoreByCategoryResponse((String) objects[0], ((Long) objects[1]).intValue()))
+                .collect(Collectors.toList());
+
+        return new CTFTeamQuestionDTO.TeamScoreByCategoryListResponse(list.size(), list);
 
     }
 }
