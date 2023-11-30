@@ -24,8 +24,8 @@ public class CTFLeagueDTO {
     @Builder
     public static class CTFLeagueDetailResponse {
         private String name;
-        private String openTime;
-        private String closeTime;
+        private LocalDateTime openTime;
+        private LocalDateTime closeTime;
         private int memberCnt;
         private String notice;
         private String description;
@@ -36,8 +36,8 @@ public class CTFLeagueDTO {
     @NoArgsConstructor
     public static class EditRequest {
         private String name;
-        private String openTime;
-        private String closeTime;
+        private LocalDateTime openTime;
+        private LocalDateTime closeTime;
         private int memberCnt;
         private String notice;
         private String description;
