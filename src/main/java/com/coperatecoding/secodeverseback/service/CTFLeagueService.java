@@ -46,8 +46,8 @@ public class CTFLeagueService {
 
         CTFLeagueDTO.CTFLeagueDetailResponse detailResponse = CTFLeagueDTO.CTFLeagueDetailResponse.builder()
                 .name(league.getName())
-                .openTime(league.convertDate(league.getOpenTime()))
-                .closeTime(league.convertDate(league.getCloseTime()))
+                .openTime(league.getOpenTime())
+                .closeTime(league.getCloseTime())
                 .memberCnt(league.getMemberCnt())
                 .notice(league.getNotice())
                 .description(league.getDescription())

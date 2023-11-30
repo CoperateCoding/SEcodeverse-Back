@@ -142,6 +142,7 @@ public class UserService {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .roleType(user.getRoleType())
+                .nickName(user.getNickname())
                 .build();
 
     }

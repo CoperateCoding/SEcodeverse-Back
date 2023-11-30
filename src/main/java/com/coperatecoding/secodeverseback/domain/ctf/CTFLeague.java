@@ -94,10 +94,10 @@ public class CTFLeague {
     }
 
 
-    public void edit(String name, String openTime, String closeTime, int memberCnt, String notice, String description) {
+    public void edit(String name, LocalDateTime openTime, LocalDateTime closeTime, int memberCnt, String notice, String description) {
         this.name = name;
-        this.openTime = convertStringtoDate(openTime);
-        this.closeTime = convertStringtoDate(closeTime);
+        this.openTime = openTime;
+        this.closeTime = closeTime;
         this.memberCnt = memberCnt;
         this.notice = notice;
         this.description = description;
