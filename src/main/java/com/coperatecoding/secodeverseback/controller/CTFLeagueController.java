@@ -27,7 +27,8 @@ public class CTFLeagueController {
 
     @Operation(summary = "ctf 리그 등록")
     @PostMapping("/admin/ctf/league/post")
-    public ResponseEntity makeCTFLeague(@AuthenticationPrincipal User user, @RequestBody CTFLeagueDTO.AddLeagueRequest addLeagueRequest) throws RuntimeException {
+    public ResponseEntity makeCTFLeague(@AuthenticationPrincipal User user, @RequestBody CTFLeagueDTO.AddLeagueRequest addLeagueRequest
+    ) throws RuntimeException {
 
         ctfLeagueService.makeLeague(addLeagueRequest);
 

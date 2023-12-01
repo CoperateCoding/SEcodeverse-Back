@@ -146,7 +146,6 @@ public class CodeService {
 
         // 사용자가 특정 년도, 월에 맞춘 코드들을 가지고 옴.
         List<Code> filteredCodes = codeRepository.findByStatusAndUserAndYearAndMonth(CodeStatus.TRUE, user, year, month);
-        System.out.println("이건 나옴?" + filteredCodes.size());
 
         // 날짜별로 문제를 맞춘 횟수를 계산함.
         Map<Integer, Long> dailyCount = filteredCodes.stream()

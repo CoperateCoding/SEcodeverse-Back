@@ -25,14 +25,8 @@ public class CTFLeagueService {
 
     public void makeLeague(CTFLeagueDTO.AddLeagueRequest addRequest) {
 
-        CTFLeague league = CTFLeague.builder()
-                .name(addRequest.getName())
-                .openTime(addRequest.getOpenTime())
-                .closeTime(addRequest.getCloseTime())
-                .memberCnt(addRequest.getMemberCnt())
-                .notice(addRequest.getNotice())
-                .description(addRequest.getDescription())
-                .build();
+        CTFLeague league = CTFLeague.makeCTFLeague(addRequest.getName(), addRequest.getOpenTime(), addRequest.getCloseTime()
+                , addRequest.getMemberCnt(), addRequest.getNotice(), addRequest.getDescription());
 
         league.checkLeagueStatus();
 
