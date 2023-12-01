@@ -1,6 +1,5 @@
-package com.coperatecoding.secodeverseback.dto;
+package com.coperatecoding.secodeverseback.dto.board;
 
-import com.coperatecoding.secodeverseback.domain.board.Board;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

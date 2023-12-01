@@ -1,7 +1,7 @@
 package com.coperatecoding.secodeverseback.controller;
 
 import com.coperatecoding.secodeverseback.domain.User;
-import com.coperatecoding.secodeverseback.dto.CodeDTO;
+import com.coperatecoding.secodeverseback.dto.question.CodeDTO;
 import com.coperatecoding.secodeverseback.service.CodeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

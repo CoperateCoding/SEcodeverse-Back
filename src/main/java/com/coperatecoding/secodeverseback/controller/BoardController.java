@@ -2,7 +2,10 @@ package com.coperatecoding.secodeverseback.controller;
 
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.domain.board.Board;
-import com.coperatecoding.secodeverseback.dto.*;
+import com.coperatecoding.secodeverseback.dto.board.BoardAndImageDTO;
+import com.coperatecoding.secodeverseback.dto.board.BoardDTO;
+import com.coperatecoding.secodeverseback.dto.board.BoardImgDTO;
+import com.coperatecoding.secodeverseback.dto.board.BoardSortType;
 import com.coperatecoding.secodeverseback.exception.CategoryNotFoundException;
 import com.coperatecoding.secodeverseback.exception.ForbiddenException;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;

@@ -1,10 +1,8 @@
-package com.coperatecoding.secodeverseback.dto;
+package com.coperatecoding.secodeverseback.dto.question;
 
-import com.coperatecoding.secodeverseback.domain.User;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 
