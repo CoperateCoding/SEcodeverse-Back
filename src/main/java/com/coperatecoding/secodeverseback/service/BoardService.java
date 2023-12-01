@@ -86,10 +86,14 @@ public class BoardService {
         Sort.Order defaultOrder = new Sort.Order(Sort.Direction.DESC, "createAt");
         Sort sort;
         if (sortType == BoardSortType.POP) {
-            sort = Sort.by(Sort.Direction.DESC, "likeCnt");
+            sort = Sort.by(Sort.Direction.DESC, "likeCnt")
+                    .and(Sort.by(Sort.Direction.DESC, "commentCnt"))
+                    .and(Sort.by(defaultOrder));
         }
         else if (sortType == BoardSortType.COMMENT) {
-            sort = Sort.by(Sort.Direction.DESC, "commentCnt");
+            sort = Sort.by(Sort.Direction.DESC, "commentCnt")
+                    .and(Sort.by(Sort.Direction.DESC, "likeCnt"))
+                    .and(Sort.by(defaultOrder));
         }
         else {
             sort = Sort.by(defaultOrder);
