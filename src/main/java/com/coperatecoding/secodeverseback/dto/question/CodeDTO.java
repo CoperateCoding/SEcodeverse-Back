@@ -1,4 +1,4 @@
-package com.coperatecoding.secodeverseback.dto;
+package com.coperatecoding.secodeverseback.dto.question;
 
 import com.coperatecoding.secodeverseback.domain.CodeStatus;
 import lombok.*;

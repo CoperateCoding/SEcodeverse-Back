@@ -2,7 +2,7 @@ package com.coperatecoding.secodeverseback.service;
 
 import com.coperatecoding.secodeverseback.domain.board.Board;
 import com.coperatecoding.secodeverseback.domain.board.BoardImage;
-import com.coperatecoding.secodeverseback.dto.BoardImgDTO;
+import com.coperatecoding.secodeverseback.dto.board.BoardImgDTO;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.repository.BoardImageRepository;
 import com.coperatecoding.secodeverseback.repository.BoardRepository;

@@ -5,8 +5,8 @@ import com.coperatecoding.secodeverseback.domain.RoleType;
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.domain.board.Board;
 import com.coperatecoding.secodeverseback.domain.board.BoardCategory;
-import com.coperatecoding.secodeverseback.dto.BoardDTO;
-import com.coperatecoding.secodeverseback.dto.BoardSortType;
+import com.coperatecoding.secodeverseback.dto.board.BoardDTO;
+import com.coperatecoding.secodeverseback.dto.board.BoardSortType;
 import com.coperatecoding.secodeverseback.exception.CategoryNotFoundException;
 import com.coperatecoding.secodeverseback.exception.ForbiddenException;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
@@ -177,7 +177,8 @@ public class BoardService {
 //
 //    }
 
-    public Page<BoardDTO.SearchResponse> getBoardList(Long categoryPk, String q, int page, int pageSize, BoardSortType sort) throws CategoryNotFoundException {
+    public Page<BoardDTO.SearchResponse> getBoardList(Long categoryPk, String q, int page, int pageSize, BoardSortType sort
+    ) throws CategoryNotFoundException {
         Pageable pageable = makePageable(sort, page, pageSize);
         Page<Board> list;
 
