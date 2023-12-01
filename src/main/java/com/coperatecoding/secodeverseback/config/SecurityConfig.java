@@ -77,6 +77,7 @@ public class SecurityConfig {
         configuration.addAllowedOrigin("http://3.35.101.75");
         configuration.addAllowedOrigin("http://3.35.101.75/");
         configuration.addAllowedOrigin("http://3.35.101.75:8080");
+        configuration.addAllowedOrigin("http://3.35.101.75:3000");
         configuration.addAllowedOrigin("https://lucky-llama-7b0801.netlify.app");
         configuration.addAllowedOrigin("https://lucky-llama-7b0801.netlify.app/");
         configuration.addAllowedOrigin("https://lucky-llama-7b0801.netlify.app:443");
