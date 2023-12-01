@@ -40,6 +40,18 @@ public class CTFTeamController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @Operation(summary = "유저가 ctf 팀이 있는지 확인")
+    @GetMapping("/ctf/team/user/isexist")
+    public ResponseEntity<Boolean> isExistCTFTeam(@AuthenticationPrincipal User user)
+    {
+        boolean isExist;
+        if(user.getTeam() != null)
+            isExist = true;
+        else
+            isExist = false;
+        return ResponseEntity.ok(isExist);
+    }
+
     @Operation(
             summary = "ctf 팀 상세 조회",
             description = "관리자 or 유저의 팀이 있을때만 가능"
