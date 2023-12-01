@@ -251,6 +251,7 @@ public class QuestionController {
             @RequestParam(required=true) String testcase
     ) throws IOException, InterruptedException {
         System.out.println("userCode" + userCode);
+//        userCode="print(1)";
         System.out.println("languageNum" + languageNum);
         String JUDGE0_API_URL = "https://judge0-extra-ce.p.rapidapi.com";
         String RAPIDAPI_HOST = "judge0-extra-ce.p.rapidapi.com";
@@ -260,13 +261,13 @@ public class QuestionController {
         String cPlusLanguageId = "2";
         String cLanguageId = "1";
         String languageNumber = "";
-        if (languageNum == 1)
+        if (languageNum == 4)
             languageNumber = cLanguageId;
         else if (languageNum == 2)
             languageNumber = javaLanguageId;
         else if (languageNum == 3)
             languageNumber = cPlusLanguageId;
-        else if (languageNum == 4)
+        else if (languageNum == 1)
             languageNumber = python3LanguageId;
 
 
