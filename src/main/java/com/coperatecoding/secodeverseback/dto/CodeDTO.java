@@ -41,9 +41,9 @@ public class CodeDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class addCodeRequest{
-        private int codeStatus;
+        private CodeStatus codeStatus;
         private String content;
-        private String compileTime;
+        private Time compileTime;
         private Long memory;
         private Integer accuracy;
 
