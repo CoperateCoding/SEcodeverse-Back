@@ -15,7 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,11 +46,14 @@ public class CodeService {
         return response;
     }
 
-    public Code makeCode(User user, Long questionPk,CodeDTO.addCodeRequest addCodeRequest) throws RuntimeException{
+    public Code makeCode(User user, Long questionPk, CodeDTO.AddCodeRequest addCodeRequest) throws RuntimeException{
         Question question = questionRepository.findById(questionPk)
                 .orElseThrow(() -> new NotFoundException("해당하는 문제가 없습니다."));
 
-       Code code = Code.makeCode(user,question,addCodeRequest.getContent(),addCodeRequest.getCompileTime(), addCodeRequest.getMemory(), addCodeRequest.getAccuracy());
+       Code code = Code.makeCode(user, question, addCodeRequest.getContent(), addCodeRequest.getCompileTime(),
+               addCodeRequest.getMemory(), addCodeRequest.getAccuracy());
+
+        System.out.println("=================" + code.getCompileTime());
 
         return codeRepository.save(code);
     }

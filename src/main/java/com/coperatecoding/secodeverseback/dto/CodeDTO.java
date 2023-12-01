@@ -1,14 +1,10 @@
 package com.coperatecoding.secodeverseback.dto;
 
-import com.coperatecoding.secodeverseback.domain.CodeLanguage;
 import com.coperatecoding.secodeverseback.domain.CodeStatus;
-import com.coperatecoding.secodeverseback.domain.Language;
-import com.coperatecoding.secodeverseback.domain.User;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.util.List;
-import java.sql.Time;
+import java.math.BigDecimal;
+import java.time.LocalTime;
 
 public class CodeDTO {
 
@@ -40,14 +36,12 @@ public class CodeDTO {
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class addCodeRequest{
+    public static class AddCodeRequest {
         private CodeStatus codeStatus;
         private String content;
-        private Time compileTime;
+        private String compileTime;
         private Long memory;
-        private Integer accuracy;
-
-
+        private Double accuracy;
     }
 
 
