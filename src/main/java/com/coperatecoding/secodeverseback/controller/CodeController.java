@@ -1,9 +1,6 @@
 package com.coperatecoding.secodeverseback.controller;
 
 import com.coperatecoding.secodeverseback.domain.User;
-import com.coperatecoding.secodeverseback.domain.board.Board;
-import com.coperatecoding.secodeverseback.dto.BoardAndImageDTO;
-import com.coperatecoding.secodeverseback.dto.BoardImgDTO;
 import com.coperatecoding.secodeverseback.dto.CodeDTO;
 import com.coperatecoding.secodeverseback.service.CodeService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,8 +21,8 @@ public class CodeController {
     private final CodeService codeService;
 
     @PostMapping("/{questionPk}")
-    public ResponseEntity makeCode(@AuthenticationPrincipal User user,@PathVariable Long questionPk, @RequestBody @Valid CodeDTO.addCodeRequest addCodeRequest) {
-     codeService.makeCode(user,questionPk,addCodeRequest);
+    public ResponseEntity makeCode(@AuthenticationPrincipal User user,@PathVariable Long questionPk, @RequestBody @Valid CodeDTO.AddCodeRequest addCodeRequest) {
+        codeService.makeCode(user,questionPk,addCodeRequest);
         System.out.println(addCodeRequest.getCodeStatus());
         System.out.println(addCodeRequest.getCompileTime());
         return ResponseEntity.status(HttpStatus.CREATED).build();
