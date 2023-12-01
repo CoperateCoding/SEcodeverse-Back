@@ -251,22 +251,23 @@ public class QuestionController {
             @RequestParam(required=true) String testcase
     ) throws IOException, InterruptedException {
         System.out.println("userCode" + userCode);
+//        userCode="print(1)";
         System.out.println("languageNum" + languageNum);
         String JUDGE0_API_URL = "https://judge0-extra-ce.p.rapidapi.com";
         String RAPIDAPI_HOST = "judge0-extra-ce.p.rapidapi.com";
-        String RAPIDAPI_KEY = "ce1aa40351mshd1b8e179b49a600p12e79djsn3c18e4473ece"; // -> 언니 이거이거
+        String RAPIDAPI_KEY = "b3daadf5a7msh4bf3f3eb4b3caf1p105483jsne73951cb49dd"; // -> 언니 이거이거
         String python3LanguageId = "28";
         String javaLanguageId = "4";
         String cPlusLanguageId = "2";
         String cLanguageId = "1";
         String languageNumber = "";
-        if (languageNum == 1)
+        if (languageNum == 4)
             languageNumber = cLanguageId;
         else if (languageNum == 2)
             languageNumber = javaLanguageId;
         else if (languageNum == 3)
             languageNumber = cPlusLanguageId;
-        else if (languageNum == 4)
+        else if (languageNum == 1)
             languageNumber = python3LanguageId;
 
 
