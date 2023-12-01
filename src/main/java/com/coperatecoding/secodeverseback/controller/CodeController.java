@@ -21,8 +21,10 @@ import org.springframework.web.bind.annotation.*;
 public class CodeController {
     private final CodeService codeService;
 
+    @Operation(summary = "코드 제출")
     @PostMapping("/{questionPk}")
-    public ResponseEntity makeCode(@AuthenticationPrincipal User user,@PathVariable Long questionPk, @RequestBody @Valid CodeDTO.AddCodeRequest addCodeRequest) {
+    public ResponseEntity makeCode(@AuthenticationPrincipal User user, @PathVariable Long questionPk,
+                                   @RequestBody @Valid CodeDTO.AddCodeRequest addCodeRequest) {
         codeService.makeCode(user,questionPk,addCodeRequest);
         System.out.println(addCodeRequest.getCodeStatus());
         System.out.println(addCodeRequest.getCompileTime());
@@ -30,16 +32,20 @@ public class CodeController {
     }
 
 
-//    @Operation(summary = "달력 정보 가져오기", description = """
-//    [로그인 필요]<br>
-//    200: 성공
-//    403: 로그인 필요
-//    /<br>
-//    현재 년도, 월 입력받으면 맞춘 개수 보내줌.
-//    """)
-//    @GetMapping("/calendar")
-//    public ResponseEntity<CodeDTO.MyTrueQuestionResponse> getCalendar(@AuthenticationPrincipal User user, @RequestParam CodeDTO.CalendarRequest request) {
-//        CodeDTO.MyTrueQuestionResponse response = codeService.getCalendar(user, request);
-//        return ResponseEntity.ok(response);
-//    }
+    @Operation(summary = "달력 정보 가져오기", description = """
+    [로그인 필요]<br>
+    200: 성공
+    403: 로그인 필요
+    /<br>
+    현재 년도, 월 입력받으면 맞춘 개수 보내줌.
+    """)
+    @GetMapping("/calendar")
+    public ResponseEntity<CodeDTO.MyTrueQuestionResponseList> getCalendar(
+            @AuthenticationPrincipal User user,
+            @RequestParam int year,
+            @RequestParam int month
+    ) throws RuntimeException {
+        CodeDTO.MyTrueQuestionResponseList response = codeService.getCalendar(user, year, month);
+        return ResponseEntity.ok(response);
+    }
 }

@@ -18,6 +18,8 @@ import org.springframework.data.domain.Page;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -57,6 +59,7 @@ public class CodeService {
 
         return codeRepository.save(code);
     }
+
     public List<CodeDTO.PageableCodeListResponse> getWrongCodes(User user, int page, int size){
 
         CodeStatus codeStatus = CodeStatus.FALSE;
@@ -116,8 +119,8 @@ public class CodeService {
     }
 
     public List<CodeDTO.PageableCodeListResponse> getPagingCodes(User user){
-        List<Code>codes = codeRepository.findByUser(user);
-        List<CodeDTO.PageableCodeListResponse>codeDTOS = new ArrayList<>();
+        List<Code> codes = codeRepository.findByUser(user);
+        List<CodeDTO.PageableCodeListResponse> codeDTOS = new ArrayList<>();
         for(Code code: codes){
             CodeDTO.PageableCodeListRequest request = CodeDTO.PageableCodeListRequest.Codes(
                     codes.size(),
@@ -138,4 +141,27 @@ public class CodeService {
         }
         return codeDTOS;
     }
+
+    public CodeDTO.MyTrueQuestionResponseList getCalendar(User user, int year, int month) {
+
+        // 사용자가 특정 년도, 월에 맞춘 코드들을 가지고 옴.
+        List<Code> filteredCodes = codeRepository.findByStatusAndUserAndYearAndMonth(CodeStatus.TRUE, user, year, month);
+
+        // 날짜별로 문제를 맞춘 횟수를 계산함.
+        Map<Integer, Long> dailyCount = filteredCodes.stream()
+                .collect(Collectors.groupingBy(code -> code.getCreateAt().getDayOfMonth(), Collectors.counting()));
+
+        List<CodeDTO.MyTrueQuestionResponse> responseList = dailyCount.entrySet().stream()
+                .map(entry -> new CodeDTO.MyTrueQuestionResponse(entry.getKey(), entry.getValue().intValue()))
+                .collect(Collectors.toList());
+
+        CodeDTO.MyTrueQuestionResponseList response = CodeDTO.MyTrueQuestionResponseList.builder()
+                .cnt(responseList.size())
+                .list(responseList)
+                .build();
+
+        return response;
+    }
+
+
 }

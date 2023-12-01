@@ -26,7 +26,8 @@ public class CTFCategoryController {
 
     @Operation(summary = "ctf 카테고리 조회")
     @GetMapping("/all")
-    public ResponseEntity<List<CTFCategory>> getCTFCategoryAll(@AuthenticationPrincipal User user) throws RuntimeException {
+    public ResponseEntity<List<CTFCategory>> getCTFCategoryAll(@AuthenticationPrincipal User user)
+            throws RuntimeException {
 
         List<CTFCategory> ctfCategoryList = ctfCategoryService.getCTFCategoryAll();
 

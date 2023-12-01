@@ -3,8 +3,6 @@ package com.coperatecoding.secodeverseback.dto;
 import com.coperatecoding.secodeverseback.domain.CodeStatus;
 import lombok.*;
 
-import java.math.BigDecimal;
-import java.time.LocalTime;
 import java.util.List;
 
 public class CodeDTO {
@@ -41,7 +39,7 @@ public class CodeDTO {
         private CodeStatus codeStatus;
         private String content;
         private String compileTime;
-        private Long memory;
+        private Double memory;
         private Double accuracy;
     }
 
@@ -88,12 +86,8 @@ public class CodeDTO {
     @AllArgsConstructor
     @Builder
     public static class MyTrueQuestionResponse {
-        private int day; // 날자
+        private int day; // 날짜(일)
         private int cnt; // 맞춘 개수
     }
 
-    public class CalendarRequest {
-        private int year; // 년도
-        private int month; // 월
-    }
 }

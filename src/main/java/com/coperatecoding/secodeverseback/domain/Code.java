@@ -66,7 +66,6 @@ public class                                                                    
         code.content = content;
         code.compileTime = LocalTime.parse(compileTime);
         code.createAt = LocalDateTime.now();
-        //code.compileTime = compileTime;
         code.memory = memory;
         code.accuracy = accuracy;
         return code;
