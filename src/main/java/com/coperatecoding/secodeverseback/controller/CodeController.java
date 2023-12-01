@@ -3,6 +3,7 @@ package com.coperatecoding.secodeverseback.controller;
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.dto.CodeDTO;
 import com.coperatecoding.secodeverseback.service.CodeService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,4 +28,18 @@ public class CodeController {
         System.out.println(addCodeRequest.getCompileTime());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+
+//    @Operation(summary = "달력 정보 가져오기", description = """
+//    [로그인 필요]<br>
+//    200: 성공
+//    403: 로그인 필요
+//    /<br>
+//    현재 년도, 월 입력받으면 맞춘 개수 보내줌.
+//    """)
+//    @GetMapping("/calendar")
+//    public ResponseEntity<CodeDTO.MyTrueQuestionResponse> getCalendar(@AuthenticationPrincipal User user, @RequestParam CodeDTO.CalendarRequest request) {
+//        CodeDTO.MyTrueQuestionResponse response = codeService.getCalendar(user, request);
+//        return ResponseEntity.ok(response);
+//    }
 }
