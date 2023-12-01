@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalTime;
+import java.util.List;
 
 public class CodeDTO {
 
@@ -69,5 +70,30 @@ public class CodeDTO {
         private Long pk;
         private CodeStatus codeStatus;
         private Long questionPk;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class MyTrueQuestionResponseList {
+        private int cnt;
+        private List<CodeDTO.MyTrueQuestionResponse> list;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class MyTrueQuestionResponse {
+        private int day; // 날자
+        private int cnt; // 맞춘 개수
+    }
+
+    public class CalendarRequest {
+        private int year; // 년도
+        private int month; // 월
     }
 }
