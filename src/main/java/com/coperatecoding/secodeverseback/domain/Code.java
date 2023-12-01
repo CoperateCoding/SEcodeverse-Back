@@ -1,5 +1,6 @@
 package com.coperatecoding.secodeverseback.domain;
 
+import com.coperatecoding.secodeverseback.config.LocalTimeAttributeConverter;
 import com.coperatecoding.secodeverseback.domain.question.Question;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -7,9 +8,8 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
-import java.sql.Time;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,8 +37,12 @@ public class                                                                    
     @Column(length = 99999)
     private String content;
 
-    @CreationTimestamp
-    private Time compileTime;
+//    @Column(columnDefinition = "Time(6)")
+//    private LocalTime compileTime;
+//    @Column(precision = 10, scale = 6)
+    @Convert(converter = LocalTimeAttributeConverter.class)
+    @Column(columnDefinition = "TIME(6)")
+    private LocalTime compileTime;
 
     @NotNull
     private Long memory;
@@ -46,20 +50,20 @@ public class                                                                    
     @NotNull
     private CodeStatus status = CodeStatus.WAITING;
 
-    private Integer accuracy;
+    private Double accuracy;
 
     @OneToMany(mappedBy = "code", cascade = CascadeType.ALL)
     private List<CodeLanguage> languageList = new ArrayList<>();
 
-    public static Code makeCode(User user,Question question , String content, Time compileTime, Long memory , Integer accuracy){
+    public static Code makeCode(User user, Question question, String content, String compileTime, Long memory , Double accuracy){
         Code code = new Code();
         code.user= user;
         code.question = question;
         code.content = content;
-        code.compileTime = compileTime;
+        code.compileTime = LocalTime.parse(compileTime);
+        //code.compileTime = compileTime;
         code.memory = memory;
         code.accuracy = accuracy;
-
         return code;
 
     }
