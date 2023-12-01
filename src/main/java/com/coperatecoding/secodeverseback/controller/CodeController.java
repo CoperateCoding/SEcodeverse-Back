@@ -25,7 +25,7 @@ public class CodeController {
 
     @PostMapping("/{questionPk}")
     public ResponseEntity makeCode(@AuthenticationPrincipal User user,@PathVariable Long questionPk, @RequestBody @Valid CodeDTO.addCodeRequest addCodeRequest) {
-//     codeService.makeCode(user,questionPk,addCodeRequest);
+     codeService.makeCode(user,questionPk,addCodeRequest);
         System.out.println(addCodeRequest.getCodeStatus());
         System.out.println(addCodeRequest.getCompileTime());
         return ResponseEntity.status(HttpStatus.CREATED).build();
