@@ -48,7 +48,7 @@ public class                                                                    
     private LocalDateTime createAt;
 
     @NotNull
-    private Long memory;
+    private Double memory;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -59,7 +59,7 @@ public class                                                                    
     @OneToMany(mappedBy = "code", cascade = CascadeType.ALL)
     private List<CodeLanguage> languageList = new ArrayList<>();
 
-    public static Code makeCode(User user, Question question, String content, String compileTime, Long memory , Double accuracy){
+    public static Code makeCode(User user, Question question, String content, String compileTime, Double memory , Double accuracy){
         Code code = new Code();
         code.user= user;
         code.question = question;

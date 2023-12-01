@@ -2,7 +2,6 @@ package com.coperatecoding.secodeverseback.domain;
 
 import com.coperatecoding.secodeverseback.domain.board.Likes;
 import com.coperatecoding.secodeverseback.domain.ctf.CTFTeam;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -160,8 +159,6 @@ public class User implements UserDetails {
             this.exp = exp;
         else this.exp += exp;
     }
-
-
 
 
 }
