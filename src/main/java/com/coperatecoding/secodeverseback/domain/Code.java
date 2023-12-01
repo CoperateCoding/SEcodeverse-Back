@@ -8,7 +8,9 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,18 +38,20 @@ public class                                                                    
     @NotNull
     @Column(length = 99999)
     private String content;
-
-//    @Column(columnDefinition = "Time(6)")
-//    private LocalTime compileTime;
-//    @Column(precision = 10, scale = 6)
     @Convert(converter = LocalTimeAttributeConverter.class)
     @Column(columnDefinition = "TIME(6)")
     private LocalTime compileTime;
 
     @NotNull
+    @CreationTimestamp
+    @Column(name = "create_at")
+    private LocalDateTime createAt;
+
+    @NotNull
     private Long memory;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     private CodeStatus status = CodeStatus.WAITING;
 
     private Double accuracy;
