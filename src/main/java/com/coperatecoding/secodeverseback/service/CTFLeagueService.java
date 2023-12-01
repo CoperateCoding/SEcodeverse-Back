@@ -109,6 +109,7 @@ public class CTFLeagueService {
 
         List<CTFLeagueDTO.BriefResponse> briefResponseList = list.getContent().stream()
                 .map(ctfLeague -> CTFLeagueDTO.BriefResponse.builder()
+                        .leaguePk(ctfLeague.getPk())
                         .name(ctfLeague.getName())
                         .status(ctfLeague.getStatus())
                         .openTime(ctfLeague.convertDate(ctfLeague.getOpenTime()))

@@ -361,7 +361,7 @@ public class QuestionController {
            사용자가 문제를 맞췄을때, 문제의 레벨에 따라 경험치를 증가 시킴. 
            """)
     @PostMapping("/corret/exp")
-    public ResponseEntity increaseExp(@AuthenticationPrincipal User user, Long questionPk) {
+    public ResponseEntity increaseExp(@AuthenticationPrincipal User user, @RequestParam Long questionPk) {
         questionService.increaseExp(user, questionPk);
         return ResponseEntity.ok().build();
     }
