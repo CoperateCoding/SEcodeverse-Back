@@ -4,7 +4,7 @@ import com.coperatecoding.secodeverseback.domain.Code;
 import com.coperatecoding.secodeverseback.domain.CodeStatus;
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.domain.question.Question;
-import com.coperatecoding.secodeverseback.dto.CodeDTO;
+import com.coperatecoding.secodeverseback.dto.question.CodeDTO;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.repository.CodeRepository;
 import com.coperatecoding.secodeverseback.repository.QuestionRepository;

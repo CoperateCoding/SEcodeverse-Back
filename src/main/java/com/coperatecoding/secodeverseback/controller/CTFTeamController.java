@@ -1,7 +1,7 @@
 package com.coperatecoding.secodeverseback.controller;
 
 import com.coperatecoding.secodeverseback.domain.User;
-import com.coperatecoding.secodeverseback.dto.CTFTeamSortType;
+import com.coperatecoding.secodeverseback.dto.ctf.CTFTeamSortType;
 import com.coperatecoding.secodeverseback.dto.ctf.CTFTeamDTO;
 import com.coperatecoding.secodeverseback.dto.ctf.CTFTeamQuestionDTO;
 import com.coperatecoding.secodeverseback.exception.CategoryNotFoundException;

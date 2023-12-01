@@ -1,8 +1,10 @@
 package com.coperatecoding.secodeverseback.controller;
 
 import com.coperatecoding.secodeverseback.domain.User;
+import com.coperatecoding.secodeverseback.domain.ctf.CTFQuestionType;
 import com.coperatecoding.secodeverseback.dto.ctf.CTFLeagueDTO;
 import com.coperatecoding.secodeverseback.dto.ctf.CTFQuestionDTO;
+import com.coperatecoding.secodeverseback.dto.ctf.CTFQuestionSortType;
 import com.coperatecoding.secodeverseback.service.CTFQuestionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -42,10 +44,11 @@ public class CTFQuestionController {
             @AuthenticationPrincipal User user,
             @RequestParam(required = false) Long categoryPk,
             @RequestParam(required = false, defaultValue = "10") @Min(value = 2, message = "page 크기는 1보다 커야합니다") int pageSize,
-            @RequestParam(required = false, defaultValue = "1") @Min(value = 1, message = "page는 0보다 커야합니다") int page
+            @RequestParam(required = false, defaultValue = "1") @Min(value = 1, message = "page는 0보다 커야합니다") int page,
+            @RequestParam(required = false, defaultValue = "HIGH") CTFQuestionSortType sort
     ) throws RuntimeException {
 
-        Page<CTFQuestionDTO.BriefResponse> briefResponses = ctfQuestionService.getCTFQuestionAll(categoryPk, page, pageSize);
+        Page<CTFQuestionDTO.BriefResponse> briefResponses = ctfQuestionService.getCTFQuestionAll(categoryPk, page, pageSize, sort);
 
         CTFQuestionDTO.AllListResponse response = CTFQuestionDTO.AllListResponse.builder()
                 .cnt((int) briefResponses.getTotalElements())

@@ -1,6 +1,6 @@
 package com.coperatecoding.secodeverseback.repository;
 
-import com.coperatecoding.secodeverseback.domain.TestCase;
+import com.coperatecoding.secodeverseback.domain.question.TestCase;
 
 import com.coperatecoding.secodeverseback.domain.question.Question;
 import org.springframework.data.jpa.repository.JpaRepository;
