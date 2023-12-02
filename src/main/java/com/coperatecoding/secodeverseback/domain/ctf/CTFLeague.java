@@ -46,13 +46,11 @@ public class CTFLeague {
     private CTFLeagueStatus status = CTFLeagueStatus.CLOSE;
 
 
-
     @OneToMany(mappedBy = "league", cascade = CascadeType.ALL)
     private List<CTFQuestion> questionList = new ArrayList<>();
 
     @OneToMany(mappedBy = "league", cascade = CascadeType.ALL)
     private List<CTFTeam> teamList = new ArrayList<>();
-
 
     public static CTFLeague makeCTFLeague(String name, LocalDateTime openTime, LocalDateTime closeTime, int memberCnt, String notice, String description) {
         CTFLeague ctfLeague = new CTFLeague();

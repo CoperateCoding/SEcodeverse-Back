@@ -58,6 +58,7 @@ public class CTFQuestionDTO {
         private Long questionPk;
         private String questionName;
         private Integer score;
+        private String categoryName;
     }
 
     @Getter

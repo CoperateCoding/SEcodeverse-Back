@@ -102,6 +102,7 @@ public class CTFQuestionService {
                         .questionPk(ctfQuestion.getPk())
                         .questionName(ctfQuestion.getName())
                         .score(ctfQuestion.getScore())
+                        .categoryName(ctfQuestion.getCategory().getName())
                         .build()
                 ).collect(Collectors.toList());
 
