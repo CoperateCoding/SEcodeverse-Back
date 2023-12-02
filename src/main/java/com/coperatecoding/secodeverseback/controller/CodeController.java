@@ -37,15 +37,13 @@ public class CodeController {
     200: 성공
     403: 로그인 필요
     /<br>
-    현재 년도, 월 입력받으면 맞춘 개수 보내줌.
+    유저의 문제 맞춘 개수 전체 보내줌. + 날짜와
     """)
     @GetMapping("/calendar")
     public ResponseEntity<CodeDTO.MyTrueQuestionResponseList> getCalendar(
-            @AuthenticationPrincipal User user,
-            @RequestParam int year,
-            @RequestParam int month
+            @AuthenticationPrincipal User user
     ) throws RuntimeException {
-        CodeDTO.MyTrueQuestionResponseList response = codeService.getCalendar(user, year, month);
+        CodeDTO.MyTrueQuestionResponseList response = codeService.getCalendar(user);
         return ResponseEntity.ok(response);
     }
 }
