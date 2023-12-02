@@ -56,28 +56,29 @@ public class CTFTeamService {
 
     }
 
-    public CTFTeamDTO.DetailResponse getDetailTeam(User user, Long teamPk) throws NoSuchElementException {
+    public CTFTeamDTO.DetailResponse getDetailTeam(User user
+    ) throws NoSuchElementException {
 
+        CTFTeam ctfTeam = ctfTeamRepository.findByUsers(user)
+                .orElseThrow(() -> new NotFoundException("ctf 팀이 존재하지 않습니다."));
         // 팀이 없는 유저는 확인 불가능
         if(user.getRoleType() != RoleType.ADMIN && user.getTeam() == null)
             throw new ForbiddenException("권한이 없는 사용자");
         else
         {
-            CTFTeam team = ctfTeamRepository.findById(teamPk)
-                    .orElseThrow(() -> new NotFoundException("해당하는 팀이 존재하지 않음"));
-
             CTFTeamDTO.DetailResponse detailResponse  = CTFTeamDTO.DetailResponse.builder()
-                    .name(team.getName())
-                    .score(team.getScore())
-                    .teamRank(team.getTeamRank())
+                    .name(ctfTeam.getName())
+                    .score((ctfTeam.getScore() != null) ? ctfTeam.getScore() : 0)
+                    .teamRank(ctfTeam.getTeamRank())
+                    .memberList(ctfTeam.getUsers().stream().map(User::getNickname).collect(Collectors.toList()))
                     .build();
+
             return detailResponse;
-
         }
-
     }
 
-    private Pageable makePageable(CTFTeamSortType sortType, Integer page, Integer pageSize) throws RuntimeException {
+    private Pageable makePageable(CTFTeamSortType sortType, Integer page, Integer pageSize
+    ) throws RuntimeException {
 
         Sort.Direction direction = (sortType == CTFTeamSortType.HIGH) ? Sort.Direction.DESC : Sort.Direction.ASC;
         Sort sort = Sort.by(direction, "score");
@@ -112,8 +113,8 @@ public class CTFTeamService {
     public CTFTeamDTO.Top10ListResponse getTop10TeamList(Long leaguePk) {
 
         List<CTFTeam> teams = ctfTeamRepository.findTop10ByLeaguePkOrderByTeamRankAsc(leaguePk);
-        List<CTFTeamDTO.DetailResponse> responses = teams.stream()
-                .map(team -> new CTFTeamDTO.DetailResponse(
+        List<CTFTeamDTO.Top10TeamResponse> responses = teams.stream()
+                .map(team -> new CTFTeamDTO.Top10TeamResponse(
                         team.getName(),
                         team.getScore(),
                         (team.getScore() != null) ? team.getScore() : 0))
