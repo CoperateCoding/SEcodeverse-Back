@@ -2,7 +2,7 @@ package com.coperatecoding.secodeverseback.controller;
 
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.domain.question.Question;
-import com.coperatecoding.secodeverseback.dto.*;
+import com.coperatecoding.secodeverseback.dto.question.*;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.service.*;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -20,28 +20,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
 import java.util.List;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Tag(name = "문제", description = "문제 관련 API")
 @RequiredArgsConstructor
@@ -55,7 +45,7 @@ public class QuestionController {
     private final LevelService levelService;
     private final QuestionCategoryService questionCategoryService;
     private final QuestionImgService questionImgService;
-    private final CodeService codeService;
+    private final CodeService  codeService;
 
     @PostMapping("/post")
     public ResponseEntity makeQuestion(@AuthenticationPrincipal User user, @RequestBody @Valid QuestionAndTestAndImageDTO.AddQuestionAndTestAndImageRequest addQuestionAndTestAndImageRequest) {
@@ -222,10 +212,6 @@ public class QuestionController {
     ) {
 
         Page<QuestionDTO.SearchQuestionResponse> questions = questionService.getQuestionList(page, pageSize, q, sort, categoryPks, levelPks);
-        System.out.println(sort);
-        System.out.println(categoryPks);
-        System.out.println(levelPks);
-
         QuestionDTO.SearchListResponse response = QuestionDTO.SearchListResponse.builder()
                 .cnt((int) questions.getTotalElements())
                 .list(questions.getContent())
@@ -251,22 +237,23 @@ public class QuestionController {
             @RequestParam(required=true) String testcase
     ) throws IOException, InterruptedException {
         System.out.println("userCode" + userCode);
+//        userCode="print(1)";
         System.out.println("languageNum" + languageNum);
         String JUDGE0_API_URL = "https://judge0-extra-ce.p.rapidapi.com";
         String RAPIDAPI_HOST = "judge0-extra-ce.p.rapidapi.com";
-        String RAPIDAPI_KEY = "ce1aa40351mshd1b8e179b49a600p12e79djsn3c18e4473ece"; // -> 언니 이거이거
+        String RAPIDAPI_KEY = "b3daadf5a7msh4bf3f3eb4b3caf1p105483jsne73951cb49dd"; // -> 언니 이거이거
         String python3LanguageId = "28";
         String javaLanguageId = "4";
         String cPlusLanguageId = "2";
         String cLanguageId = "1";
         String languageNumber = "";
-        if (languageNum == 1)
+        if (languageNum == 4)
             languageNumber = cLanguageId;
         else if (languageNum == 2)
             languageNumber = javaLanguageId;
         else if (languageNum == 3)
             languageNumber = cPlusLanguageId;
-        else if (languageNum == 4)
+        else if (languageNum == 1)
             languageNumber = python3LanguageId;
 
 
@@ -361,7 +348,7 @@ public class QuestionController {
            사용자가 문제를 맞췄을때, 문제의 레벨에 따라 경험치를 증가 시킴. 
            """)
     @PostMapping("/corret/exp")
-    public ResponseEntity increaseExp(@AuthenticationPrincipal User user, Long questionPk) {
+    public ResponseEntity increaseExp(@AuthenticationPrincipal User user, @RequestParam Long questionPk) {
         questionService.increaseExp(user, questionPk);
         return ResponseEntity.ok().build();
     }

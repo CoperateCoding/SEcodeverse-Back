@@ -48,6 +48,7 @@ public class CTFLeagueDTO {
     @Builder
     @AllArgsConstructor
     public static class BriefResponse {
+        private Long leaguePk;
         private String name;
         private String openTime;
         private String closeTime;

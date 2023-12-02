@@ -5,8 +5,8 @@ import com.coperatecoding.secodeverseback.domain.RoleType;
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.domain.board.Board;
 import com.coperatecoding.secodeverseback.domain.board.BoardCategory;
-import com.coperatecoding.secodeverseback.dto.BoardDTO;
-import com.coperatecoding.secodeverseback.dto.BoardSortType;
+import com.coperatecoding.secodeverseback.dto.board.BoardDTO;
+import com.coperatecoding.secodeverseback.dto.board.BoardSortType;
 import com.coperatecoding.secodeverseback.exception.CategoryNotFoundException;
 import com.coperatecoding.secodeverseback.exception.ForbiddenException;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
@@ -86,10 +86,14 @@ public class BoardService {
         Sort.Order defaultOrder = new Sort.Order(Sort.Direction.DESC, "createAt");
         Sort sort;
         if (sortType == BoardSortType.POP) {
-            sort = Sort.by(Sort.Direction.DESC, "likeCnt");
+            sort = Sort.by(Sort.Direction.DESC, "likeCnt")
+                    .and(Sort.by(Sort.Direction.DESC, "commentCnt"))
+                    .and(Sort.by(defaultOrder));
         }
         else if (sortType == BoardSortType.COMMENT) {
-            sort = Sort.by(Sort.Direction.DESC, "commentCnt");
+            sort = Sort.by(Sort.Direction.DESC, "commentCnt")
+                    .and(Sort.by(Sort.Direction.DESC, "likeCnt"))
+                    .and(Sort.by(defaultOrder));
         }
         else {
             sort = Sort.by(defaultOrder);
@@ -173,7 +177,8 @@ public class BoardService {
 //
 //    }
 
-    public Page<BoardDTO.SearchResponse> getBoardList(Long categoryPk, String q, int page, int pageSize, BoardSortType sort) throws CategoryNotFoundException {
+    public Page<BoardDTO.SearchResponse> getBoardList(Long categoryPk, String q, int page, int pageSize, BoardSortType sort
+    ) throws CategoryNotFoundException {
         Pageable pageable = makePageable(sort, page, pageSize);
         Page<Board> list;
 

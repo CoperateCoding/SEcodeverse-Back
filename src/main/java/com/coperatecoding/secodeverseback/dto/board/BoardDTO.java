@@ -1,12 +1,10 @@
-package com.coperatecoding.secodeverseback.dto;
+package com.coperatecoding.secodeverseback.dto.board;
 
 import com.coperatecoding.secodeverseback.domain.board.BoardCategory;
-import com.coperatecoding.secodeverseback.domain.board.BoardImage;
+import com.coperatecoding.secodeverseback.dto.question.QuestionSortType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class BoardDTO {
@@ -90,7 +88,6 @@ public class BoardDTO {
         private Long commentCnt;
         private String title;
         private String content;
-//        private List<BoardImage> imageList = new ArrayList<>();
 
     }
 
@@ -117,16 +114,4 @@ public class BoardDTO {
         private List<PopularBoardResponse> list;
     }
 
-
-//    @Getter
-//    @Setter
-//    @NoArgsConstructor
-//    @AllArgsConstructor
-//    @Builder
-//    public class AddBoardAndImageRequest {
-//        private BoardDTO.AddBoardRequest board;
-//
-//        private List<BoardImgDTO.AddBoardImgRequest> imageList;
-//
-//    }
 }

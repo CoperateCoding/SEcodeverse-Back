@@ -1,11 +1,9 @@
 package com.coperatecoding.secodeverseback.controller;
 
 import com.coperatecoding.secodeverseback.domain.User;
-import com.coperatecoding.secodeverseback.domain.board.Board;
-import com.coperatecoding.secodeverseback.dto.BoardAndImageDTO;
-import com.coperatecoding.secodeverseback.dto.BoardImgDTO;
-import com.coperatecoding.secodeverseback.dto.CodeDTO;
+import com.coperatecoding.secodeverseback.dto.question.CodeDTO;
 import com.coperatecoding.secodeverseback.service.CodeService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,11 +21,31 @@ import org.springframework.web.bind.annotation.*;
 public class CodeController {
     private final CodeService codeService;
 
+    @Operation(summary = "코드 제출")
     @PostMapping("/{questionPk}")
-    public ResponseEntity makeCode(@AuthenticationPrincipal User user,@PathVariable Long questionPk, @RequestBody @Valid CodeDTO.addCodeRequest addCodeRequest) {
-     codeService.makeCode(user,questionPk,addCodeRequest);
+    public ResponseEntity makeCode(@AuthenticationPrincipal User user, @PathVariable Long questionPk,
+                                   @RequestBody @Valid CodeDTO.AddCodeRequest addCodeRequest) {
+        codeService.makeCode(user,questionPk,addCodeRequest);
         System.out.println(addCodeRequest.getCodeStatus());
         System.out.println(addCodeRequest.getCompileTime());
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+
+    @Operation(summary = "달력 정보 가져오기", description = """
+    [로그인 필요]<br>
+    200: 성공
+    403: 로그인 필요
+    /<br>
+    현재 년도, 월 입력받으면 맞춘 개수 보내줌.
+    """)
+    @GetMapping("/calendar")
+    public ResponseEntity<CodeDTO.MyTrueQuestionResponseList> getCalendar(
+            @AuthenticationPrincipal User user,
+            @RequestParam int year,
+            @RequestParam int month
+    ) throws RuntimeException {
+        CodeDTO.MyTrueQuestionResponseList response = codeService.getCalendar(user, year, month);
+        return ResponseEntity.ok(response);
     }
 }

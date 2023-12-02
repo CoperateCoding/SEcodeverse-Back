@@ -14,7 +14,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Builder
 @Table(name = "ctf_league")
 public class CTFLeague {
 
@@ -26,12 +25,10 @@ public class CTFLeague {
     private String name;
 
     @NotNull
-    @CreationTimestamp
     @Column(name = "open_time")
     private LocalDateTime openTime;
 
     @NotNull
-    @CreationTimestamp
     @Column(name = "close_time")
     private LocalDateTime closeTime;
 
@@ -102,4 +99,6 @@ public class CTFLeague {
         this.notice = notice;
         this.description = description;
     }
+
+
 }

@@ -1,14 +1,9 @@
-package com.coperatecoding.secodeverseback.dto;
+package com.coperatecoding.secodeverseback.dto.question;
 
-import com.coperatecoding.secodeverseback.domain.CodeLanguage;
 import com.coperatecoding.secodeverseback.domain.CodeStatus;
-import com.coperatecoding.secodeverseback.domain.Language;
-import com.coperatecoding.secodeverseback.domain.User;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.List;
-import java.sql.Time;
 
 public class CodeDTO {
 
@@ -40,14 +35,12 @@ public class CodeDTO {
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class addCodeRequest{
+    public static class AddCodeRequest {
         private CodeStatus codeStatus;
         private String content;
-        private Time compileTime;
-        private Long memory;
-        private Integer accuracy;
-
-
+        private String compileTime;
+        private Double memory;
+        private Double accuracy;
     }
 
 
@@ -76,4 +69,25 @@ public class CodeDTO {
         private CodeStatus codeStatus;
         private Long questionPk;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class MyTrueQuestionResponseList {
+        private int cnt;
+        private List<CodeDTO.MyTrueQuestionResponse> list;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class MyTrueQuestionResponse {
+        private int day; // 날짜(일)
+        private int cnt; // 맞춘 개수
+    }
+
 }

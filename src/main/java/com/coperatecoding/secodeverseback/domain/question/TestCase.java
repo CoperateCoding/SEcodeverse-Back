@@ -1,13 +1,11 @@
-package com.coperatecoding.secodeverseback.domain;
+package com.coperatecoding.secodeverseback.domain.question;
 
-import com.coperatecoding.secodeverseback.domain.question.Question;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import net.minidev.json.annotate.JsonIgnore;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

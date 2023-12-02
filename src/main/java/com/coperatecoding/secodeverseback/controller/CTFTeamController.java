@@ -1,7 +1,7 @@
 package com.coperatecoding.secodeverseback.controller;
 
 import com.coperatecoding.secodeverseback.domain.User;
-import com.coperatecoding.secodeverseback.dto.CTFTeamSortType;
+import com.coperatecoding.secodeverseback.dto.ctf.CTFTeamSortType;
 import com.coperatecoding.secodeverseback.dto.ctf.CTFTeamDTO;
 import com.coperatecoding.secodeverseback.dto.ctf.CTFTeamQuestionDTO;
 import com.coperatecoding.secodeverseback.exception.CategoryNotFoundException;
@@ -38,6 +38,18 @@ public class CTFTeamController {
         ctfTeamService.makeTeam(user, addRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @Operation(summary = "유저가 ctf 팀이 있는지 확인")
+    @GetMapping("/ctf/team/user/isexist")
+    public ResponseEntity<Boolean> isExistCTFTeam(@AuthenticationPrincipal User user, @RequestParam Long leaguePk)
+    {
+        boolean isExist;
+        if(user.getTeam() != null)
+            isExist = true;
+        else
+            isExist = false;
+        return ResponseEntity.ok(isExist);
     }
 
     @Operation(

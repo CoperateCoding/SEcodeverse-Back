@@ -2,7 +2,9 @@ package com.coperatecoding.secodeverseback.service;
 
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.domain.ctf.*;
+import com.coperatecoding.secodeverseback.dto.board.BoardSortType;
 import com.coperatecoding.secodeverseback.dto.ctf.CTFQuestionDTO;
+import com.coperatecoding.secodeverseback.dto.ctf.CTFQuestionSortType;
 import com.coperatecoding.secodeverseback.exception.CategoryNotFoundException;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.repository.*;
@@ -62,21 +64,27 @@ public class CTFQuestionService {
         }
     }
 
-    private Pageable makePageable(Integer page, Integer pageSize) throws RuntimeException {
+    private Pageable makePageable(CTFQuestionSortType sortType, Integer page, Integer pageSize) throws RuntimeException {
 
-        Sort sort = Sort.by(Sort.Direction.DESC, "score");
-        if (page == null)
-            page = 1;
+        Sort.Order defaultOrder = new Sort.Order(Sort.Direction.DESC, "score");
+        Sort sort;
+        if (sortType == CTFQuestionSortType.LOW) {
+            sort = Sort.by(Sort.Direction.ASC, "score");
+        }
+        else {
+            sort = Sort.by(defaultOrder);
+        }
 
-        if (pageSize == null)
-            pageSize = 10;
+        int pageNumber = page != null && page > 0 ? page - 1 : 0;
+        int size = pageSize != null && pageSize > 1 ? pageSize : 10;
 
-        return PageRequest.of(page-1, pageSize, sort);
+        return PageRequest.of(pageNumber, size, sort);
     }
 
 
-    public Page<CTFQuestionDTO.BriefResponse> getCTFQuestionAll(Long categoryPk, int page, int pageSize) throws RuntimeException {
-        Pageable pageable = makePageable(page, pageSize);
+    public Page<CTFQuestionDTO.BriefResponse> getCTFQuestionAll(Long categoryPk, int page, int pageSize, CTFQuestionSortType sort
+    ) throws RuntimeException {
+        Pageable pageable = makePageable(sort, page, pageSize);
         Page<CTFQuestion> list;
 
         if(categoryPk != null)
