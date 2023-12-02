@@ -2,22 +2,19 @@ package com.coperatecoding.secodeverseback.service;
 
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.domain.ctf.*;
-import com.coperatecoding.secodeverseback.dto.board.BoardSortType;
 import com.coperatecoding.secodeverseback.dto.ctf.CTFQuestionDTO;
 import com.coperatecoding.secodeverseback.dto.ctf.CTFQuestionSortType;
 import com.coperatecoding.secodeverseback.exception.CategoryNotFoundException;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.repository.*;
+import com.sun.jdi.request.DuplicateRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -82,8 +79,10 @@ public class CTFQuestionService {
     }
 
 
-    public Page<CTFQuestionDTO.BriefResponse> getCTFQuestionAll(Long categoryPk, int page, int pageSize, CTFQuestionSortType sort
+    public Page<CTFQuestionDTO.BriefResponse> getCTFQuestionAll(
+            User user, Long categoryPk, int page, int pageSize, CTFQuestionSortType sort
     ) throws RuntimeException {
+
         Pageable pageable = makePageable(sort, page, pageSize);
         Page<CTFQuestion> list;
 
@@ -97,13 +96,21 @@ public class CTFQuestionService {
             list = ctfQuestionRepository.findAll(pageable);
         }
 
+        CTFTeam ctfTeam = ctfTeamRepository.findByUsers(user)
+                .orElseThrow(() -> new NotFoundException("해당하는 ctf 팀이 존재하지 않습니다."));
+
         List<CTFQuestionDTO.BriefResponse> briefResponseList = list.getContent().stream()
-                .map(ctfQuestion -> CTFQuestionDTO.BriefResponse.builder()
-                        .questionPk(ctfQuestion.getPk())
-                        .questionName(ctfQuestion.getName())
-                        .score(ctfQuestion.getScore())
-                        .categoryName(ctfQuestion.getCategory().getName())
-                        .build()
+                .map(ctfQuestion -> {
+                    // user의 팀이 해당 문제를 맞췄는지
+                    boolean isExist = ctfTeamQuestionRepository.findByCtfQuestionAndCtfTeam(ctfQuestion, ctfTeam).isPresent();
+                    return CTFQuestionDTO.BriefResponse.builder()
+                                    .questionPk(ctfQuestion.getPk())
+                                    .questionName(ctfQuestion.getName())
+                                    .score(ctfQuestion.getScore())
+                                    .categoryName(ctfQuestion.getCategory().getName())
+                                    .isSolved(isExist)
+                                    .build();
+                        }
                 ).collect(Collectors.toList());
 
         return new PageImpl<>(briefResponseList, pageable, list.getTotalElements());
@@ -133,35 +140,40 @@ public class CTFQuestionService {
 
     }
 
-    public boolean solveCTFQuestion(User user, Long ctfQuestionPk, CTFQuestionDTO.SolveRequest request) throws RuntimeException {
-
-        boolean isTrue;
+    public boolean solveCTFQuestion(User user, Long ctfQuestionPk, CTFQuestionDTO.SolveRequest request
+    ) throws RuntimeException {
         CTFQuestion ctfQuestion = ctfQuestionRepository.findById(ctfQuestionPk)
                 .orElseThrow(() -> new NotFoundException("해당하는 ctf 문제가 없습니다."));
 
-        if (ctfQuestion.getAnswer().equals(request.getAnswer())) {
-            // 정답이면 user의 ctfTeam의 점수가 증가
-            CTFTeam ctfTeam = ctfTeamRepository.findByUsers(user)
-                    .orElseThrow(() -> new NotFoundException("해당하는 ctf 팀이 없습니다."));
+        CTFTeam ctfTeam = ctfTeamRepository.findByUsers(user)
+                .orElseThrow(() -> new NotFoundException("해당하는 ctf 팀이 없습니다."));
 
-            int score = ctfQuestion.getScore() != null ? ctfQuestion.getScore() : 0;
+        Optional<CTFTeamQuestion> optionalCTFTeamQuestion  =
+                ctfTeamQuestionRepository.findByCtfQuestionAndCtfTeam(ctfQuestion, ctfTeam);
 
-            ctfTeam.addScore(score);
-
-            CTFTeamQuestion ctfTeamQuestion = CTFTeamQuestion.makeCTFTeamQuestion(ctfQuestion, ctfTeam, ctfQuestion.getCategory(), score);
-            ctfTeamQuestionRepository.save(ctfTeamQuestion);
-
-            ctfTeamRepository.save(ctfTeam);
-            isTrue = true;
+        if (optionalCTFTeamQuestion.isPresent()) {
+            throw new DuplicateRequestException("이미 해당 문제를 풀었습니다.");
         }
-        else
-            isTrue = false;
 
-        return isTrue;
+        boolean isCorrectAnswer = ctfQuestion.getAnswer().equals(request.getAnswer());
+        int score = isCorrectAnswer && ctfQuestion.getScore() != null ? ctfQuestion.getScore() : 0;
 
+        if (isCorrectAnswer) {
+            // 정답이면 user의 ctfTeam의 점수가 증가
+            ctfTeam.addScore(score);
+            ctfTeamRepository.save(ctfTeam);
+        }
+
+        CTFTeamQuestion ctfTeamQuestion =
+                CTFTeamQuestion.makeCTFTeamQuestion(ctfQuestion, ctfTeam, ctfQuestion.getCategory(),
+                        score, isCorrectAnswer);
+        ctfTeamQuestionRepository.save(ctfTeamQuestion);
+
+        return isCorrectAnswer;
     }
 
-    public void editRequest(Long ctfQuestionPk, CTFQuestionDTO.EditRequest request) throws RuntimeException {
+    public void editRequest(Long ctfQuestionPk, CTFQuestionDTO.EditRequest request
+    ) throws RuntimeException {
 
         CTFQuestion question = ctfQuestionRepository.findById(ctfQuestionPk)
                 .orElseThrow(() -> new IllegalArgumentException("해당하는 CTF 문제가 없습니다."));

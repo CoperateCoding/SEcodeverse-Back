@@ -23,7 +23,7 @@ public class UserDTO {
 
         @NotNull
         @Size(min = 12, max = 20,message ="비밀번호는 12에서 20자 사이 입니다.")
-        @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[~!@#$%^&*()_=+|{};:<>/?])[a-zA-Z0-9~!@#$%^&*()_=+|{};:,.<>/?]*$"
+        @Pattern(regexp = "^(?=.*\\d)(?=.*[~!@#$%^&*()_=+|{};:<>/?])[a-zA-Z0-9~!@#$%^&*()_=+|{};:,.<>/?]*$"
                 , message = "비밀번호 형식이 일치하지 않습니다.")
         private String pw;
 
@@ -33,7 +33,7 @@ public class UserDTO {
         private String name;
 
         @NotNull
-        @Size(min = 2, max = 10, message = "닉네임은 2에서 10자 사이 입니다.")
+        @Size(min = 2, max = 8, message = "닉네임은 2에서 8자 사이 입니다.")
         @Pattern(regexp = "^[가-힣a-zA-Z0-9]*$", message = "닉네임은 한글 또는 영문이 필수이며, 숫자는 선택입니다.")
         private String nickname;
     }

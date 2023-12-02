@@ -48,7 +48,7 @@ public class CTFQuestionController {
             @RequestParam(required = false, defaultValue = "HIGH") CTFQuestionSortType sort
     ) throws RuntimeException {
 
-        Page<CTFQuestionDTO.BriefResponse> briefResponses = ctfQuestionService.getCTFQuestionAll(categoryPk, page, pageSize, sort);
+        Page<CTFQuestionDTO.BriefResponse> briefResponses = ctfQuestionService.getCTFQuestionAll(user, categoryPk, page, pageSize, sort);
 
         CTFQuestionDTO.AllListResponse response = CTFQuestionDTO.AllListResponse.builder()
                 .cnt((int) briefResponses.getTotalElements())
