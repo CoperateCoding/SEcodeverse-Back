@@ -1,6 +1,5 @@
 package com.coperatecoding.secodeverseback.dto.ctf;
 
-//import com.coperatecoding.secodeverseback.dto.board.BoardDTO;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -46,7 +45,19 @@ public class CTFTeamDTO {
         private String name;
         private Integer score;
         private Integer teamRank;
+        private List<String> memberList;
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class Top10TeamResponse {
+        private String name;
+        private Integer score;
+        private Integer teamRank;
+    }
+
 
     @Getter
     @NoArgsConstructor
@@ -63,7 +74,7 @@ public class CTFTeamDTO {
     @Builder
     public static class Top10ListResponse {
         private int cnt;
-        private List<CTFTeamDTO.DetailResponse> list;
+        private List<CTFTeamDTO.Top10TeamResponse> list;
     }
 
     @Getter
