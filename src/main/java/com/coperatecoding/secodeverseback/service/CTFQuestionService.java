@@ -128,6 +128,7 @@ public class CTFQuestionService {
         }
 
         CTFQuestionDTO.DetailResponse response = CTFQuestionDTO.DetailResponse.builder()
+                .categoryPk(ctfQuestion.getCategory().getPk())
                 .categoryName(ctfQuestion.getCategory().getName())
                 .ctfQuestionType(ctfQuestion.getType())
                 .questionName(ctfQuestion.getName())
