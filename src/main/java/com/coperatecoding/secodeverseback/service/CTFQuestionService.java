@@ -135,6 +135,7 @@ public class CTFQuestionService {
                 .description(ctfQuestion.getDescription())
                 .score(ctfQuestion.getScore())
                 .imgUrlList(imgUrlList)
+                .answer(ctfQuestion.getAnswer())
                 .build();
 
         return response;
