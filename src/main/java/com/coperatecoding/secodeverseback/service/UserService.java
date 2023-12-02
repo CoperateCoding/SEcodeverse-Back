@@ -7,7 +7,6 @@ import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.exception.UserLockedException;
 import com.coperatecoding.secodeverseback.repository.CodingBadgeRepository;
 import com.coperatecoding.secodeverseback.repository.RedisRepository;
-import com.coperatecoding.secodeverseback.repository.RefreshTokenRepository;
 import com.coperatecoding.secodeverseback.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +32,7 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
+//    private final RefreshTokenRepository refreshTokenRepository;
     private final CodingBadgeRepository codingBadgeRepository;
     private final RedisRepository redisRepository;
 
