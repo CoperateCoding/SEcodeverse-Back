@@ -19,6 +19,7 @@ public class CTFCategoryService {
 
     public List<CTFCategory> getCTFCategoryAll() {
         List<CTFCategory> categories = ctfCategoryRepository.findAll();
+        //다 풀었는지 - 그 카테고리 문제 다 풀었는지 정보
         return categories;
     }
 

@@ -29,12 +29,17 @@ public class CTFTeamQuestion {
     @Column(name="total_score")
     private Integer totalScore;
 
-    public static CTFTeamQuestion makeCTFTeamQuestion(CTFQuestion ctfQuestion, CTFTeam ctfTeam, CTFCategory ctfCategory, int score) {
+    @Column(name="is_true")
+    private boolean isTrue;
+
+    public static CTFTeamQuestion makeCTFTeamQuestion(CTFQuestion ctfQuestion, CTFTeam ctfTeam,
+                                                      CTFCategory ctfCategory, int score, boolean isTrue) {
         CTFTeamQuestion ctfTeamQuestion = new CTFTeamQuestion();
         ctfTeamQuestion.ctfQuestion = ctfQuestion;
         ctfTeamQuestion.ctfTeam = ctfTeam;
         ctfTeamQuestion.ctfCategory = ctfCategory;
         ctfTeamQuestion.totalScore = score;
+        ctfTeamQuestion.isTrue = isTrue;
         return ctfTeamQuestion;
     }
 
