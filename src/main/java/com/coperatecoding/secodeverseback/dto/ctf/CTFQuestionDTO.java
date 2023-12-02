@@ -59,6 +59,7 @@ public class CTFQuestionDTO {
         private String questionName;
         private Integer score;
         private String categoryName;
+        private boolean isSolved;
     }
 
     @Getter
