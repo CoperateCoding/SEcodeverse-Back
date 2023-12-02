@@ -67,6 +67,7 @@ public class CTFQuestionDTO {
     @AllArgsConstructor
     @Builder
     public static class DetailResponse {
+        private Long categoryPk;
         private String categoryName;
         private String questionName;
         private String description;
