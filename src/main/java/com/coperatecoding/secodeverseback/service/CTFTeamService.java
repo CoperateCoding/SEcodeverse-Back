@@ -183,4 +183,24 @@ public class CTFTeamService {
         return new CTFTeamQuestionDTO.TeamScoreByCategoryListResponse(list.size(), list);
 
     }
+
+    public boolean isExistCTFTeam(User user, Long leaguePk) {
+        boolean isExist = false;
+
+        CTFLeague league = ctfLeagueRepository.findById(leaguePk)
+                .orElseThrow(() -> new NotFoundException("해당하는 ctf 리그가 존재하지 않습니다."));
+
+        CTFTeam ctfTeam = user.getTeam();
+
+        if(ctfTeam != null) {
+            for (CTFTeam team : league.getTeamList()) {
+                if (team.getPk().equals(ctfTeam.getPk())) {
+                    isExist = true;
+                    break;
+                }
+            }
+        }
+
+        return isExist;
+    }
 }
