@@ -74,6 +74,7 @@ public class CTFQuestionDTO {
         private CTFQuestionType ctfQuestionType;
         private Integer score;
         private String[] imgUrlList;
+        private String answer;
     }
 
     @Getter
