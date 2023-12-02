@@ -3,6 +3,7 @@ package com.coperatecoding.secodeverseback.dto.question;
 import com.coperatecoding.secodeverseback.domain.CodeStatus;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class CodeDTO {
@@ -86,7 +87,7 @@ public class CodeDTO {
     @AllArgsConstructor
     @Builder
     public static class MyTrueQuestionResponse {
-        private int day; // 날짜(일)
+        private LocalDateTime time; // 맞춘 날짜
         private int cnt; // 맞춘 개수
     }
 
