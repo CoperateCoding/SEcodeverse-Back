@@ -16,10 +16,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 
 @Slf4j
 @RequiredArgsConstructor
@@ -31,7 +34,8 @@ public class CodeService {
     private final QuestionRepository questionRepository;
 
     public CodeDTO.SearchCodeListResponse getCodes(CodeDTO.SearchCodeListRequest request){
-        CodeDTO.SearchCodeListResponse response = CodeDTO.SearchCodeListResponse.builder()
+        CodeDTO.SearchCodeListResponse response =
+                CodeDTO.SearchCodeListResponse.builder()
                 .pk(request.getPk())
                 .codeStatus(request.getCodeStatus())
                 .questionPk(request.getQuestionPk())
@@ -39,7 +43,8 @@ public class CodeService {
         return response;
     }
     public CodeDTO.PageableCodeListResponse getPagingCodes(CodeDTO.PageableCodeListRequest request){
-        CodeDTO.PageableCodeListResponse response = CodeDTO.PageableCodeListResponse.builder()
+        CodeDTO.PageableCodeListResponse response =
+                CodeDTO.PageableCodeListResponse.builder()
                 .cnt(request.getCnt())
                 .pk(request.getPk())
                 .codeStatus(request.getCodeStatus())
@@ -70,14 +75,16 @@ public class CodeService {
 
         List<CodeDTO.PageableCodeListResponse>codeDTOS = new ArrayList<>();
         for(Code code: codes){
-            CodeDTO.PageableCodeListRequest request = CodeDTO.PageableCodeListRequest.Codes(
+            CodeDTO.PageableCodeListRequest request =
+                    CodeDTO.PageableCodeListRequest.Codes(
                     allCodes.size(),
                     code.getPk(),
                     code.getStatus(),
                     code.getQuestion().getPk()
             );
             CodeDTO.PageableCodeListResponse response = getPagingCodes(request);
-            CodeDTO.PageableCodeListResponse codeDTO = CodeDTO.PageableCodeListResponse.builder()
+            CodeDTO.PageableCodeListResponse codeDTO =
+                    CodeDTO.PageableCodeListResponse.builder()
                     .cnt(response.getCnt())
                     .pk(response.getPk())
                     .codeStatus(response.getCodeStatus())
@@ -96,16 +103,18 @@ public class CodeService {
         List<Code>allCodes = codeRepository.findByUser(user);
         Pageable pageable =  PageRequest.of(page-1, pageSize);
         Page<Code>codes = codeRepository.findByUser(user,pageable);
-        List<CodeDTO.PageableCodeListResponse>codeDTOS = new ArrayList<>();
+        List<CodeDTO.PageableCodeListResponse> codeDTOS = new ArrayList<>();
         for(Code code: codes){
-            CodeDTO.PageableCodeListRequest request = CodeDTO.PageableCodeListRequest.Codes(
+            CodeDTO.PageableCodeListRequest request =
+                    CodeDTO.PageableCodeListRequest.Codes(
                     allCodes.size(),
                     code.getPk(),
                     code.getStatus(),
                     code.getQuestion().getPk()
             );
             CodeDTO.PageableCodeListResponse response = getPagingCodes(request);
-            CodeDTO.PageableCodeListResponse codeDTO = CodeDTO.PageableCodeListResponse.builder()
+            CodeDTO.PageableCodeListResponse codeDTO =
+                    CodeDTO.PageableCodeListResponse.builder()
                     .cnt(response.getCnt())
                     .pk(response.getPk())
                     .codeStatus(response.getCodeStatus())
@@ -122,14 +131,17 @@ public class CodeService {
         List<Code> codes = codeRepository.findByUser(user);
         List<CodeDTO.PageableCodeListResponse> codeDTOS = new ArrayList<>();
         for(Code code: codes){
-            CodeDTO.PageableCodeListRequest request = CodeDTO.PageableCodeListRequest.Codes(
+            CodeDTO.PageableCodeListRequest request =
+                    CodeDTO.PageableCodeListRequest.Codes(
                     codes.size(),
                     code.getPk(),
                     code.getStatus(),
                     code.getQuestion().getPk()
             );
-            CodeDTO.PageableCodeListResponse response = getPagingCodes(request);
-            CodeDTO.PageableCodeListResponse codeDTO = CodeDTO.PageableCodeListResponse.builder()
+            CodeDTO.PageableCodeListResponse response =
+                    getPagingCodes(request);
+            CodeDTO.PageableCodeListResponse codeDTO =
+                    CodeDTO.PageableCodeListResponse.builder()
                     .cnt(codes.size())
                     .pk(response.getPk())
                     .codeStatus(response.getCodeStatus())
@@ -142,23 +154,36 @@ public class CodeService {
         return codeDTOS;
     }
 
-    public CodeDTO.MyTrueQuestionResponseList getCalendar(User user, int year, int month) {
+    public CodeDTO.MyTrueQuestionResponseList getCalendar(User user) {
 
-        // 사용자가 특정 년도, 월에 맞춘 코드들을 가지고 옴.
-        List<Code> filteredCodes = codeRepository.findByStatusAndUserAndYearAndMonth(CodeStatus.TRUE, user, year, month);
+        // 사용자 맞춘 코드 들고 옴.
+        List<Code> correctCodeList = codeRepository.findByStatusAndUser(CodeStatus.TRUE, user);
 
-        // 날짜별로 문제를 맞춘 횟수를 계산함.
-        Map<Integer, Long> dailyCount = filteredCodes.stream()
-                .collect(Collectors.groupingBy(code -> code.getCreateAt().getDayOfMonth(), Collectors.counting()));
+        // 날짜별로 그룹화
+        Map<LocalDate, Long> dateCountMap = correctCodeList.stream()
+                .collect(Collectors.groupingBy(
+                        code -> code.getCreateAt().toLocalDate(),
+                        Collectors.counting()
+                ));
 
-        List<CodeDTO.MyTrueQuestionResponse> responseList = dailyCount.entrySet().stream()
-                .map(entry -> new CodeDTO.MyTrueQuestionResponse(entry.getKey(), entry.getValue().intValue()))
-                .collect(Collectors.toList());
+        List<CodeDTO.MyTrueQuestionResponse> responseList = new ArrayList<>();
+        for (Map.Entry<LocalDate, Long> entry : dateCountMap.entrySet()) {
+            CodeDTO.MyTrueQuestionResponse trueQuestionResponse =
+                    CodeDTO.MyTrueQuestionResponse.builder()
+                            .time(entry.getKey().atStartOfDay()) // LocalDate를 LocalDateTime으로 변환
+                            .cnt(entry.getValue().intValue()) // 맞춘 코드의 개수
+                            .build();
+            responseList.add(trueQuestionResponse);
+        }
 
-        CodeDTO.MyTrueQuestionResponseList response = CodeDTO.MyTrueQuestionResponseList.builder()
-                .cnt(responseList.size())
-                .list(responseList)
-                .build();
+        // 리스트를 날짜 순으로 정렬
+        responseList.sort(Comparator.comparing(CodeDTO.MyTrueQuestionResponse::getTime));
+
+        CodeDTO.MyTrueQuestionResponseList response =
+                CodeDTO.MyTrueQuestionResponseList.builder()
+                        .cnt(responseList.size())
+                        .list(responseList)
+                        .build();
 
         return response;
     }

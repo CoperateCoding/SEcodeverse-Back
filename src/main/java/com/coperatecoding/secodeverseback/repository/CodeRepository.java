@@ -17,8 +17,4 @@ public interface CodeRepository extends JpaRepository<Code, Long> {
     Page<Code> findByUser(User user, Pageable pageable);
     Page<Code> findByStatusAndUser(CodeStatus codeStatus, User user, Pageable pageable);
 
-    @Query("SELECT c FROM Code c WHERE c.user = :user AND c.status = :codeStatus AND YEAR(c.createAt) = :year AND MONTH(c.createAt) = :month")
-    List<Code> findByStatusAndUserAndYearAndMonth(@Param("codeStatus") CodeStatus codeStatus, @Param("user") User user, @Param("year") int year, @Param("month") int month);
-
-
 }
