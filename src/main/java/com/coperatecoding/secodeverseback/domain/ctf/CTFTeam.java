@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -62,5 +63,19 @@ public class CTFTeam {
     public void setRank(int rank) {
         this.teamRank = rank;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CTFTeam ctfTeam = (CTFTeam) o;
+        return Objects.equals(pk, ctfTeam.pk);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pk);
+    }
+
 
 }
