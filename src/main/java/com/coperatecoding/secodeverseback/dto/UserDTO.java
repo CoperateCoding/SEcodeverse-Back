@@ -2,16 +2,12 @@ package com.coperatecoding.secodeverseback.dto;
 
 import com.coperatecoding.secodeverseback.domain.CodingBadge;
 import com.coperatecoding.secodeverseback.domain.RoleType;
-import com.coperatecoding.secodeverseback.domain.board.Likes;
 import com.coperatecoding.secodeverseback.domain.ctf.CTFTeam;
-import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import java.time.LocalDateTime;
-import java.util.List;
 
 public class UserDTO {
 
@@ -21,7 +17,7 @@ public class UserDTO {
     @Builder
     public static class RegisterRequest {
         @NotNull
-        @Size(min = 6, max = 12, message ="아이디는 6에서 12자 사이 입니다.")
+        @Size(min = 4, max = 12, message ="아이디는 4에서 12자 사이 입니다.")
         @Pattern(regexp = "^[a-zA-Z0-9]*[a-zA-Z]+[a-zA-Z0-9]*$", message = "아이디 형식이 일치하지 않습니다.")
         private String id;
 

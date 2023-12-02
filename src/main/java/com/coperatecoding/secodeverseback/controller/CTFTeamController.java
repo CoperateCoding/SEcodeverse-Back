@@ -42,7 +42,7 @@ public class CTFTeamController {
 
     @Operation(summary = "유저가 ctf 팀이 있는지 확인")
     @GetMapping("/ctf/team/user/isexist")
-    public ResponseEntity<Boolean> isExistCTFTeam(@AuthenticationPrincipal User user)
+    public ResponseEntity<Boolean> isExistCTFTeam(@AuthenticationPrincipal User user, @RequestParam Long leaguePk)
     {
         boolean isExist;
         if(user.getTeam() != null)
