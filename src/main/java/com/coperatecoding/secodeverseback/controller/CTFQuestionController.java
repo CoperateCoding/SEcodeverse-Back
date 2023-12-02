@@ -35,8 +35,10 @@ public class CTFQuestionController {
         System.out.println("leaguePk:"  + request.getLeaguePk());
         System.out.println("categoryPk: " + request.getCategoryPk());
         ctfQuestionService.makeQuestion(request);
+
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
 
     @Operation(summary = "ctf 문제 리스트 조회")
     @GetMapping("/ctf/question/")
@@ -56,7 +58,6 @@ public class CTFQuestionController {
                 .build();
 
         return ResponseEntity.ok(response);
-
     }
 
     @Operation(summary = "ctf 문제 상세 조회")

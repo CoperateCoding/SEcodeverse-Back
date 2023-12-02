@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,5 +34,16 @@ public class CTFCategoryController {
 
         return ResponseEntity.ok(ctfCategoryList);
 
+    }
+
+    @Operation(summary = "ctf 문제 카테고리 조회")
+    @GetMapping("/{categoryName}")
+    public ResponseEntity<Long> getCategoryPk(@AuthenticationPrincipal User user
+            , @PathVariable String categoryName)
+        throws RuntimeException {
+
+        Long categoryPk = ctfCategoryService.getCategoryPk(categoryName);
+
+        return ResponseEntity.ok(categoryPk);
     }
 }
