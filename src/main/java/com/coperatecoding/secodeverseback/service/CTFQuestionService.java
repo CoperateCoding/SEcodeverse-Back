@@ -128,6 +128,7 @@ public class CTFQuestionService {
         }
 
         CTFQuestionDTO.DetailResponse response = CTFQuestionDTO.DetailResponse.builder()
+                .leaguePk(ctfQuestion.getLeague().getPk())
                 .categoryPk(ctfQuestion.getCategory().getPk())
                 .categoryName(ctfQuestion.getCategory().getName())
                 .ctfQuestionType(ctfQuestion.getType())
