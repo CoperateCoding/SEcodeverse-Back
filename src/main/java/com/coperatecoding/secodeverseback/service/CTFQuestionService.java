@@ -107,7 +107,7 @@ public class CTFQuestionService {
         CTFTeam finalCtfTeam = ctfTeam;
         List<CTFQuestionDTO.BriefResponse> briefResponseList = list.getContent().stream()
                 .map(ctfQuestion -> {
-                    // user의 팀이 해당 문제를 맞췄는지
+                    // user의 팀이 해당 문제를 풀었는지
                     boolean isExist = false;
                     if (finalCtfTeam != null) {
                         isExist = ctfTeamQuestionRepository.findByCtfQuestionAndCtfTeam(ctfQuestion, finalCtfTeam).isPresent();
