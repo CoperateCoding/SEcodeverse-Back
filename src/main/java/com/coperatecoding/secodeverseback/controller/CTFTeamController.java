@@ -143,7 +143,7 @@ public class CTFTeamController {
     @Operation(summary = "ctf 본인 팀 카테고리별 점수 확인", description = """
             본인 팀의 카테고리별 점수 확인"""
     )
-    @PostMapping("/ctf/team/category/scores")
+    @GetMapping("/ctf/team/category/scores")
     public ResponseEntity<CTFTeamQuestionDTO.TeamScoreByCategoryListResponse> getMyTeamScoresByCategory(
             @AuthenticationPrincipal User user
     ) throws RuntimeException {
