@@ -2,9 +2,11 @@ package com.coperatecoding.secodeverseback.controller;
 
 import com.coperatecoding.secodeverseback.domain.RoleType;
 import com.coperatecoding.secodeverseback.domain.User;
+import com.coperatecoding.secodeverseback.dto.UserDTO;
 import com.coperatecoding.secodeverseback.repository.UserRepository;
 import com.coperatecoding.secodeverseback.service.JwtService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,9 +22,6 @@ public class TokenController {
 
     private final JwtService jwtService;
     private final UserRepository userRepository;
-
-//    private final RefreshTokenService refreshTokenService;
-//    private final RefreshTokenRepository refreshTokenRepository;
 
     @Operation(summary = "토큰 유효성 검사", description = """
     항상 200을 반환<br>
@@ -72,27 +71,6 @@ public class TokenController {
         return ResponseEntity.ok(response);
     }
 
-
-
-//    @GetMapping("/token/validate")
-//    public ResponseEntity<Map<String, Object>> validateJwtToken(@AuthenticationPrincipal User user) {
-//        Map<String, Object> response = new HashMap<>();
-//
-//        boolean isValid = jwtService.isTokenValidByUsers(user);
-//
-//
-//        Map<String, Object> userResponse = new HashMap<>();
-//        if (isValid) {
-//            userResponse.put("id", user.getId());
-//            userResponse.put("username", user.getNickname());
-//            userResponse.put("role", user.getRoleType().name());
-//        }
-//
-//        response.put("isValid", isValid);
-//        response.put("user", userResponse);
-//
-//        return ResponseEntity.ok(response);
-//    }
 
 //    @Operation(summary = "엑세스 토큰 재발급(리프레쉬 토큰 이용)", description = """
 //    refresh token을 <X-REFRESH-TOKEN 헤더>에 넣어 보내면 새로운 access token을 반환<br>

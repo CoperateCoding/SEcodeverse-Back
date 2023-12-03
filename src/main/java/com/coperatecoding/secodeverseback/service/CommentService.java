@@ -25,13 +25,12 @@ import java.util.stream.Collectors;
 public class CommentService {
 
     private final BoardRepository boardRepository;
-
     private final CommentRepository commentRepository;
 
     private final UserRepository userRepository;
 
 
-    public Comment makeComment(User user, CommentDTO.AddCommentRequest addCommentRequest) throws RuntimeException{
+    public Comment makeComment(User user, CommentDTO.AddCommentRequest addCommentRequest) throws RuntimeException {
 
         Board board =  boardRepository.findById(addCommentRequest.getBoardPK())
                 .orElseThrow(() -> new NotFoundException("해당하는 게시글이 존재하지 않음"));
@@ -40,12 +39,12 @@ public class CommentService {
         board.addCommentCnt();
 
         return commentRepository.save(comment);
-
     }
 
     public void deleteComment(User user, Long commentID) throws RuntimeException{
 
-        Comment comment = commentRepository.findById(commentID).orElseThrow(() -> new NotFoundException("해당하는 댓글이 존재하지 않음"));
+        Comment comment = commentRepository.findById(commentID)
+                .orElseThrow(() -> new NotFoundException("해당하는 댓글이 존재하지 않음"));
         Board board = comment.getBoard();
         board.deleteCommentCnt();
 
@@ -55,11 +54,12 @@ public class CommentService {
         }
 
         commentRepository.delete(comment);
-
     }
 
     public void modifyComment(User user, Long commentPk, CommentDTO.modifyRequest modifyRequest) throws RuntimeException{
-        Comment comment = commentRepository.findById(commentPk).orElseThrow(() -> new NotFoundException("해당하는 댓글이 존재하지 않음"));
+
+        Comment comment = commentRepository.findById(commentPk)
+                .orElseThrow(() -> new NotFoundException("해당하는 댓글이 존재하지 않음"));
 
         // Admin은 통과, 회원이면 댓글 확인
         if(!user.getRoleType().equals(RoleType.ADMIN) && comment.getUser().getPk() != user.getPk()) {
@@ -68,6 +68,7 @@ public class CommentService {
 
         comment.modifyComment(modifyRequest.getContent());
 
+        commentRepository.save(comment);
     }
 
     public List<CommentDTO.SearchResponse> getComments(Long boardPk){
@@ -87,10 +88,7 @@ public class CommentService {
                     .build();
         }).collect(Collectors.toList());
 
-
         return commentResponses;
-
     }
-
 
 }

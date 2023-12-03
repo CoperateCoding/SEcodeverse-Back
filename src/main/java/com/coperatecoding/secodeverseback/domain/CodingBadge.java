@@ -21,7 +21,7 @@ public class CodingBadge {
     @NotNull
     private String name;
 
-//    @NotNull //임시로 일단 지움.
+    @NotNull
     @Column(name = "img_url")
     private String imgUrl;
 

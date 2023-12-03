@@ -32,13 +32,10 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
-//    private final RefreshTokenRepository refreshTokenRepository;
     private final CodingBadgeRepository codingBadgeRepository;
     private final RedisRepository redisRepository;
-
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-
     private final AuthenticationManager authenticationManager;
 
 
@@ -60,13 +57,13 @@ public class UserService {
         User newUser = User.makeUsers(dto.getId(), passwordEncoder.encode(dto.getPw()), dto.getName(), dto.getNickname());
         newUser.setBadge(defaultBadge);
 
-         userRepository.save(newUser);
-
+        userRepository.save(newUser);
    }
 
     //중복 아이디 확인
     @Transactional(readOnly = true)
     public boolean isExistId(String id) {
+
         User user = userRepository.findById(id)
                 .orElseGet(() -> null);
 
@@ -76,6 +73,7 @@ public class UserService {
     //중복 닉네임 확인
     @Transactional(readOnly = true)
     public boolean isExistNickname(String nickName) {
+
         User user = userRepository.findByNickname(nickName)
                 .orElseGet(() -> null);
 
@@ -83,6 +81,7 @@ public class UserService {
     }
 
     public static String getClientIp(HttpServletRequest request) {
+
         String clientIp = null;
         boolean isIpInHeader = false;
 
@@ -114,6 +113,7 @@ public class UserService {
     }
 
     public UserDTO.LoginResponse login(UserDTO.LoginRequest loginRequest, HttpServletRequest request) {
+
         User user = userRepository.findById(loginRequest.getId())
                 .orElseGet(() -> null);
 
@@ -143,7 +143,6 @@ public class UserService {
                 .roleType(user.getRoleType())
                 .nickName(user.getNickname())
                 .build();
-
     }
 
     public void logout(String userId) {
@@ -151,7 +150,9 @@ public class UserService {
     }
 
     private CodingBadge findBadgeByExp(Integer exp) {
+
         Long badgeId;
+
         if (exp >= 5000) {
             badgeId = 6L;
         } else if (exp >= 1200) {
@@ -165,13 +166,16 @@ public class UserService {
         } else {
             badgeId = 1L;
         }
+
         return codingBadgeRepository.findById(badgeId)
                 .orElseThrow(() -> new NotFoundException("해당하는 코딩뱃지가 존재하지 않습니다."));
     }
 
 
     public UserDTO.UserInfoResponse getUserInfo(User user) {
+
         Integer userExp = user.getExp();
+
         if (userExp != null) {
             CodingBadge newBadge = findBadgeByExp(userExp);
             user.setBadge(newBadge);
@@ -187,6 +191,5 @@ public class UserService {
 
         return userInfoResponse;
     }
-
 
 }

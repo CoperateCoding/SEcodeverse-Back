@@ -5,7 +5,6 @@ import lombok.*;
 
 import java.util.List;
 
-
 public class TestCaseDTO {
     @Getter
     @AllArgsConstructor
@@ -20,6 +19,7 @@ public class TestCaseDTO {
     public static class AddtestCaseRequest{
 
         private String input;
+
         @NotNull(message ="output이 null 이면 안됩니다.")
         private String output;
     }
@@ -37,6 +37,7 @@ public class TestCaseDTO {
             return new TestCaseDTO.SearchListRequest(pk, input, output);
         }
     }
+
     @Getter
     @Setter
     @Builder
@@ -47,6 +48,5 @@ public class TestCaseDTO {
         private String input;
         private String output;
     }
-
 
 }

@@ -23,6 +23,7 @@ public class CTFLeagueService {
 
     private final CTFLeagueRepository ctfLeagueRepository;
 
+
     public void makeLeague(CTFLeagueDTO.AddLeagueRequest addRequest) {
 
         CTFLeague league = CTFLeague.makeCTFLeague(addRequest.getName(), addRequest.getOpenTime(), addRequest.getCloseTime()
@@ -55,8 +56,10 @@ public class CTFLeagueService {
         CTFLeague league = ctfLeagueRepository.findById(leaguePk)
                 .orElseThrow(() -> new NotFoundException("해당하는 리그가 존재하지 않음"));
 
-        league.edit(request.getName(), request.getOpenTime(), request.getCloseTime(), request.getMemberCnt(), request.getNotice(), request.getDescription());
+        league.edit(request.getName(), request.getOpenTime(), request.getCloseTime()
+                , request.getMemberCnt(), request.getNotice(), request.getDescription());
 
+        ctfLeagueRepository.save(league);
     }
 
     public CTFLeagueDTO.StatusResponse getCTFLeagueStatus(Long leaguePk) {
@@ -70,6 +73,7 @@ public class CTFLeagueService {
                 .build();
 
         ctfLeagueRepository.save(league);
+
         return statusResponse;
     }
 
@@ -79,7 +83,6 @@ public class CTFLeagueService {
                 .orElseThrow(() -> new NotFoundException("해당하는 리그가 존재하지 않음"));
 
         ctfLeagueRepository.delete(league);
-
     }
 
     private Pageable makePageable(Integer page, Integer pageSize) throws RuntimeException {
@@ -93,7 +96,6 @@ public class CTFLeagueService {
 
         return PageRequest.of(page-1, pageSize, sort);
     }
-
 
     public Page<CTFLeagueDTO.BriefResponse> getCTFLeagueAll(int page, int pageSize) throws RuntimeException {
         Pageable pageable = makePageable(page, pageSize);
@@ -120,8 +122,8 @@ public class CTFLeagueService {
         if (ongoingLeagues.isEmpty()) {
             throw new RuntimeException("현재 진행 중인 리그가 없습니다.");
         }
+
         // 여러 개의 진행 중인 리그 중 첫 번째 리그의 pk를 반환
         return ongoingLeagues.get(0).getPk();
-
     }
 }

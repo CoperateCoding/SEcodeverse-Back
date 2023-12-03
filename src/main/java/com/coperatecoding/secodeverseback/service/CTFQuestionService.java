@@ -30,6 +30,7 @@ public class CTFQuestionService {
     private final CTFTeamRepository ctfTeamRepository;
     private final CTFTeamQuestionRepository ctfTeamQuestionRepository;
 
+
     // ctf 문제 등록
     public void makeQuestion(CTFQuestionDTO.PostRequest request) {
 
@@ -39,24 +40,14 @@ public class CTFQuestionService {
         CTFCategory ctfCategory = ctfCategoryRepository.findById(request.getCategoryPk())
                 .orElseThrow(() -> new NotFoundException("해당하는 카테고리가 존재하지 않습니다."));
 
-        CTFQuestion ctfQuestion = CTFQuestion.builder()
-                .league(ctfLeague)
-                .category(ctfCategory)
-                .type(request.getCtfQuestionType())
-                .name(request.getName())
-                .score(request.getScore())
-                .description(request.getDescription())
-                .answer(request.getAnswer())
-                .build();
+        CTFQuestion ctfQuestion = CTFQuestion.makeCTFQuestion(ctfLeague, ctfCategory, request.getCtfQuestionType(), request.getName()
+                        ,request.getScore(), request.getDescription(), request.getAnswer());
 
         ctfQuestionRepository.save(ctfQuestion);
 
         if (request.getImgUrlList() != null) {
             for (String imgUrl : request.getImgUrlList()) {
-                CTFImage ctfImage = CTFImage.builder()
-                        .ctfQuestion(ctfQuestion)
-                        .imgUrl(imgUrl)
-                        .build();
+                CTFImage ctfImage = CTFImage.makeCTFImage(ctfQuestion, imgUrl);
                 ctfImageRepository.save(ctfImage);
             }
         }
@@ -221,10 +212,7 @@ public class CTFQuestionService {
 
             // 새로운 이미지 리스트를 추가
             for (String newImgUrl : request.getImgUrlList()) {
-                CTFImage image = CTFImage.builder()
-                        .ctfQuestion(question)
-                        .imgUrl(newImgUrl)
-                        .build();
+                CTFImage image = CTFImage.makeCTFImage(question, newImgUrl);
                 ctfImageRepository.save(image);
             }
         } else {

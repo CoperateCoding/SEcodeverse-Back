@@ -7,7 +7,6 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Builder
 @Table(name = "ctf_image")
 public class CTFImage {
     @Id
@@ -20,6 +19,13 @@ public class CTFImage {
 
     @JoinColumn(name = "img_url")
     private String imgUrl;
+
+    public static CTFImage makeCTFImage(CTFQuestion ctfQuestion, String imgUrl) {
+        CTFImage ctfImage = new CTFImage();
+        ctfImage.ctfQuestion = ctfQuestion;
+        ctfImage.imgUrl = imgUrl;
+        return ctfImage;
+    }
 
     public void updateImgUrl(String s) {
         this.imgUrl = imgUrl;

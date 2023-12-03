@@ -27,5 +27,4 @@ public class CTFTeamQuestionDTO {
         private int score;
     }
 
-
 }

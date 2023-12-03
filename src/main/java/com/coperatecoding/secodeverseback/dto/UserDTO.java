@@ -8,7 +8,6 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-
 public class UserDTO {
 
     @Getter
@@ -16,6 +15,7 @@ public class UserDTO {
     @NoArgsConstructor
     @Builder
     public static class RegisterRequest {
+
         @NotNull
         @Size(min = 4, max = 12, message ="아이디는 4에서 12자 사이 입니다.")
         @Pattern(regexp = "^[a-zA-Z0-9]*[a-zA-Z]+[a-zA-Z0-9]*$", message = "아이디 형식이 일치하지 않습니다.")
@@ -46,7 +46,6 @@ public class UserDTO {
         private String nickname;
     }
 
-
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
@@ -55,7 +54,6 @@ public class UserDTO {
         private String id;
         @NotNull
         private String pw;
-
     }
 
     @Getter
@@ -68,7 +66,6 @@ public class UserDTO {
         private RoleType roleType;
         private String nickName;
     }
-
 
     @Getter
     @NoArgsConstructor
@@ -92,40 +89,11 @@ public class UserDTO {
     @AllArgsConstructor
     @Builder
     public static class UserInfoResponse {
-
         private String nickName;
         private String badgeName;
         private Integer exp;
         private String imgUrl;
-
     }
-
-//    @Getter
-//    @Builder
-//    @AllArgsConstructor(access = AccessLevel.PROTECTED)
-//    @NoArgsConstructor(access = AccessLevel.PROTECTED)
-//    public static class LoginResponse {
-//        private String token;
-//        private UserInfo user;
-//
-//        public LoginResponse(String token, String id, String username, String role) {
-//            this.token = token;
-//            this.user = new UserInfo(id, username, role);
-//        }
-//
-//        @Data
-//        @AllArgsConstructor
-//        private class UserInfo {
-//            private String id;
-//            private String username;
-//            private String role;
-//
-//        }
-//
-//        public String getId() {
-//            return this.user.id;
-//        }
-//    }
 
 
 }
