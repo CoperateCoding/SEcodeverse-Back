@@ -43,6 +43,8 @@ public class CodeService {
                 .build();
         return response;
     }
+
+
     public CodeDTO.PageableCodeListResponse getPagingCodes(CodeDTO.PageableCodeListRequest request){
         CodeDTO.PageableCodeListResponse response =
                 CodeDTO.PageableCodeListResponse.builder()
@@ -99,7 +101,10 @@ public class CodeService {
         return codeDTOS;
     }
 
-
+    public List<Code> userAllCodes (User user){
+        List<Code>allCodes = codeRepository.findByUser(user);
+        return allCodes;
+    }
     public List<CodeDTO.PageableCodeListResponse> getUserCodes(User user,int page,int pageSize){
         List<Code>allCodes = codeRepository.findByUser(user);
         Pageable pageable =  PageRequest.of(page-1, pageSize);
