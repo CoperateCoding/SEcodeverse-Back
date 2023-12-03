@@ -42,8 +42,6 @@ import java.net.http.HttpResponse;
 public class QuestionController {
     private final QuestionService questionService;
     private final TestCaseService testCaseService;
-    private final LevelService levelService;
-    private final QuestionCategoryService questionCategoryService;
     private final QuestionImgService questionImgService;
     private final CodeService  codeService;
 

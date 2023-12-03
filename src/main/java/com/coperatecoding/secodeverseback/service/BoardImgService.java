@@ -22,7 +22,10 @@ public class BoardImgService {
     private final BoardRepository boardRepository;
     private final BoardImageRepository boardImageRepository;
 
-    public BoardImage makeBoardImage(Long boardPk, BoardImgDTO.AddBoardImgRequest addBoardImgRequest) throws RuntimeException {
+
+    public BoardImage makeBoardImage(Long boardPk, BoardImgDTO.AddBoardImgRequest addBoardImgRequest
+    ) throws RuntimeException {
+
         Board board = boardRepository.findById(boardPk)
                 .orElseThrow(() -> new NotFoundException("해당하는 게시글이 존재하지 않음"));
 
@@ -32,6 +35,7 @@ public class BoardImgService {
     }
 
     public BoardImgDTO.SearchResponse getBoardImg(BoardImgDTO.SearchRequest request) {
+
         BoardImgDTO.SearchResponse response = BoardImgDTO.SearchResponse.makeResponse(
                 request.getPk(),
                 request.getImgUrl());
@@ -40,6 +44,7 @@ public class BoardImgService {
     }
 
     public List<BoardImgDTO.SearchResponse> getBoardImg(Long boardPk) {
+
         Board board = boardRepository.findById(boardPk)
                 .orElseThrow(() -> new NotFoundException("해당하는 게시글이 존재하지 않음"));
 
@@ -63,21 +68,24 @@ public class BoardImgService {
         return boardImgDTOS;
     }
 
-
-
     public void delete(Long boardImgPk) throws RuntimeException {
+
         BoardImage boardImage = boardImageRepository.findById(boardImgPk)
                 .orElseThrow(() -> new NotFoundException("해당하는 게시글 이미지가 존재하지 않음"));
 
         boardImageRepository.delete(boardImage);
     }
 
-
-    public BoardImage editBoardImg(Long imgPk, BoardImgDTO.AddBoardImgRequest addBoardImgRequest) throws RuntimeException {
+    public BoardImage editBoardImg(Long imgPk, BoardImgDTO.AddBoardImgRequest addBoardImgRequest
+    ) throws RuntimeException {
 
         BoardImage boardImage = boardImageRepository.findById(imgPk)
                 .orElseThrow(() -> new NotFoundException("해당하는 게시글 이미지가 존재하지 않음"));
         boardImage.edit(addBoardImgRequest.getImgUrl());
+
+        boardImageRepository.save(boardImage);
+
         return boardImage;
     }
+
 }

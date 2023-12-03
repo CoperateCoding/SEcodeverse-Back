@@ -127,6 +127,4 @@ public class QuestionDTO {
         private List<QuestionDTO.SearchQuestionResponse> list;
     }
 
-
-
 }

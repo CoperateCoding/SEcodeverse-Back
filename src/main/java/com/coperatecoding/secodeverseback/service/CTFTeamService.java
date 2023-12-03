@@ -34,6 +34,7 @@ public class CTFTeamService {
 
     private final CTFTeamQuestionRepository ctfTeamQuestionRepository;
 
+
     public void makeTeam(User user, CTFTeamDTO.AddRequest addRequest) {
 
         if(user.getTeam() != null)
@@ -49,11 +50,9 @@ public class CTFTeamService {
             ctfTeamRepository.save(team);
 
             user.setTeam(team); // 유저도 자동 팀 참가
+
             userRepository.save(user);
-
         }
-
-
     }
 
     public CTFTeamDTO.DetailResponse getDetailTeam(User user
@@ -61,6 +60,7 @@ public class CTFTeamService {
 
         CTFTeam ctfTeam = ctfTeamRepository.findByUsers(user)
                 .orElseThrow(() -> new NotFoundException("ctf 팀이 존재하지 않습니다."));
+
         // 팀이 없는 유저는 확인 불가능
         if(user.getRoleType() != RoleType.ADMIN && user.getTeam() == null)
             throw new ForbiddenException("권한이 없는 사용자");
@@ -89,8 +89,9 @@ public class CTFTeamService {
         return PageRequest.of(pageNumber, size, sort);
     }
 
-    public Page<CTFTeamDTO.SearchResponse> getSearchTeam(User user, Long leaguePk, int page, int pageSize, CTFTeamSortType sort)
-    throws CategoryNotFoundException {
+    public Page<CTFTeamDTO.SearchResponse> getSearchTeam(User user, Long leaguePk, int page, int pageSize, CTFTeamSortType sort
+    ) throws CategoryNotFoundException {
+
         Pageable pageable = makePageable(sort, page, pageSize);
 
         if(user.getRoleType() == RoleType.ADMIN)
@@ -121,11 +122,10 @@ public class CTFTeamService {
                 .collect(Collectors.toList());
 
         return new CTFTeamDTO.Top10ListResponse(responses.size(), responses);
-
-
     }
 
     public void joinTeam(User user, CTFTeamDTO.JoinRequest request) {
+
         CTFTeam ctfTeam = ctfTeamRepository.findByName(request.getTeamName())
                 .orElseThrow(() -> new NotFoundException("해당하는 ctf 팀이 존재하지 않습니다."));
 
@@ -137,11 +137,11 @@ public class CTFTeamService {
         else {
             throw new ForbiddenException("해당 유저는 ctf 팀이 존재합니다.");
         }
-
     }
 
     @Transactional(readOnly = true)
     public Boolean isExistTeamName(String teamName) {
+
         CTFTeam team = ctfTeamRepository.findByName(teamName)
                 .orElseGet(() -> null);
 
@@ -149,6 +149,7 @@ public class CTFTeamService {
     }
 
     public CTFTeamDTO.TeamRankListResponse getTeamRankList(Long leaguePk) {
+
         CTFLeague ctfLeague = ctfLeagueRepository.findById(leaguePk)
                 .orElseThrow(() -> new NotFoundException("해당하는 리그가 존재하지 않습니다."));
 
@@ -169,10 +170,10 @@ public class CTFTeamService {
         }
 
         return new CTFTeamDTO.TeamRankListResponse(responses.size(), responses);
-
     }
 
     public CTFTeamQuestionDTO.TeamScoreByCategoryListResponse getMyTeamScoresByCategory(User user) {
+
         CTFTeam ctfTeam = user.getTeam();
 
         List<Object[]> scoresByCategory = ctfTeamQuestionRepository.findTotalScoreByCategoryForTeam(ctfTeam);
@@ -182,10 +183,10 @@ public class CTFTeamService {
                 .collect(Collectors.toList());
 
         return new CTFTeamQuestionDTO.TeamScoreByCategoryListResponse(list.size(), list);
-
     }
 
     public boolean isExistCTFTeam(User user, Long leaguePk) {
+
         boolean isExist = false;
 
         CTFLeague league = ctfLeagueRepository.findById(leaguePk)

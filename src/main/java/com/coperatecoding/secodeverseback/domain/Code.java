@@ -69,7 +69,6 @@ public class                                                                    
         code.memory = memory;
         code.accuracy = accuracy;
         return code;
-
     }
 
 }

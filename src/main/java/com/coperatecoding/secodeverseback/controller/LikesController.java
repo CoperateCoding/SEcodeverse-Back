@@ -1,12 +1,9 @@
 package com.coperatecoding.secodeverseback.controller;
 
 import com.coperatecoding.secodeverseback.domain.User;
-import com.coperatecoding.secodeverseback.dto.LikesDTO;
-import com.coperatecoding.secodeverseback.service.BoardService;
 import com.coperatecoding.secodeverseback.service.LikeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 public class LikesController {
     private final LikeService likeService;
 
-
     @Operation(summary = "좋아요", description = """
     [로그인 필요] 좋아요<br>
     200: 성공<br>
@@ -31,7 +27,9 @@ public class LikesController {
     """)
     @PostMapping("/{boardPk}")
     public ResponseEntity makeLikes(@AuthenticationPrincipal User user, @PathVariable Long boardPk){
+
         likeService.makeLikes(user, boardPk);
+
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -43,7 +41,9 @@ public class LikesController {
     """)
     @DeleteMapping("/{boardPk}")
     public ResponseEntity deleteLikes(@AuthenticationPrincipal User user, @PathVariable  Long boardPk){
+
         likeService.deleteLikes(user, boardPk);
+
         return ResponseEntity.ok().build();
     }
 
@@ -56,7 +56,9 @@ public class LikesController {
     """)
     @GetMapping("/{boardPk}")
     public ResponseEntity checkLikes(@AuthenticationPrincipal User user, @PathVariable  Long boardPk){
+
         boolean check = likeService.checkLikes(user, boardPk);
+
         return ResponseEntity.ok(check);
     }
 

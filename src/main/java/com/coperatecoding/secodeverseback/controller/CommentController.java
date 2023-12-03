@@ -2,6 +2,7 @@ package com.coperatecoding.secodeverseback.controller;
 
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.dto.CommentDTO;
+import com.coperatecoding.secodeverseback.exception.ForbiddenException;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,8 +32,12 @@ public class CommentController {
     403: 권한없음
     """)
     @PostMapping("")
-    public ResponseEntity makeComment(@AuthenticationPrincipal User user, @RequestBody @Valid CommentDTO.AddCommentRequest addCommentRequest){
+    public ResponseEntity makeComment(@AuthenticationPrincipal User user
+            , @RequestBody @Valid CommentDTO.AddCommentRequest addCommentRequest
+    ) throws ForbiddenException {
+
         commentService.makeComment(user,addCommentRequest);
+
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -42,7 +47,8 @@ public class CommentController {
     403: 권한없음
     """)
     @DeleteMapping("/{commentPk}")
-    public ResponseEntity deleteComment(@AuthenticationPrincipal User user, @PathVariable Long commentPk){
+    public ResponseEntity deleteComment(@AuthenticationPrincipal User user, @PathVariable Long commentPk
+    ) throws ForbiddenException {
         try {
             commentService.deleteComment(user, commentPk);
             return ResponseEntity.noContent().build();
@@ -57,19 +63,21 @@ public class CommentController {
     403: 권한없음
     """)
     @PatchMapping("/{commentPk}")
-    public ResponseEntity modifyComment(@AuthenticationPrincipal User user, @PathVariable Long commentPk, @RequestBody CommentDTO.modifyRequest modifyRequest){
+    public ResponseEntity modifyComment(@AuthenticationPrincipal User user, @PathVariable Long commentPk
+            , @RequestBody CommentDTO.modifyRequest modifyRequest
+    ) throws ForbiddenException {
+
         commentService.modifyComment(user, commentPk, modifyRequest);
+
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @Operation(summary = "댓글 조회")
     @GetMapping("/{boardPk}")
-    public ResponseEntity <List<CommentDTO.SearchResponse>> getComments(@PathVariable Long boardPk){
+    public ResponseEntity <List<CommentDTO.SearchResponse>> getComments(@PathVariable Long boardPk
+    ) throws NotFoundException {
+
         List<CommentDTO.SearchResponse> comments = commentService.getComments(boardPk);
-        //
-//        if (comments.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("댓글이 없음");
-//        }
 
         return ResponseEntity.ok(comments);
     }

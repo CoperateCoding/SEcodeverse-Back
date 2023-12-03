@@ -1,6 +1,5 @@
 package com.coperatecoding.secodeverseback.dto.ctf;
 
-import com.coperatecoding.secodeverseback.domain.ctf.CTFCategory;
 import com.coperatecoding.secodeverseback.domain.ctf.CTFQuestionType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

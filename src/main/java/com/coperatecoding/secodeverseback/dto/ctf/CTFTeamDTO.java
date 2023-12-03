@@ -97,7 +97,6 @@ public class CTFTeamDTO {
         private List<CTFTeamDTO.TeamRankResponse> list;
     }
 
-
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor

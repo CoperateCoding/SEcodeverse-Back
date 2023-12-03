@@ -24,15 +24,19 @@ public class TestCaseService {
     private final QuestionRepository questionRepository;
 
 
-    public TestCase makeTestCase(Long questionPk,TestCaseDTO.AddtestCaseRequest addTestCaseRequest) throws RuntimeException{
+    public TestCase makeTestCase(Long questionPk,TestCaseDTO.AddtestCaseRequest addTestCaseRequest
+    ) throws RuntimeException {
+
         Question question = questionRepository.findById(questionPk)
                 .orElseThrow(() -> new NotFoundException("해당하는 문제가 존재하지 않음"));
 
         TestCase testCase = TestCase.makeTestCase(question, addTestCaseRequest.getInput(), addTestCaseRequest.getOutput());
+
         return testCaseRepository.save(testCase);
     }
 
-    public List<TestCaseDTO.SearchResponse> getTestCaseList(Long questionPk){
+    public List<TestCaseDTO.SearchResponse> getTestCaseList(Long questionPk) {
+
         Question question = questionRepository.findById(questionPk)
                 .orElseThrow(() -> new NotFoundException("해당하는 문제가 존재하지 않음"));
 
@@ -54,12 +58,13 @@ public class TestCaseService {
                     .output(response.getOutput())
                    .build();
             testCaseDTOS.add(testCaseDTO);
-
         }
+
         return testCaseDTOS;
     }
 
-    public TestCaseDTO.SearchResponse getTestCase(TestCaseDTO.SearchListRequest request){
+    public TestCaseDTO.SearchResponse getTestCase(TestCaseDTO.SearchListRequest request) {
+
         TestCaseDTO.SearchResponse response =  TestCaseDTO.SearchResponse.builder()
                 .pk(request.getPk())
                 .input(request.getInput())
@@ -69,17 +74,19 @@ public class TestCaseService {
         return response;
     }
 
-    public TestCase modifyTestCase(Long testCasePK, TestCaseDTO.AddtestCaseRequest addQuestionRequest) throws RuntimeException{
+    public TestCase modifyTestCase(Long testCasePK, TestCaseDTO.AddtestCaseRequest addQuestionRequest
+    ) throws RuntimeException{
+
        TestCase testCase = testCaseRepository.findById(testCasePK)
                .orElseThrow(() -> new NotFoundException("해당하는 테스트케이스가 존재하지 않음"));
 
         testCase.updateTestCase(addQuestionRequest.getInput(), addQuestionRequest.getOutput());
 
-
         return testCase;
     }
 
-    public void delete(Long testCasePK) throws RuntimeException{
+    public void delete(Long testCasePK) throws RuntimeException {
+
         TestCase testCase = testCaseRepository.findById(testCasePK)
                 .orElseThrow(() -> new NotFoundException("해당하는 테스트케이스가 존재하지 않음"));
 

@@ -2,6 +2,7 @@ package com.coperatecoding.secodeverseback.controller;
 
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.domain.ctf.CTFCategory;
+import com.coperatecoding.secodeverseback.exception.ForbiddenException;
 import com.coperatecoding.secodeverseback.service.CTFCategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,20 +28,19 @@ public class CTFCategoryController {
 
     @Operation(summary = "ctf 카테고리 조회")
     @GetMapping("/all")
-    public ResponseEntity<List<CTFCategory>> getCTFCategoryAll(@AuthenticationPrincipal User user)
-            throws RuntimeException {
+    public ResponseEntity<List<CTFCategory>> getCTFCategoryAll(@AuthenticationPrincipal User user
+    ) throws ForbiddenException {
 
         List<CTFCategory> ctfCategoryList = ctfCategoryService.getCTFCategoryAll();
 
         return ResponseEntity.ok(ctfCategoryList);
-
     }
 
     @Operation(summary = "ctf 문제 카테고리 조회")
     @GetMapping("/{categoryName}")
     public ResponseEntity<Long> getCategoryPk(@AuthenticationPrincipal User user
-            , @PathVariable String categoryName)
-        throws RuntimeException {
+            , @PathVariable String categoryName
+    ) throws ForbiddenException {
 
         Long categoryPk = ctfCategoryService.getCategoryPk(categoryName);
 
