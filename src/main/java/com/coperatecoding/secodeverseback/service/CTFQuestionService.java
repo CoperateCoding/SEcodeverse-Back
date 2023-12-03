@@ -110,7 +110,7 @@ public class CTFQuestionService {
                     // user의 팀이 해당 문제를 맞췄는지
                     boolean isExist = false;
                     if (finalCtfTeam != null) {
-                        ctfTeamQuestionRepository.findByCtfQuestionAndCtfTeam(ctfQuestion, finalCtfTeam).isPresent();
+                        isExist = ctfTeamQuestionRepository.findByCtfQuestionAndCtfTeam(ctfQuestion, finalCtfTeam).isPresent();
                     }
                     return CTFQuestionDTO.BriefResponse.builder()
                                     .questionPk(ctfQuestion.getPk())

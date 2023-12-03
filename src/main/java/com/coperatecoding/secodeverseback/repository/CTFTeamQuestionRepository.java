@@ -21,4 +21,5 @@ public interface CTFTeamQuestionRepository extends JpaRepository<CTFTeamQuestion
     List<Object[]> findTotalScoreByCategoryForTeam(@Param("team") CTFTeam team);
 
     Optional<CTFTeamQuestion> findByCtfQuestionAndCtfTeam(CTFQuestion ctfQuestion, CTFTeam ctfTeam);
+
 }
