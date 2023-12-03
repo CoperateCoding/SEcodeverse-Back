@@ -1,5 +1,6 @@
 package com.coperatecoding.secodeverseback.service;
 
+import com.coperatecoding.secodeverseback.domain.RoleType;
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.domain.ctf.*;
 import com.coperatecoding.secodeverseback.dto.ctf.CTFQuestionDTO;
@@ -80,34 +81,52 @@ public class CTFQuestionService {
 
 
     public Page<CTFQuestionDTO.BriefResponse> getCTFQuestionAll(
-            User user, Long categoryPk, int page, int pageSize, CTFQuestionSortType sort
+            User user, Long leaguePk, Long categoryPk, int page, int pageSize, CTFQuestionSortType sort
     ) throws RuntimeException {
 
         Pageable pageable = makePageable(sort, page, pageSize);
         Page<CTFQuestion> list;
 
-        if(categoryPk != null)
-        {
-            CTFCategory ctfCategory = ctfCategoryRepository.findById(categoryPk)
-                    .orElseThrow(() -> new CategoryNotFoundException("해당하는 카테고리가 없습니다"));
-            list = ctfQuestionRepository.findByCategory(ctfCategory, pageable);
+        if(leaguePk != null) {
+            CTFLeague ctfLeague = ctfLeagueRepository.findById(leaguePk)
+                    .orElseThrow(() -> new NotFoundException("해당하는 ctf 리그가 없습니다."));
+            if(categoryPk != null) {
+                CTFCategory ctfCategory = ctfCategoryRepository.findById(categoryPk)
+                        .orElseThrow(() -> new CategoryNotFoundException("해당하는 ctf 카테고리가 없습니다."));
+                list = ctfQuestionRepository.findByLeagueAndCategory(ctfLeague, ctfCategory, pageable);
+            } else {
+                list = ctfQuestionRepository.findByLeague(ctfLeague, pageable);
+            }
         }
-        else {
+        else if(categoryPk != null) { // leaguePk가 null일때
+            CTFCategory ctfCategory = ctfCategoryRepository.findById(categoryPk)
+                    .orElseThrow(() -> new CategoryNotFoundException("해당하는 ctf 카테고리가 없습니다."));
+            list = ctfQuestionRepository.findByCategory(ctfCategory, pageable);
+        } 
+        else { // leaguePk와 categoryPk가 모두 null일 때
             list = ctfQuestionRepository.findAll(pageable);
         }
 
-        CTFTeam ctfTeam = ctfTeamRepository.findByUsers(user)
-                .orElseThrow(() -> new NotFoundException("해당하는 ctf 팀이 존재하지 않습니다."));
+        CTFTeam ctfTeam = null;
+        if (!user.getRoleType().equals(RoleType.ADMIN)) {
+            ctfTeam = ctfTeamRepository.findByUsers(user)
+                    .orElseThrow(() -> new NotFoundException("해당하는 ctf 팀이 존재하지 않습니다."));
+        }
 
+        CTFTeam finalCtfTeam = ctfTeam;
         List<CTFQuestionDTO.BriefResponse> briefResponseList = list.getContent().stream()
                 .map(ctfQuestion -> {
                     // user의 팀이 해당 문제를 맞췄는지
-                    boolean isExist = ctfTeamQuestionRepository.findByCtfQuestionAndCtfTeam(ctfQuestion, ctfTeam).isPresent();
+                    boolean isExist = false;
+                    if (finalCtfTeam != null) {
+                        ctfTeamQuestionRepository.findByCtfQuestionAndCtfTeam(ctfQuestion, finalCtfTeam).isPresent();
+                    }
                     return CTFQuestionDTO.BriefResponse.builder()
                                     .questionPk(ctfQuestion.getPk())
                                     .questionName(ctfQuestion.getName())
                                     .score(ctfQuestion.getScore())
                                     .categoryName(ctfQuestion.getCategory().getName())
+                                    .questionType(ctfQuestion.getType())
                                     .isSolved(isExist)
                                     .build();
                         }

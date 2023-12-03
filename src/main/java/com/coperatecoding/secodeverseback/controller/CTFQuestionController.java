@@ -44,13 +44,14 @@ public class CTFQuestionController {
     @GetMapping("/ctf/question/")
     public ResponseEntity<CTFQuestionDTO.AllListResponse> getCTFQuestionList(
             @AuthenticationPrincipal User user,
+            @RequestParam(required = false) Long leaguePk,
             @RequestParam(required = false) Long categoryPk,
             @RequestParam(required = false, defaultValue = "10") @Min(value = 2, message = "page 크기는 1보다 커야합니다") int pageSize,
             @RequestParam(required = false, defaultValue = "1") @Min(value = 1, message = "page는 0보다 커야합니다") int page,
             @RequestParam(required = false, defaultValue = "HIGH") CTFQuestionSortType sort
     ) throws RuntimeException {
 
-        Page<CTFQuestionDTO.BriefResponse> briefResponses = ctfQuestionService.getCTFQuestionAll(user, categoryPk, page, pageSize, sort);
+        Page<CTFQuestionDTO.BriefResponse> briefResponses = ctfQuestionService.getCTFQuestionAll(user, leaguePk, categoryPk, page, pageSize, sort);
 
         CTFQuestionDTO.AllListResponse response = CTFQuestionDTO.AllListResponse.builder()
                 .cnt((int) briefResponses.getTotalElements())
