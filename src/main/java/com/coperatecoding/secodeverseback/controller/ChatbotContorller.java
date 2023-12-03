@@ -1,23 +1,16 @@
 package com.coperatecoding.secodeverseback.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.Map;
-import org.springframework.http.*;
-import org.springframework.web.client.RestTemplate;
 
 @Tag(name = "챗봇", description = "챗봇 관련 API")
 @RequiredArgsConstructor
@@ -28,7 +21,6 @@ public class ChatbotContorller {
 
     @GetMapping("")
     public ResponseEntity chatbot(@RequestParam String input) {
-
 
         String url = "http://127.0.0.1:5000";
         String responseAnser="";

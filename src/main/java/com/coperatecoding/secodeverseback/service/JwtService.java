@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import java.security.Key;
-import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +26,7 @@ public class JwtService {
     public long accessTokenValidTime;
     @Value("${jwt.refreshtoken-validity-in-seconds}")
     public long refreshTokenValidTime;
+
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
@@ -54,6 +54,7 @@ public class JwtService {
     }
 
     public String generateToken(UserDetails userDetails) {
+
         return generateToken(new HashMap<>(), userDetails, accessTokenValidTime * 1000);
     }
 
@@ -75,10 +76,12 @@ public class JwtService {
     }
 
     public String generateAccessToken(UserDetails userDetails) {
+
         return generateToken(new HashMap<>(), userDetails, "access");
     }
 
     public String generateRefreshToken(UserDetails userDetails) {
+
         return generateToken(new HashMap<>(), userDetails, "refresh");
     }
 
@@ -105,10 +108,12 @@ public class JwtService {
 
 
     public Date extractExpiration(String token) {
+
         return extractClaim(token, Claims::getExpiration);
     }
 
     private Claims extractAllClaims(String token) {
+
         return Jwts
                 .parserBuilder()
                 .setSigningKey(getSignInKey())

@@ -2,18 +2,13 @@ package com.coperatecoding.secodeverseback.controller;
 
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.dto.UserDTO;
-//import com.coperatecoding.secodeverseback.service.JwtService;
 import com.coperatecoding.secodeverseback.exception.UserInfoDuplicatedException;
-import com.coperatecoding.secodeverseback.service.JwtService;
 import com.coperatecoding.secodeverseback.service.UserService;
-import com.nimbusds.openid.connect.sdk.UserInfoResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -30,8 +25,6 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
-//    private final JwtService jwtService;
-
 
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     @Operation(summary = "회원가입", description = """
@@ -96,7 +89,5 @@ public class UserController {
 
         return ResponseEntity.ok(userInfo);
     }
-
-
 
 }

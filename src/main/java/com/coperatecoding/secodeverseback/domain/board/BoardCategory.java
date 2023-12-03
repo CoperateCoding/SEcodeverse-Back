@@ -1,7 +1,5 @@
 package com.coperatecoding.secodeverseback.domain.board;
 
-import com.coperatecoding.secodeverseback.domain.User;
-import com.coperatecoding.secodeverseback.domain.ctf.CTFCategory;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

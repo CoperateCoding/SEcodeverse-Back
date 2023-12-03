@@ -29,9 +29,10 @@ import java.util.stream.Collectors;
 @Transactional
 @Service
 public class CodeService {
-    private final CodeRepository codeRepository;
 
+    private final CodeRepository codeRepository;
     private final QuestionRepository questionRepository;
+
 
     public CodeDTO.SearchCodeListResponse getCodes(CodeDTO.SearchCodeListRequest request){
         CodeDTO.SearchCodeListResponse response =

@@ -2,6 +2,7 @@ package com.coperatecoding.secodeverseback.controller;
 
 import com.coperatecoding.secodeverseback.domain.User;
 import com.coperatecoding.secodeverseback.dto.ctf.CTFLeagueDTO;
+import com.coperatecoding.secodeverseback.exception.ForbiddenException;
 import com.coperatecoding.secodeverseback.exception.NotFoundException;
 import com.coperatecoding.secodeverseback.service.CTFLeagueService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,7 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.NoSuchElementException;
 
 @Tag(name = "CTF리그", description = "CTF 리그 관련 API")
 @RequiredArgsConstructor
@@ -27,24 +28,36 @@ public class CTFLeagueController {
 
     @Operation(summary = "ctf 리그 등록")
     @PostMapping("/admin/ctf/league/post")
-    public ResponseEntity makeCTFLeague(@AuthenticationPrincipal User user, @RequestBody CTFLeagueDTO.AddLeagueRequest addLeagueRequest
-    ) throws RuntimeException {
-
-        ctfLeagueService.makeLeague(addLeagueRequest);
-
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity makeCTFLeague(@AuthenticationPrincipal User user,
+                                        @RequestBody CTFLeagueDTO.AddLeagueRequest addLeagueRequest
+    ) {
+        try {
+            ctfLeagueService.makeLeague(addLeagueRequest);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (ForbiddenException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("관리자 권한이 없습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
+        }
     }
 
     @Operation(summary = "현재 진행중인 리그 조회")
     @GetMapping("/ctf/league/current")
-    public ResponseEntity<Long> getOngoingLeague() throws RuntimeException {
-        Long leaguePk = ctfLeagueService.getOngoingLeague();
-        return ResponseEntity.ok(leaguePk);
+    public ResponseEntity<Long> getOngoingLeague() {
+        try {
+            Long leaguePk = ctfLeagueService.getOngoingLeague();
+            return ResponseEntity.ok(leaguePk);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @Operation(summary = "ctf 리그 상세 조회")
     @GetMapping("/ctf/league/{leaguePk}")
-    public ResponseEntity<CTFLeagueDTO.CTFLeagueDetailResponse> getCtfLeague(@PathVariable Long leaguePk) throws RuntimeException {
+    public ResponseEntity<CTFLeagueDTO.CTFLeagueDetailResponse> getCtfLeague(@PathVariable Long leaguePk
+    ) throws NoSuchElementException {
 
         CTFLeagueDTO.CTFLeagueDetailResponse league = ctfLeagueService.getDetailLeague(leaguePk);
 
@@ -68,13 +81,13 @@ public class CTFLeagueController {
                 .build();
 
         return ResponseEntity.ok(response);
-
-
     }
 
     @Operation(summary = "ctf 리그 수정")
     @PatchMapping("/admin/ctf/league/{leaguePk}")
-    public ResponseEntity editCTFLeague(@AuthenticationPrincipal User user, @PathVariable Long leaguePk, @RequestBody CTFLeagueDTO.EditRequest editRequest) {
+    public ResponseEntity editCTFLeague(@AuthenticationPrincipal User user, @PathVariable Long leaguePk,
+                                        @RequestBody CTFLeagueDTO.EditRequest editRequest
+    ) throws ForbiddenException, NoSuchElementException {
 
         ctfLeagueService.editCTFLeague(leaguePk, editRequest);
 
@@ -83,7 +96,8 @@ public class CTFLeagueController {
 
     @Operation(summary = "ctf 리그 현재 상태 받아오기")
     @GetMapping("/ctf/league/{leaguePk}/status")
-    public ResponseEntity<CTFLeagueDTO.StatusResponse> getCTFLeagueStatus(@PathVariable Long leaguePk) {
+    public ResponseEntity<CTFLeagueDTO.StatusResponse> getCTFLeagueStatus(@PathVariable Long leaguePk
+    ) throws NoSuchElementException {
 
         CTFLeagueDTO.StatusResponse  ctfLeagueStatus = ctfLeagueService.getCTFLeagueStatus(leaguePk);
 
@@ -92,7 +106,8 @@ public class CTFLeagueController {
 
     @Operation(summary = "ctf 리그 삭제")
     @DeleteMapping("/admin/ctf/league/{leaguePk}")
-    public ResponseEntity deleteCTFLeague(@AuthenticationPrincipal User user, @RequestBody @PathVariable Long leaguePk) {
+    public ResponseEntity deleteCTFLeague(@AuthenticationPrincipal User user, @RequestBody @PathVariable Long leaguePk
+    ) throws ForbiddenException, NoSuchElementException {
         try {
             ctfLeagueService.deleteCTFLeague(leaguePk);
             return ResponseEntity.noContent().build();
@@ -100,9 +115,5 @@ public class CTFLeagueController {
             return ResponseEntity.notFound().build();
         }
     }
-
-
-
-
 
 }

@@ -9,8 +9,6 @@ import java.time.LocalDateTime;
 
 public class CommentDTO {
 
-
-
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
@@ -21,7 +19,6 @@ public class CommentDTO {
 
         @NotNull(message = "댓글 내용이 null이면 안됩니다.")
         private String content;
-
     }
 
     @Getter
@@ -34,11 +31,8 @@ public class CommentDTO {
         private String content;
         @JsonIgnore
         private User user;
-
-        public static SearchListRequest makeRequest(Long pk,LocalDateTime createAt, String content, User user) {
-            return new SearchListRequest(pk, createAt,content,user);
-        }
     }
+
     @Getter
     @Setter
     @Builder
@@ -51,12 +45,12 @@ public class CommentDTO {
         private String nickname;
 
     }
+
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class modifyRequest{
-        private String content;}
-
-
+        private String content;
+    }
 
 }

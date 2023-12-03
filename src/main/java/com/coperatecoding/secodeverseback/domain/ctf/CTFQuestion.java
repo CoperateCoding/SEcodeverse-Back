@@ -11,7 +11,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Builder
 @Table(name = "ctf_question")
 public class CTFQuestion {
 
@@ -46,6 +45,19 @@ public class CTFQuestion {
 
     @OneToMany(mappedBy = "ctfQuestion", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<CTFImage> ctfImages = new ArrayList<>();
+
+    public static CTFQuestion makeCTFQuestion(CTFLeague ctfLeague, CTFCategory ctfCategory, CTFQuestionType ctfQuestionType
+            , String name, Integer score, String description, String answer) {
+        CTFQuestion ctfQuestion = new CTFQuestion();
+        ctfQuestion.league = ctfLeague;
+        ctfQuestion.category = ctfCategory;
+        ctfQuestion.type = ctfQuestionType;
+        ctfQuestion.name = name;
+        ctfQuestion.score = score;
+        ctfQuestion.description = description;
+        ctfQuestion.answer = answer;
+        return ctfQuestion;
+    }
 
     public void edit(CTFCategory ctfCategory, CTFQuestionType ctfQuestionType, String name,
                      Integer score, String description, String answer) {

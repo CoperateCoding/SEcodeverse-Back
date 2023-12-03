@@ -45,7 +45,7 @@ public class BoardController {
     @PostMapping("/board/")
     public ResponseEntity makeBoard(@AuthenticationPrincipal User user,
                                     @RequestBody @Valid BoardAndImageDTO.AddBoardAndImageRequest addBoardAndImageRequest
-    ) throws RuntimeException {
+    ) throws ForbiddenException {
         Board board = boardService.makeBoard(user, addBoardAndImageRequest.getBoard());
 
         for (BoardImgDTO.AddBoardImgRequest image : addBoardAndImageRequest.getImgList())
@@ -68,7 +68,7 @@ public class BoardController {
             @RequestParam(required = false, defaultValue = "10") @Min(value = 2, message = "page 크기는 1보다 커야합니다") int pageSize,
             @RequestParam(required = false, defaultValue = "1") @Min(value = 1, message = "page는 0보다 커야합니다") int page,
             @RequestParam(required = false, defaultValue = "RECENT") BoardSortType sort
-    ) throws CategoryNotFoundException {
+    ) throws CategoryNotFoundException, NoSuchElementException {
         Page<BoardDTO.SearchResponse> boardPage = boardService.getBoardList(categoryPk, q, page, pageSize, sort);
 
         BoardDTO.SearchListResponse response = BoardDTO.SearchListResponse.builder()
@@ -193,7 +193,8 @@ public class BoardController {
     public ResponseEntity<BoardDTO.SearchListResponse> getMyBoardList(
             @AuthenticationPrincipal User user,
             @RequestParam(required = false, defaultValue = "1") @Min(value = 1, message = "page는 1보다 커야합니다") int page,
-            @RequestParam(required = false, defaultValue = "10") @Min(value = 1, message = "pageSize는 1보다 커야합니다") int pageSize) {
+            @RequestParam(required = false, defaultValue = "10") @Min(value = 1, message = "pageSize는 1보다 커야합니다") int pageSize
+    ) {
 
         Page<BoardDTO.SearchResponse> boardPage = boardService.getMyBoardList(user, page, pageSize);
 
@@ -204,8 +205,5 @@ public class BoardController {
 
         return ResponseEntity.ok(response);
     }
-
-
-
 
 }

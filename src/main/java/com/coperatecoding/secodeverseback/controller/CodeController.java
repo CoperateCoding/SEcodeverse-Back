@@ -25,12 +25,11 @@ public class CodeController {
     @PostMapping("/{questionPk}")
     public ResponseEntity makeCode(@AuthenticationPrincipal User user, @PathVariable Long questionPk,
                                    @RequestBody @Valid CodeDTO.AddCodeRequest addCodeRequest) {
+
         codeService.makeCode(user,questionPk,addCodeRequest);
-        System.out.println(addCodeRequest.getCodeStatus());
-        System.out.println(addCodeRequest.getCompileTime());
+
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
-
 
     @Operation(summary = "달력 정보 가져오기", description = """
     [로그인 필요]<br>
@@ -43,7 +42,10 @@ public class CodeController {
     public ResponseEntity<CodeDTO.MyTrueQuestionResponseList> getCalendar(
             @AuthenticationPrincipal User user
     ) throws RuntimeException {
+
         CodeDTO.MyTrueQuestionResponseList response = codeService.getCalendar(user);
+
         return ResponseEntity.ok(response);
     }
+
 }
