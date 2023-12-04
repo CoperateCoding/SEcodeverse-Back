@@ -1,5 +1,6 @@
 package com.coperatecoding.secodeverseback.controller;
 
+import com.amazonaws.SdkClientException;
 import com.coperatecoding.secodeverseback.dto.ImageNameDTO;
 import com.coperatecoding.secodeverseback.service.S3Service;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -8,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +31,16 @@ public class S3Controller {
         map.put("presigned_url", preSignedUrl);
 
         return ResponseEntity.ok(map);
+    }
+
+    @DeleteMapping("/{fileName}")
+    public ResponseEntity deleteFile(@PathVariable String fileName) throws IOException {
+        try {
+            s3Service.fileDelete(fileName);
+            return ResponseEntity.ok().build();
+        } catch (SdkClientException e) {
+            throw new IOException("Error deleting file from S3", e);
+        }
     }
 
 }
