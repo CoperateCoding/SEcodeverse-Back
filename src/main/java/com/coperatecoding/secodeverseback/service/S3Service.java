@@ -2,8 +2,11 @@ package com.coperatecoding.secodeverseback.service;
 
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.Headers;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +23,12 @@ import java.util.UUID;
 public class S3Service {
 
     private final AmazonS3 amazonS3;
+    private final AmazonS3Client amazonS3Client;
     @Value("${cloud.aws.credentials.bucket-name}")
     public String bucketName;
+
+    @Value("${cloud.aws.region.static}")
+    private String region;
 
     //Pre-Signed URL 받아옴
     public String getPreSignedUrl(String prefix, String fileName) {
@@ -60,4 +67,26 @@ public class S3Service {
     private String onlyOneFileName(String filename){
         return UUID.randomUUID().toString()+filename;
     }
+
+    // 이미지 수정으로 인해 기존 이미지 삭제 메소드
+    public void deleteImage(String fileUrl) {
+        String splitStr = ".com/";
+        String fileName = fileUrl.substring(fileUrl.lastIndexOf(splitStr) + splitStr.length());
+
+        amazonS3Client.deleteObject(new DeleteObjectRequest(bucketName, fileName));
+    }
+
+    public void fileDelete(String fileUrl) {
+
+        String fileKey = fileUrl.substring(58);
+        String key = fileKey; // 폴더/파일.확장자
+        final AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(region).build();
+
+        s3.deleteObject(bucketName, key);
+
+        System.out.println(String.format("[%s] deletion complete", key));
+
+    }
+
+
 }
