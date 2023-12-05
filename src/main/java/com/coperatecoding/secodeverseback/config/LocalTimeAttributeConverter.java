@@ -3,18 +3,20 @@ package com.coperatecoding.secodeverseback.config;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
-import java.time.LocalTime;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Converter(autoApply = true)
-public class LocalTimeAttributeConverter implements AttributeConverter<LocalTime, String> {
+public class LocalTimeAttributeConverter implements AttributeConverter<LocalDateTime, Timestamp> {
 
     @Override
-    public String convertToDatabaseColumn(LocalTime locTime) {
-        return (locTime == null ? null : locTime.toString());
+    public Timestamp convertToDatabaseColumn(LocalDateTime locDateTime) {
+        return (locDateTime == null ? null : Timestamp.valueOf(locDateTime.atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime()));
     }
 
     @Override
-    public LocalTime convertToEntityAttribute(String sqlTime) {
-        return (sqlTime == null ? null : LocalTime.parse(sqlTime));
+    public LocalDateTime convertToEntityAttribute(Timestamp sqlTimestamp) {
+        return (sqlTimestamp == null ? null : sqlTimestamp.toLocalDateTime().atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime());
     }
 }
