@@ -27,7 +27,7 @@ public class ChatbotContorller {
     @GetMapping("")
     public ResponseEntity chatbot(@RequestParam String input) {
 
-        String url = "http://127.0.0.1:5000";
+        String url = "http://3.39.39.217:5000";
         String responseAnser="";
         try {
             HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
@@ -76,7 +76,7 @@ public class ChatbotContorller {
         System.out.println(levelPk);
         System.out.println("유사문제 추천 시작합니다.");
         System.out.println(categoryPk);
-        String url = "http://127.0.0.1:5000/similarRecommend";
+        String url = "http://3.39.39.217:5000/similarRecommend";
         String responseAnswer = "";
         try {
             HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
@@ -171,7 +171,7 @@ public ResponseEntity codeReview(@RequestBody Map<String, String> requestBody) {
     String code = requestBody.get("code");
     System.out.println("입력받은 코드: " + code);
 
-    String url = "http://127.0.0.1:5000";
+    String url = "http://3.39.39.217:5000";
     String responseAnswer = "";
     try {
         HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
@@ -218,7 +218,7 @@ public ResponseEntity codeReview(@RequestBody Map<String, String> requestBody) {
 
     @PostMapping("/userRecommend")
     public ResponseEntity userRecommend (@AuthenticationPrincipal User user) {
-
+        System.out.println("사용자 문제 추천 시작합니다.");
         List<Code>allCodes=codeService.userAllCodes(user);
         int allLevel =0;
 
@@ -236,7 +236,7 @@ public ResponseEntity codeReview(@RequestBody Map<String, String> requestBody) {
         int finalScore = allScore/allCodes.size();
         int finalMemory =allMemory/allCodes.size();
 
-        String url = "http://127.0.0.1:5000/userRecommend";
+        String url = "http://3.39.39.217:5000/userRecommend";
         String responseAnswer = "";
         try {
             HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
