@@ -52,7 +52,7 @@ public class CTFTeamDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class Top10TeamResponse {
+    public static class Top5TeamResponse {
         private String name;
         private Integer score;
         private Integer teamRank;
@@ -72,9 +72,9 @@ public class CTFTeamDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class Top10ListResponse {
+    public static class Top5ListResponse {
         private int cnt;
-        private List<CTFTeamDTO.Top10TeamResponse> list;
+        private List<Top5TeamResponse> list;
     }
 
     @Getter

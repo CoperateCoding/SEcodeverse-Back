@@ -111,17 +111,31 @@ public class CTFTeamService {
             throw new ForbiddenException("관리자만 접근 가능합니다.");
     }
 
-    public CTFTeamDTO.Top10ListResponse getTop10TeamList(Long leaguePk) {
+    public CTFTeamDTO.Top5ListResponse getTop5TeamList(User user, Long leaguePk) {
+        CTFTeam myTeam = ctfTeamRepository.findByUsers(user)
+                .orElseThrow(() -> new NotFoundException("해당하는 ctf 팀이 없습니다."));
 
-        List<CTFTeam> teams = ctfTeamRepository.findTop10ByLeaguePkOrderByTeamRankAsc(leaguePk);
-        List<CTFTeamDTO.Top10TeamResponse> responses = teams.stream()
-                .map(team -> new CTFTeamDTO.Top10TeamResponse(
+        List<CTFTeam> teams = ctfTeamRepository.findTop5ByLeaguePkOrderByTeamRankAsc(leaguePk);
+        List<CTFTeamDTO.Top5TeamResponse> responses = teams.stream()
+                .map(team -> new CTFTeamDTO.Top5TeamResponse(
                         team.getName(),
-                        team.getScore(),
-                        (team.getScore() != null) ? team.getScore() : 0))
+                        (team.getScore() != null) ? team.getScore() : 0,
+                        (team.getTeamRank() != null) ? team.getTeamRank() : 0))
+                .sorted(Comparator.comparingInt(CTFTeamDTO.Top5TeamResponse::getScore).reversed())
                 .collect(Collectors.toList());
 
-        return new CTFTeamDTO.Top10ListResponse(responses.size(), responses);
+        // myTeam이 teams 리스트에 없다면 리스트에 추가
+        if (!teams.contains(myTeam)) {
+            if (!responses.isEmpty()) {
+                responses.remove(responses.size() - 1);
+            }
+            responses.add(new CTFTeamDTO.Top5TeamResponse(
+                    myTeam.getName(),
+                    myTeam.getScore(),
+                    (myTeam.getTeamRank() != null) ? myTeam.getTeamRank() : 0));
+        }
+
+        return new CTFTeamDTO.Top5ListResponse(responses.size(), responses);
     }
 
     public void joinTeam(User user, CTFTeamDTO.JoinRequest request) {
