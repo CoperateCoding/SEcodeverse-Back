@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface CTFTeamRepository extends JpaRepository<CTFTeam, Long> {
     Page<CTFTeam> findByLeaguePk(Long leaguePk, Pageable pageable);
 
-    List<CTFTeam> findTop10ByLeaguePkOrderByTeamRankAsc(Long leaguePk);
+    List<CTFTeam> findTop5ByLeaguePkOrderByTeamRankAsc(Long leaguePk);
     Optional<CTFTeam> findByName(String name);
     Optional<CTFTeam> findByUsers(User user);
 

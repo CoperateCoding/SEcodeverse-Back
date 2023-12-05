@@ -103,15 +103,15 @@ public class CTFTeamController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "상위 10개 팀 정보 조회", description = """
+    @Operation(summary = "상위 5개 팀 정보 조회", description = """
     팀 이름, 팀원 닉네임
     """)
     @GetMapping("/ctf/team/all/rank_and_score/{leaguePk}")
-    public ResponseEntity<CTFTeamDTO.Top10ListResponse> getTop10TeamList(
+    public ResponseEntity<CTFTeamDTO.Top5ListResponse> getTop5TeamList(
             @AuthenticationPrincipal User user,
             @PathVariable Long leaguePk)
     {
-        CTFTeamDTO.Top10ListResponse response = ctfTeamService.getTop10TeamList(leaguePk);
+        CTFTeamDTO.Top5ListResponse response = ctfTeamService.getTop5TeamList(user, leaguePk);
 
         return ResponseEntity.ok(response);
     }
