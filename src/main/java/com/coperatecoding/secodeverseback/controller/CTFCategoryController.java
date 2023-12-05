@@ -1,7 +1,6 @@
 package com.coperatecoding.secodeverseback.controller;
 
 import com.coperatecoding.secodeverseback.domain.User;
-import com.coperatecoding.secodeverseback.domain.ctf.CTFCategory;
 import com.coperatecoding.secodeverseback.dto.ctf.CTFCategoryDTO;
 import com.coperatecoding.secodeverseback.exception.ForbiddenException;
 import com.coperatecoding.secodeverseback.service.CTFCategoryService;

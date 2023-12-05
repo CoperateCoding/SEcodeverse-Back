@@ -40,7 +40,6 @@ public class CTFCategoryService {
                         .build())
                 .collect(Collectors.toList());
 
-
         //다 풀었는지 - 그 카테고리 문제 다 풀었는지 정보
         return categoryDTOs;
     }
@@ -70,9 +69,9 @@ public class CTFCategoryService {
         return result;
     }
 
-    public boolean allQuestionsSolved(User user, Long leaguePk, Long categoryPky) {
+    public boolean allQuestionsSolved(User user, Long leaguePk, Long categoryPk) {
 
-        CTFCategory ctfCategory = ctfCategoryRepository.findById(categoryPky)
+        CTFCategory ctfCategory = ctfCategoryRepository.findById(categoryPk)
                 .orElseThrow(() -> new NotFoundException("해당하는 ctf 카테고리가 존재하지 않습니다."));
 
         CTFTeam ctfTeam = ctfTeamRepository.findByUsers(user)
@@ -90,7 +89,6 @@ public class CTFCategoryService {
             // 해당 팀이 문제를 풀었는지 확인
             Optional<CTFTeamQuestion> ctfTeamQuestionOpt = ctfTeamQuestionRepository.findByCtfQuestionAndCtfTeam(question, ctfTeam);
             if (ctfTeamQuestionOpt.isEmpty()) {
-                System.out.println("지금 이게 되는지???");
                 isTrue = false;
             }
         }

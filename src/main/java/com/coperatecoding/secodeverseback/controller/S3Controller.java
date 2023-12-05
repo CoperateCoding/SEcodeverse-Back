@@ -33,10 +33,10 @@ public class S3Controller {
         return ResponseEntity.ok(map);
     }
 
-    @DeleteMapping("/{fileName}")
-    public ResponseEntity deleteFile(@PathVariable String fileName) throws IOException {
+    @DeleteMapping("/{fileUrl}")
+    public ResponseEntity deleteFile(@PathVariable String fileUrl) throws IOException {
         try {
-            s3Service.fileDelete(fileName);
+            s3Service.fileDelete(fileUrl);
             return ResponseEntity.ok().build();
         } catch (SdkClientException e) {
             throw new IOException("Error deleting file from S3", e);
