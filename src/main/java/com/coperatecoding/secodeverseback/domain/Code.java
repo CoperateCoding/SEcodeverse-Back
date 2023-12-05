@@ -59,9 +59,10 @@ public class                                                                    
     @OneToMany(mappedBy = "code", cascade = CascadeType.ALL)
     private List<CodeLanguage> languageList = new ArrayList<>();
 
-    public static Code makeCode(User user, Question question, String content, String compileTime, Double memory , Double accuracy){
+    public static Code makeCode(User user, CodeStatus codeStatus,Question question, String content, String compileTime, Double memory , Double accuracy){
         Code code = new Code();
         code.user= user;
+        code.status=codeStatus;
         code.question = question;
         code.content = content;
         code.compileTime = LocalTime.parse(compileTime);
