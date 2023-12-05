@@ -36,16 +36,8 @@ public class BoardService {
         User findUser = userRepository.findById(user.getPk())
                 .orElseThrow(() -> new NotFoundException("해당하는 사용자가 없습니다."));
 
-        System.out.println("여기 나오는지 "+findUser.getNickname());
-
-
-        // 카테고리 올바른지 확인
-        System.out.println(addBoardRequest.getCategoryPk());
-        System.out.println(addBoardRequest.getTitle());
-        System.out.println(addBoardRequest.getContent());
         BoardCategory category = boardCategoryRepository.findById(addBoardRequest.getCategoryPk())
                 .orElseThrow(() -> new NotFoundException("해당하는 카테고리가 존재하지 않음"));
-
 
         Board board = Board.makeBoard(findUser, category, addBoardRequest.getTitle(), addBoardRequest.getContent());
 
