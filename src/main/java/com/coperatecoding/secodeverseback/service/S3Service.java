@@ -68,23 +68,15 @@ public class S3Service {
         return UUID.randomUUID().toString()+filename;
     }
 
-    // 이미지 수정으로 인해 기존 이미지 삭제 메소드
-    public void deleteImage(String fileUrl) {
-        String splitStr = ".com/";
-        String fileName = fileUrl.substring(fileUrl.lastIndexOf(splitStr) + splitStr.length());
-
-        amazonS3Client.deleteObject(new DeleteObjectRequest(bucketName, fileName));
-    }
 
     public void fileDelete(String fileUrl) {
 
-        String fileKey = fileUrl.substring(58);
-        String key = fileKey; // 폴더/파일.확장자
+        String fileKey = fileUrl.substring(fileUrl.indexOf(bucketName) + bucketName.length() + 1);
+
         final AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(region).build();
+        s3.deleteObject(bucketName, fileKey);
 
-        s3.deleteObject(bucketName, key);
-
-        System.out.println(String.format("[%s] deletion complete", key));
+        System.out.println(String.format("[%s] deletion complete", fileKey));
 
     }
 
