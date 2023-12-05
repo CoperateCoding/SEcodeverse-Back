@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.List;
+import java.util.Objects;
 
 public class QuestionDTO {
 
@@ -170,6 +171,20 @@ public class QuestionDTO {
         private String title;
         private String intro;
         private Long categoryPk;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            SearchQuestionResponse that = (SearchQuestionResponse) o;
+            return Objects.equals(pk, that.pk);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(pk);
+        }
+
 
     }
 
