@@ -44,6 +44,7 @@ public class QuestionController {
     private final TestCaseService testCaseService;
     private final QuestionImgService questionImgService;
     private final CodeService  codeService;
+    private final QuestionCategoryService questionCategoryService;
 
     @PostMapping("/post")
     public ResponseEntity makeQuestion(@AuthenticationPrincipal User user, @RequestBody @Valid QuestionAndTestAndImageDTO.AddQuestionAndTestAndImageRequest addQuestionAndTestAndImageRequest) {
@@ -194,13 +195,20 @@ public class QuestionController {
     }
 
     @GetMapping("/search/recent")
-    public ResponseEntity<List<QuestionDTO.SearchQuestionResponse>> getRecentQuestion(){
-        List<QuestionDTO.SearchQuestionResponse> questions = questionService.getRecentQuestion();
+    public ResponseEntity<List<QuestionDTO.SearchQuestionCategoryNameResponse>> getRecentQuestion(){
+        List<QuestionDTO.SearchQuestionCategoryNameResponse> questions = questionService.getRecentQuestion();
         return ResponseEntity.ok(questions);
     }
+    @GetMapping("/search/categorys")
+    public ResponseEntity<List<CategoryDTO.SearchQuestionCategoryResponse>> getCategorys(
 
+    ) {
+
+        List<CategoryDTO.SearchQuestionCategoryResponse> allCategorys = questionCategoryService.getAllCategorys();
+        return ResponseEntity.ok(allCategorys);
+    }
     @GetMapping("/search/")
-    public ResponseEntity<QuestionDTO.SearchListResponse> getQuestions(
+    public ResponseEntity<QuestionDTO.SearchListNameResponse> getQuestions(
             @RequestParam(required = false, defaultValue = "10") @Min(value = 2, message = "page 크기는 1보다 커야합니다") int pageSize,
             @RequestParam(required = false, defaultValue = "1") @Min(value = 1, message = "page는 0보다 커야합니다") int page,
             @RequestParam(value = "q", required = false) String q,
@@ -209,8 +217,8 @@ public class QuestionController {
             @RequestParam(value = "levelPk", required = false) List<Long> levelPks
     ) {
 
-        Page<QuestionDTO.SearchQuestionResponse> questions = questionService.getQuestionList(page, pageSize, q, sort, categoryPks, levelPks);
-        QuestionDTO.SearchListResponse response = QuestionDTO.SearchListResponse.builder()
+        Page<QuestionDTO.SearchQuestionCategoryNameResponse> questions = questionService.getQuestionList(page, pageSize, q, sort, categoryPks, levelPks);
+        QuestionDTO.SearchListNameResponse response = QuestionDTO.SearchListNameResponse.builder()
                 .cnt((int) questions.getTotalElements())
                 .list(questions.getContent())
                 .build();
