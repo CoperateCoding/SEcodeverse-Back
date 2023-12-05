@@ -291,7 +291,17 @@ public class QuestionService {
 
         return response;
     }
+    public QuestionDTO.SearchQuestionCategoryNameResponse getQuestion(QuestionDTO.questionCategoryNameRequest request) {
+        QuestionDTO.SearchQuestionCategoryNameResponse response = QuestionDTO.SearchQuestionCategoryNameResponse.builder()
+                .pk(request.getPk())
+                .userName(request.getUserName())
+                .levelPk(request.getLevelPk())
+                .title(request.getTitle())
+                .categoryName(request.getCategoryName())
+                .build();
 
+        return response;
+    }
     public QuestionDTO.questionPagingResponse getPagingQuestion(QuestionDTO.questionPagingRequest request) {
         QuestionDTO.questionPagingResponse response = QuestionDTO.questionPagingResponse.builder()
                 .cnt(request.getCnt())
@@ -307,31 +317,31 @@ public class QuestionService {
 
 
 
-    public List<QuestionDTO.SearchQuestionResponse> getRecentQuestion() {
+    public List<QuestionDTO.SearchQuestionCategoryNameResponse> getRecentQuestion() {
 
 
         List<Question> questions = questionRepository.findAll();
-        List<QuestionDTO.SearchQuestionResponse> resultQuestions = new ArrayList<>();
-        List<QuestionDTO.SearchQuestionResponse> questionDTOS = new ArrayList<>();
+        List<QuestionDTO.SearchQuestionCategoryNameResponse> resultQuestions = new ArrayList<>();
+        List<QuestionDTO.SearchQuestionCategoryNameResponse> questionDTOS = new ArrayList<>();
         for (Question question : questions) {
             User user = question.getUser();
-            QuestionDTO.SearchQuestionListRequest request = QuestionDTO.SearchQuestionListRequest.questions(
+            QuestionDTO.questionCategoryNameRequest request = QuestionDTO.questionCategoryNameRequest.questions(
                     question.getPk(),
                     user.getUsername(),
                     question.getLevel().getPk(),
                     question.getTitle(),
                     question.getIntro(),
-                    question.getCategory().getPk()
+                    question.getCategory().getName()
             );
 
-            QuestionDTO.SearchQuestionResponse response = getQuestion(request);
+            QuestionDTO.SearchQuestionCategoryNameResponse response = getQuestion(request);
 
-            QuestionDTO.SearchQuestionResponse questionDTO = QuestionDTO.SearchQuestionResponse.builder()
+            QuestionDTO.SearchQuestionCategoryNameResponse questionDTO = QuestionDTO.SearchQuestionCategoryNameResponse.builder()
                     .pk(response.getPk())
                     .userName(response.getUserName())
                     .levelPk(response.getLevelPk())
                     .title(response.getTitle())
-                    .categoryPk(response.getCategoryPk())
+                    .categoryName(response.getCategoryName())
                     .build();
             questionDTOS.add(questionDTO);
 
@@ -550,7 +560,7 @@ public class QuestionService {
 //
 //        return new PageImpl<>(searchList, PageRequest.of(page, pageSize), filteredQuestions.size());
 //    }
-    public Page<QuestionDTO.SearchQuestionResponse> getQuestionList(int page, int pageSize, String q, QuestionSortType sort, List<Long> categoryPks, List<Long> levelPks) {
+    public Page<QuestionDTO.SearchQuestionCategoryNameResponse> getQuestionList(int page, int pageSize, String q, QuestionSortType sort, List<Long> categoryPks, List<Long> levelPks) {
         Pageable pageable = makePageable(page, pageSize, sort);
 
         Specification<Question> spec = (root, query, criteriaBuilder) -> {
@@ -576,17 +586,17 @@ public class QuestionService {
         System.out.println("size1============="+questions.getTotalElements());
 
 
-        List<QuestionDTO.SearchQuestionResponse> searchList = questions.stream()
+        List<QuestionDTO.SearchQuestionCategoryNameResponse> searchList = questions.stream()
                 .map(question -> {
                     User user = question.getUser();
                     if (user == null) return null;
                     if (question.getCategory() == null) return null;
                     if (question.getLevel() == null) return null;
 
-                    return QuestionDTO.SearchQuestionResponse.builder()
+                    return QuestionDTO.SearchQuestionCategoryNameResponse.builder()
                             .pk(question.getPk())
                             .userName(user.getNickname())
-                            .categoryPk(question.getCategory().getPk())
+                            .categoryName(question.getCategory().getName())
                             .title(question.getTitle())
                             .levelPk(question.getLevel().getPk())
                             .build();

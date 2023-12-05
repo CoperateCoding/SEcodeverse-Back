@@ -92,6 +92,62 @@ public class QuestionDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class questionCategoryNameRequest {
+
+        private Long pk;
+        private String userName;
+        private Long levelPk;
+        private String title;
+        private String intro;
+        private String categoryName;
+
+        public static questionCategoryNameRequest questions(Long pk, String userName, Long levelPk, String title, String intro,String categoryName) {
+            return new questionCategoryNameRequest(pk, userName, levelPk, title, intro,categoryName);
+        }
+
+    }
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class questionCategoryNamePagingRequest {
+        private int cnt;
+        private Long pk;
+        private String userName;
+        private Long levelPk;
+        private String title;
+        private String categoryName;
+
+        public static questionCategoryNamePagingRequest questions(int cnt,Long pk, String userName, Long levelPk, String title, String categoryName) {
+            return new questionCategoryNamePagingRequest(cnt, pk, userName, levelPk, title, categoryName);
+        }
+
+    }
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class questionListName {
+        private int cnt;
+        private Long pk;
+        private String userName;
+        private Long levelPk;
+        private String title;
+        private String  categoryName;
+
+        public static questionCategoryNamePagingRequest questions(int cnt,Long pk, String userName, Long levelPk, String title,String categoryName) {
+            return new questionCategoryNamePagingRequest(cnt, pk, userName, levelPk, title, categoryName);
+        }
+
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class questionPagingResponse {
         private int cnt;
         private Long pk;
@@ -119,6 +175,21 @@ public class QuestionDTO {
 
     @Getter
     @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SearchQuestionCategoryNameResponse {
+        private Long pk;
+        private String userName;
+        private Long levelPk;
+        private String title;
+        private String intro;
+        private String categoryName;
+
+    }
+
+    @Getter
+    @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
@@ -127,4 +198,15 @@ public class QuestionDTO {
         private List<QuestionDTO.SearchQuestionResponse> list;
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class SearchListNameResponse {
+        private int cnt;
+        private List<QuestionDTO.SearchQuestionCategoryNameResponse> list;
+    }
+
 }
+
