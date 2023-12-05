@@ -60,7 +60,7 @@ public class CodeService {
         Question question = questionRepository.findById(questionPk)
                 .orElseThrow(() -> new NotFoundException("해당하는 문제가 없습니다."));
 
-       Code code = Code.makeCode(user, question, addCodeRequest.getContent(), addCodeRequest.getCompileTime(),
+       Code code = Code.makeCode(user, addCodeRequest.getCodeStatus(), question, addCodeRequest.getContent(), addCodeRequest.getCompileTime(),
                addCodeRequest.getMemory(), addCodeRequest.getAccuracy());
 
         System.out.println("=================" + code.getCompileTime());
