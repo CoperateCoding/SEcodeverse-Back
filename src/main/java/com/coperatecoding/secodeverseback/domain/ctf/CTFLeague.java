@@ -1,6 +1,5 @@
 package com.coperatecoding.secodeverseback.domain.ctf;
 
-import com.coperatecoding.secodeverseback.config.LocalTimeAttributeConverter;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

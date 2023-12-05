@@ -1,6 +1,5 @@
 package com.coperatecoding.secodeverseback.domain;
 
-import com.coperatecoding.secodeverseback.config.LocalTimeAttributeConverter;
 import com.coperatecoding.secodeverseback.domain.question.Question;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -38,7 +37,7 @@ public class                                                                    
     @NotNull
     @Column(length = 99999)
     private String content;
-    @Convert(converter = LocalTimeAttributeConverter.class)
+//    @Convert(converter = LocalTimeAttributeConverter.class)
     @Column(columnDefinition = "TIME(6)")
     private LocalTime compileTime;
 

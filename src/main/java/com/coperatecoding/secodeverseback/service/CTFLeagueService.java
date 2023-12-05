@@ -39,6 +39,11 @@ public class CTFLeagueService {
         CTFLeague league = ctfLeagueRepository.findById(leaguePk)
                 .orElseThrow(() -> new NotFoundException("해당하는 리그가 존재하지 않음"));
 
+        System.out.println("요기~~~~~~~~~~~~~~~");
+        System.out.println(league.getPk());
+        System.out.println(league.getOpenTime());
+        System.out.println(league.getCloseTime());
+
         CTFLeagueDTO.CTFLeagueDetailResponse detailResponse = CTFLeagueDTO.CTFLeagueDetailResponse.builder()
                 .name(league.getName())
                 .openTime(league.getOpenTime())

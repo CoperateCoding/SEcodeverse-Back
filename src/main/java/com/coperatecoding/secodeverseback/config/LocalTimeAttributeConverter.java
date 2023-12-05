@@ -15,8 +15,15 @@ public class LocalTimeAttributeConverter implements AttributeConverter<LocalDate
         return (locDateTime == null ? null : Timestamp.valueOf(locDateTime.atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime()));
     }
 
+//    @Override
+//    public LocalDateTime convertToEntityAttribute(Timestamp sqlTimestamp) {
+//        return (sqlTimestamp == null ? null : sqlTimestamp.toLocalDateTime().atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime());
+//    }
+
     @Override
     public LocalDateTime convertToEntityAttribute(Timestamp sqlTimestamp) {
-        return (sqlTimestamp == null ? null : sqlTimestamp.toLocalDateTime().atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime());
+        return (sqlTimestamp == null ? null : sqlTimestamp.toInstant().atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime());
     }
+
+
 }
