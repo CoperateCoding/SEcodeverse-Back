@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +33,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Set;
 
 @Tag(name = "문제", description = "문제 관련 API")
 @RequiredArgsConstructor
@@ -130,13 +132,22 @@ public class QuestionController {
                                                                                     @RequestParam(defaultValue = "10") int pageSize){
 
         List<CodeDTO.PageableCodeListResponse>codes=codeService.getUserCodes(user,page,pageSize);
-        List<QuestionDTO.SearchQuestionResponse> questions=new ArrayList<>();
+
+        Set<QuestionDTO.SearchQuestionResponse> questionsSet = new HashSet<>();
         for(CodeDTO.PageableCodeListResponse code: codes){
             Question question = questionService.findByPk(code.getQuestionPk());
-            QuestionDTO.SearchQuestionResponse questionDTO=questionService.getByPk(question);
-            questions.add(questionDTO);
-
+            QuestionDTO.SearchQuestionResponse questionDTO = questionService.getByPk(question);
+            questionsSet.add(questionDTO);
         }
+        List<QuestionDTO.SearchQuestionResponse> questions = new ArrayList<>(questionsSet);
+
+//        List<QuestionDTO.SearchQuestionResponse> questions=new ArrayList<>();
+//        for(CodeDTO.PageableCodeListResponse code: codes){
+//            Question question = questionService.findByPk(code.getQuestionPk());
+//            QuestionDTO.SearchQuestionResponse questionDTO=questionService.getByPk(question);
+//            questions.add(questionDTO);
+//
+//        }
         List<QuestionDTO.questionPagingResponse> pagingQuestion = questionService.userPagingQuestion(codes.get(0).getCnt(),questions);
 
         return ResponseEntity.ok(pagingQuestion);
