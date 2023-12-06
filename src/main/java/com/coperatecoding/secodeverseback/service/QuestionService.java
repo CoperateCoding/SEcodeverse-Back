@@ -77,6 +77,7 @@ public class QuestionService {
                 .content(question.getContent())
                 .levelPk(question.getLevel().getPk())
                 .title(question.getTitle())
+                .intro(question.getIntro())
                 .language(question.getLanguage())
                 .limitations(question.getLimitations())
                 .testcaseDescription(question.getTestcaseDescription())
